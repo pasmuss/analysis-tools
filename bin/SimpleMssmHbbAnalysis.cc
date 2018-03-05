@@ -20,7 +20,6 @@ using namespace analysis::tools;
 // =============================================================================================   
 int main(int argc, char * argv[])
 {
-   
    if ( macro_config(argc, argv) != 0 ) return -1;
    
    TH1::SetDefaultSumw2();  // proper treatment of errors when scaling histograms
