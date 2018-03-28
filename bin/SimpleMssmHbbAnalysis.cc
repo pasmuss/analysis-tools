@@ -80,12 +80,13 @@ int main(int argc, char * argv[])
       h1[Form("eta_%i",i)]        = new TH1F(Form("eta_%i",i) , "" , 100, -5, 5);
       h1[Form("phi_%i",i)]        = new TH1F(Form("phi_%i",i) , "" , 100, -4, 4);
       h1[Form("btag_%i",i)]       = new TH1F(Form("btag_%i",i) , "" , 500, 0, 1);
+      h1[Form("deepcsvbtag_%i",i)]       = new TH1F(Form("deepcsvbtag_%i",i) , "" , 500, 0, 1);
       
       h1[Form("pt_%i_csv",i)]     = new TH1F(Form("pt_%i_csv",i) , "" , 100, 0, 1000);
       h1[Form("eta_%i_csv",i)]    = new TH1F(Form("eta_%i_csv",i) , "" , 100, -5, 5);
       h1[Form("phi_%i_csv",i)]    = new TH1F(Form("phi_%i_csv",i) , "" , 100, -4, 4);
       h1[Form("btag_%i_csv",i)]   = new TH1F(Form("btag_%i_csv",i) , "" , 500, 0, 1);
-      h1[Form("deepcsvbtag_%i",i)]   = new TH1F(Form("deepcsvbtag_%i",i) , "" , 500, 0, 1);
+      h1[Form("deepcsvbtag_%i_csv",i)]   = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 500, 0, 1);
     }
   h1["m12"]     = new TH1F("m12"     , "" , 50, 0, 1000);
   h1["m12_csv"] = new TH1F("m12_csv" , "" , 50, 0, 1000);
@@ -121,8 +122,9 @@ int main(int argc, char * argv[])
       int nomujet = 0;
       bool goodEvent = true;
       bool muonpresent = false;
-      
-      if ( i > 0 && i%100000==0 ) std::cout << i << "  events processed! " << std::endl;
+
+      if (i == 1) std::cout << "Started!" << std::endl;
+      if ( i > 0 && i%500000==0 ) std::cout << i << "  events processed! " << std::endl;
       
       analysis.event(i);
       if (! isMC_ )
@@ -264,9 +266,10 @@ int main(int argc, char * argv[])
 	  h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta());
 	  h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi());
 	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag());
+	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
 	}
       mbb = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
-      if ( !signalregion_ )
+      if ( !signalregion_ )//blinding
 	{ 
 	  h1["m12_csv"] -> Fill(mbb);
 	  weight = 1;

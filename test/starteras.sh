@@ -1,4 +1,3 @@
-SimpleMssmHbbAnalysis -c exampleC.cfg
-SimpleMssmHbbAnalysis -c exampleD.cfg
-SimpleMssmHbbAnalysis -c exampleE.cfg
-SimpleMssmHbbAnalysis -c exampleF.cfg
+SimpleMssmHbbAnalysis -c D-SR-deep.cfg
+SimpleMssmHbbAnalysis -c E-SR-deep.cfg
+SimpleMssmHbbAnalysis -c F-SR-deep.cfg
