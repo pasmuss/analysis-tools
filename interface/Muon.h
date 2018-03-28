@@ -46,7 +46,7 @@ namespace analysis {
 	   bool  isTrackerMuon()   const ; 
 	   bool  isLooseMuon()     const ; 
 	   bool  isMediumMuon()    const ;
-	   bool  isTightMuon()     const ;
+	   //bool  isTightMuon()     const ;
 
 	   float validFraction()          const ;
 	   float segmentCompatibility()   const ; 
@@ -61,7 +61,7 @@ namespace analysis {
 	   void isTrackerMuon(const bool & isTrackerMuon) ;  
 	   void isLooseMuon  (const bool & isLooseMuon)   ; 
            void isMediumMuon (const bool & isMediumMuon)  ;
-           void isTightMuon  (const bool & isTightMuon)  ;
+           //void isTightMuon  (const bool & isTightMuon)  ;
 
            void validFraction( const float & validFraction) ;     
            void segmentCompatibility(const float & segmentCompatibility) ; 
@@ -77,7 +77,7 @@ namespace analysis {
 	   bool isTrackerMuon_;        
 	   bool isLooseMuon_;          
 	   bool isMediumMuon_;         
-	   bool isTightMuon_;
+	   //bool isTightMuon_;
 
 	   float validFraction_;        
 	   float segmentCompatibility_; 
