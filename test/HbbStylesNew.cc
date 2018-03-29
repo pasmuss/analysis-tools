@@ -184,7 +184,7 @@ void HbbStylesNew::InitHist(TH1 *hist, const char *xtit, const char *ytit, int c
   hist->SetLineWidth(    2.);
   hist->SetFillColor(color);
   hist->SetFillStyle(style);
-  hist->GetYaxis()->SetRangeUser(0.1,100000);
+  //  hist->GetYaxis()->SetRangeUser(0.1,100000);
   hist->SetTitleSize  (0.055,"Y");
   hist->SetTitleOffset(1.600,"Y");
   hist->SetLabelOffset(0.014,"Y");
