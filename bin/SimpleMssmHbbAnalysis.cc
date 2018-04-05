@@ -39,7 +39,7 @@ int main(int argc, char * argv[])
     {
       analysis.addTree<TriggerObject> (obj,Form("MssmHbb/Events/slimmedPatTrigger/%s",obj.c_str()));
     }
-   
+  
   analysis.triggerResults("MssmHbb/Events/TriggerResults");
    
   if( !isMC_ )
@@ -100,7 +100,7 @@ int main(int argc, char * argv[])
    
   // Analysis of events
   std::cout << "This analysis has " << analysis.size() << " events" << std::endl;
-   
+  
   // Cut flow
   // 0: triggered events
   // 1: 3+ idloose jets
@@ -123,9 +123,13 @@ int main(int argc, char * argv[])
       bool goodEvent = true;
       bool muonpresent = false;
 
-      if (i == 1) std::cout << "Started!" << std::endl;
-      if ( i > 0 && i%500000==0 ) std::cout << i << "  events processed! " << std::endl;
-      
+      if ( i > 0 && i%1000000==0 ) std::cout << i << "  events processed! " << std::endl;
+  
+      //cout << "run number of event " << i << ": " << analysis.run() << endl; 
+      /*for (unsigned int i = 0; i < triggerObjects_.size(); i++){
+	cout << triggerObjects_[i] << endl;
+	}*/
+    
       analysis.event(i);
       if (! isMC_ )
 	{
@@ -230,22 +234,39 @@ int main(int argc, char * argv[])
       
       
       // Is matched?
-      bool matched[10] = {true,true,true,true,true,true,true,true,true,true};
+      bool matched[10] = {true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
       for ( int j = 0; j < 2; ++j )
 	{
 	  Jet * jet = selectedJets[j];
 	  //         for ( auto & obj : triggerObjects_ )   matched = (matched && jet->matched(obj));
-	  for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
-	    {       
-	      if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
-	    }
+	  if(analysis.run() <= 304508){
+	    for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
+	      { 
+		if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
+	      }
+	  }
+	  else{
+	    for ( size_t io = 1; io < triggerObjects_.size()+1 ; ++io )
+              {
+                if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
+              }
+	  }
 	}
       
-      for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
-	{
-	  if ( matched[io] ) ++nmatch[io];
-	  goodEvent = ( goodEvent && matched[io] );
-	}
+      if(analysis.run() <= 304508){
+	for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
+	  {
+	    if ( matched[io] ) ++nmatch[io];
+	    goodEvent = ( goodEvent && matched[io] );
+	  }
+      }
+      else{
+	for ( size_t io = 1; io < triggerObjects_.size()+1 ; ++io )
+          {
+            if ( matched[io] ) ++nmatch[io];
+            goodEvent = ( goodEvent && matched[io] );
+          }
+      }
       
       if ( ! goodEvent ) continue;
       

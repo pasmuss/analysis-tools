@@ -396,14 +396,14 @@ void PlotTDRStyle (){
 
     TCanvas* eta_cuts_1_crCSV_can = style.MakeCanvas("eta_cuts_1_crCSV_can","eta 1st jet cuts (CR, CSV)",700,700);
     eta_cuts_1_crCSV_can -> SetLogy();
-    style.InitHist(eta_cuts_C_crCSV_hist_1,"p_{T}, after cuts, CR, CSV, first jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_crCSV_hist_1,"#eta, after cuts, CR, CSV, first jet","Entries",kBlack,0);
     eta_cuts_C_crCSV_hist_1->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_crCSV_hist_1->Draw();
-    style.InitHist(eta_cuts_D_crCSV_hist_1,"p_{T}, after cuts, CR, CSV, first jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_crCSV_hist_1,"#eta, after cuts, CR, CSV, first jet","Entries",kRed,0);
     eta_cuts_D_crCSV_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_E_crCSV_hist_1,"p_{T}, after cuts, CR, CSV, first jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_crCSV_hist_1,"#eta, after cuts, CR, CSV, first jet","Entries",kBlue,0);
     eta_cuts_E_crCSV_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_F_crCSV_hist_1,"p_{T}, after cuts, CR, CSV, first jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_crCSV_hist_1,"#eta, after cuts, CR, CSV, first jet","Entries",kGreen,0);
     eta_cuts_F_crCSV_hist_1->Draw("SAME");
 
     TLegend* legeta1acCRcsv = new TLegend(0.35,0.65,0.8,0.9);
@@ -417,14 +417,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_2_crCSV_can = style.MakeCanvas("eta_cuts_2_crCSV_can","eta 2nd jet cuts (CR, CSV)",700,700);
     eta_cuts_2_crCSV_can -> SetLogy();
-    style.InitHist(eta_cuts_C_crCSV_hist_2,"p_{T}, after cuts, CR, CSV, second jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_crCSV_hist_2,"#eta, after cuts, CR, CSV, second jet","Entries",kBlack,0);
     eta_cuts_C_crCSV_hist_2->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_crCSV_hist_2->Draw();
-    style.InitHist(eta_cuts_D_crCSV_hist_2,"p_{T}, after cuts, CR, CSV, second jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_crCSV_hist_2,"#eta, after cuts, CR, CSV, second jet","Entries",kRed,0);
     eta_cuts_D_crCSV_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_E_crCSV_hist_2,"p_{T}, after cuts, CR, CSV, second jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_crCSV_hist_2,"#eta, after cuts, CR, CSV, second jet","Entries",kBlue,0);
     eta_cuts_E_crCSV_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_F_crCSV_hist_2,"p_{T}, after cuts, CR, CSV, second jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_crCSV_hist_2,"#eta, after cuts, CR, CSV, second jet","Entries",kGreen,0);
     eta_cuts_F_crCSV_hist_2->Draw("SAME");
 
     TLegend* legeta2acCRcsv = new TLegend(0.35,0.65,0.8,0.9);
@@ -438,14 +438,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_3_crCSV_can = style.MakeCanvas("eta_cuts_3_crCSV_can","eta 3rd jet cuts (CR, CSV)",700,700);
     eta_cuts_3_crCSV_can -> SetLogy();
-    style.InitHist(eta_cuts_C_crCSV_hist_3,"p_{T}, after cuts, CR, CSV, third jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_crCSV_hist_3,"#eta, after cuts, CR, CSV, third jet","Entries",kBlack,0);
     eta_cuts_C_crCSV_hist_3->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_crCSV_hist_3->Draw();
-    style.InitHist(eta_cuts_D_crCSV_hist_3,"p_{T}, after cuts, CR, CSV, third jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_crCSV_hist_3,"#eta, after cuts, CR, CSV, third jet","Entries",kRed,0);
     eta_cuts_D_crCSV_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_E_crCSV_hist_3,"p_{T}, after cuts, CR, CSV, third jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_crCSV_hist_3,"#eta, after cuts, CR, CSV, third jet","Entries",kBlue,0);
     eta_cuts_E_crCSV_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_F_crCSV_hist_3,"p_{T}, after cuts, CR, CSV, third jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_crCSV_hist_3,"#eta, after cuts, CR, CSV, third jet","Entries",kGreen,0);
     eta_cuts_F_crCSV_hist_3->Draw("SAME");
 
     TLegend* legeta3acCRcsv = new TLegend(0.35,0.65,0.8,0.9);
@@ -459,14 +459,14 @@ void PlotTDRStyle (){
 
     TCanvas* eta_cuts_1_srCSV_can = style.MakeCanvas("eta_cuts_1_srCSV_can","eta 1st jet cuts (SR, CSV)",700,700);
     eta_cuts_1_srCSV_can -> SetLogy();
-    style.InitHist(eta_cuts_C_srCSV_hist_1,"p_{T}, after cuts, SR, CSV, first jet","Entries",kBlack,0);
-    eta_cuts_C_srCSV_hist_1->GetYaxis()->SetRangeUser(0.1,100000);
+    style.InitHist(eta_cuts_C_srCSV_hist_1,"#eta, after cuts, SR, CSV, first jet","Entries",kBlack,0);
+    eta_cuts_C_srCSV_hist_1->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_srCSV_hist_1->Draw();
-    style.InitHist(eta_cuts_D_srCSV_hist_1,"p_{T}, after cuts, SR, CSV, first jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_srCSV_hist_1,"#eta, after cuts, SR, CSV, first jet","Entries",kRed,0);
     eta_cuts_D_srCSV_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_E_srCSV_hist_1,"p_{T}, after cuts, SR, CSV, first jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_srCSV_hist_1,"#eta, after cuts, SR, CSV, first jet","Entries",kBlue,0);
     eta_cuts_E_srCSV_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_F_srCSV_hist_1,"p_{T}, after cuts, SR, CSV, first jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_srCSV_hist_1,"#eta, after cuts, SR, CSV, first jet","Entries",kGreen,0);
     eta_cuts_F_srCSV_hist_1->Draw("SAME");
 
     TLegend* legeta1acSRcsv = new TLegend(0.35,0.65,0.8,0.9);
@@ -480,14 +480,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_2_srCSV_can = style.MakeCanvas("eta_cuts_2_srCSV_can","eta 2nd jet cuts (SR, CSV)",700,700);
     eta_cuts_2_srCSV_can -> SetLogy();
-    style.InitHist(eta_cuts_C_srCSV_hist_2,"p_{T}, after cuts, SR, CSV, second jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_srCSV_hist_2,"#eta, after cuts, SR, CSV, second jet","Entries",kBlack,0);
     eta_cuts_C_srCSV_hist_2->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_srCSV_hist_2->Draw();
-    style.InitHist(eta_cuts_D_srCSV_hist_2,"p_{T}, after cuts, SR, CSV, second jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_srCSV_hist_2,"#eta, after cuts, SR, CSV, second jet","Entries",kRed,0);
     eta_cuts_D_srCSV_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_E_srCSV_hist_2,"p_{T}, after cuts, SR, CSV, second jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_srCSV_hist_2,"#eta, after cuts, SR, CSV, second jet","Entries",kBlue,0);
     eta_cuts_E_srCSV_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_F_srCSV_hist_2,"p_{T}, after cuts, SR, CSV, second jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_srCSV_hist_2,"#eta, after cuts, SR, CSV, second jet","Entries",kGreen,0);
     eta_cuts_F_srCSV_hist_2->Draw("SAME");
 
     TLegend* legeta2acSRcsv = new TLegend(0.35,0.65,0.8,0.9);
@@ -501,14 +501,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_3_srCSV_can = style.MakeCanvas("eta_cuts_3_srCSV_can","eta 3rd jet cuts (SR, CSV)",700,700);
     eta_cuts_3_srCSV_can -> SetLogy();
-    style.InitHist(eta_cuts_C_srCSV_hist_3,"p_{T}, after cuts, SR, CSV, third jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_srCSV_hist_3,"#eta, after cuts, SR, CSV, third jet","Entries",kBlack,0);
     eta_cuts_C_srCSV_hist_3->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_srCSV_hist_3->Draw();
-    style.InitHist(eta_cuts_D_srCSV_hist_3,"p_{T}, after cuts, SR, CSV, third jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_srCSV_hist_3,"#eta, after cuts, SR, CSV, third jet","Entries",kRed,0);
     eta_cuts_D_srCSV_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_E_srCSV_hist_3,"p_{T}, after cuts, SR, CSV, third jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_srCSV_hist_3,"#eta, after cuts, SR, CSV, third jet","Entries",kBlue,0);
     eta_cuts_E_srCSV_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_F_srCSV_hist_3,"p_{T}, after cuts, SR, CSV, third jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_srCSV_hist_3,"#eta, after cuts, SR, CSV, third jet","Entries",kGreen,0);
     eta_cuts_F_srCSV_hist_3->Draw("SAME");
 
     TLegend* legeta3acSRcsv = new TLegend(0.35,0.65,0.8,0.9);
@@ -522,14 +522,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_1_crdeep_can = style.MakeCanvas("eta_cuts_1_crdeep_can","eta 1st jet cuts (CR, deep)",700,700);
     eta_cuts_1_crdeep_can -> SetLogy();
-    style.InitHist(eta_cuts_C_crdeep_hist_1,"p_{T}, after cuts, CR, deep CSV, first jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_crdeep_hist_1,"#eta, after cuts, CR, deep CSV, first jet","Entries",kBlack,0);
     eta_cuts_C_crdeep_hist_1->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_crdeep_hist_1->Draw();
-    style.InitHist(eta_cuts_D_crdeep_hist_1,"p_{T}, after cuts, CR, deep CSV, first jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_crdeep_hist_1,"#eta, after cuts, CR, deep CSV, first jet","Entries",kRed,0);
     eta_cuts_D_crdeep_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_E_crdeep_hist_1,"p_{T}, after cuts, CR, deep CSV, first jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_crdeep_hist_1,"#eta, after cuts, CR, deep CSV, first jet","Entries",kBlue,0);
     eta_cuts_E_crdeep_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_F_crdeep_hist_1,"p_{T}, after cuts, CR, deep CSV, first jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_crdeep_hist_1,"#eta, after cuts, CR, deep CSV, first jet","Entries",kGreen,0);
     eta_cuts_F_crdeep_hist_1->Draw("SAME");
 
     TLegend* legeta1acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
@@ -543,14 +543,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_2_crdeep_can = style.MakeCanvas("eta_cuts_2_crdeep_can","eta 2nd jet cuts (CR, deep)",700,700);
     eta_cuts_2_crdeep_can -> SetLogy();
-    style.InitHist(eta_cuts_C_crdeep_hist_2,"p_{T}, after cuts, CR, deep CSV, second jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_crdeep_hist_2,"#eta, after cuts, CR, deep CSV, second jet","Entries",kBlack,0);
     eta_cuts_C_crdeep_hist_2->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_crdeep_hist_2->Draw();
-    style.InitHist(eta_cuts_D_crdeep_hist_2,"p_{T}, after cuts, CR, deep CSV, second jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_crdeep_hist_2,"#eta, after cuts, CR, deep CSV, second jet","Entries",kRed,0);
     eta_cuts_D_crdeep_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_E_crdeep_hist_2,"p_{T}, after cuts, CR, deep CSV, second jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_crdeep_hist_2,"#eta, after cuts, CR, deep CSV, second jet","Entries",kBlue,0);
     eta_cuts_E_crdeep_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_F_crdeep_hist_2,"p_{T}, after cuts, CR, deep CSV, second jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_crdeep_hist_2,"#eta, after cuts, CR, deep CSV, second jet","Entries",kGreen,0);
     eta_cuts_F_crdeep_hist_2->Draw("SAME");
 
     TLegend* legeta2acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
@@ -564,14 +564,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_3_crdeep_can = style.MakeCanvas("eta_cuts_3_crdeep_can","eta 3rd jet cuts (CR, deep)",700,700);
     eta_cuts_3_crdeep_can -> SetLogy();
-    style.InitHist(eta_cuts_C_crdeep_hist_3,"p_{T}, after cuts, CR, deep CSV, third jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_crdeep_hist_3,"#eta, after cuts, CR, deep CSV, third jet","Entries",kBlack,0);
     eta_cuts_C_crdeep_hist_3->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_crdeep_hist_3->Draw();
-    style.InitHist(eta_cuts_D_crdeep_hist_3,"p_{T}, after cuts, CR, deep CSV, third jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_crdeep_hist_3,"#eta, after cuts, CR, deep CSV, third jet","Entries",kRed,0);
     eta_cuts_D_crdeep_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_E_crdeep_hist_3,"p_{T}, after cuts, CR, deep CSV, third jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_crdeep_hist_3,"#eta, after cuts, CR, deep CSV, third jet","Entries",kBlue,0);
     eta_cuts_E_crdeep_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_F_crdeep_hist_3,"p_{T}, after cuts, CR, deep CSV, third jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_crdeep_hist_3,"#eta, after cuts, CR, deep CSV, third jet","Entries",kGreen,0);
     eta_cuts_F_crdeep_hist_3->Draw("SAME");
 
     TLegend* legeta3acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
@@ -585,14 +585,14 @@ void PlotTDRStyle (){
 
     TCanvas* eta_cuts_1_srdeep_can = style.MakeCanvas("eta_cuts_1_srdeep_can","eta 1st jet cuts (SR, deep)",700,700);
     eta_cuts_1_srdeep_can -> SetLogy();
-    style.InitHist(eta_cuts_C_srdeep_hist_1,"p_{T}, after cuts, SR, deep CSV, first jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_srdeep_hist_1,"#eta, after cuts, SR, deep CSV, first jet","Entries",kBlack,0);
     eta_cuts_C_srdeep_hist_1->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_srdeep_hist_1->Draw();
-    style.InitHist(eta_cuts_D_srdeep_hist_1,"p_{T}, after cuts, SR, deep CSV, first jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_srdeep_hist_1,"#eta, after cuts, SR, deep CSV, first jet","Entries",kRed,0);
     eta_cuts_D_srdeep_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_E_srdeep_hist_1,"p_{T}, after cuts, SR, deep CSV, first jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_srdeep_hist_1,"#eta, after cuts, SR, deep CSV, first jet","Entries",kBlue,0);
     eta_cuts_E_srdeep_hist_1->Draw("SAME");
-    style.InitHist(eta_cuts_F_srdeep_hist_1,"p_{T}, after cuts, SR, deep CSV, first jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_srdeep_hist_1,"#eta, after cuts, SR, deep CSV, first jet","Entries",kGreen,0);
     eta_cuts_F_srdeep_hist_1->Draw("SAME");
 
     TLegend* legeta1acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
@@ -606,14 +606,14 @@ void PlotTDRStyle (){
     
     TCanvas* eta_cuts_2_srdeep_can = style.MakeCanvas("eta_cuts_2_srdeep_can","eta 2nd jet cuts (SR, deep)",700,700);
     eta_cuts_2_srdeep_can -> SetLogy();
-    style.InitHist(eta_cuts_C_srdeep_hist_2,"p_{T}, after cuts, SR, deep CSV, second jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_srdeep_hist_2,"#eta, after cuts, SR, deep CSV, second jet","Entries",kBlack,0);
     eta_cuts_C_srdeep_hist_2->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_srdeep_hist_2->Draw();
-    style.InitHist(eta_cuts_D_srdeep_hist_2,"p_{T}, after cuts, SR, deep CSV, second jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_srdeep_hist_2,"#eta, after cuts, SR, deep CSV, second jet","Entries",kRed,0);
     eta_cuts_D_srdeep_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_E_srdeep_hist_2,"p_{T}, after cuts, SR, deep CSV, second jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_srdeep_hist_2,"#eta, after cuts, SR, deep CSV, second jet","Entries",kBlue,0);
     eta_cuts_E_srdeep_hist_2->Draw("SAME");
-    style.InitHist(eta_cuts_F_srdeep_hist_2,"p_{T}, after cuts, SR, deep CSV, second jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_srdeep_hist_2,"#eta, after cuts, SR, deep CSV, second jet","Entries",kGreen,0);
     eta_cuts_F_srdeep_hist_2->Draw("SAME");
 
     TLegend* legeta2acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
@@ -627,14 +627,14 @@ void PlotTDRStyle (){
 
     TCanvas* eta_cuts_3_srdeep_can = style.MakeCanvas("eta_cuts_3_srdeep_can","eta 3rd jet cuts (SR, deep)",700,700);
     eta_cuts_3_srdeep_can -> SetLogy();
-    style.InitHist(eta_cuts_C_srdeep_hist_3,"p_{T}, after cuts, SR, deep CSV, third jet","Entries",kBlack,0);
+    style.InitHist(eta_cuts_C_srdeep_hist_3,"#eta, after cuts, SR, deep CSV, third jet","Entries",kBlack,0);
     eta_cuts_C_srdeep_hist_3->GetYaxis()->SetRangeUser(10,100000);
     eta_cuts_C_srdeep_hist_3->Draw();
-    style.InitHist(eta_cuts_D_srdeep_hist_3,"p_{T}, after cuts, SR, deep CSV, third jet","Entries",kRed,0);
+    style.InitHist(eta_cuts_D_srdeep_hist_3,"#eta, after cuts, SR, deep CSV, third jet","Entries",kRed,0);
     eta_cuts_D_srdeep_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_E_srdeep_hist_3,"p_{T}, after cuts, SR, deep CSV, third jet","Entries",kBlue,0);
+    style.InitHist(eta_cuts_E_srdeep_hist_3,"#eta, after cuts, SR, deep CSV, third jet","Entries",kBlue,0);
     eta_cuts_E_srdeep_hist_3->Draw("SAME");
-    style.InitHist(eta_cuts_F_srdeep_hist_3,"p_{T}, after cuts, SR, deep CSV, third jet","Entries",kGreen,0);
+    style.InitHist(eta_cuts_F_srdeep_hist_3,"#eta, after cuts, SR, deep CSV, third jet","Entries",kGreen,0);
     eta_cuts_F_srdeep_hist_3->Draw("SAME");
 
     TLegend* legeta3acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
