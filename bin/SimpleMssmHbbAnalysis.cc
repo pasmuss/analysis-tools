@@ -123,13 +123,19 @@ int main(int argc, char * argv[])
       bool goodEvent = true;
       bool muonpresent = false;
 
-      if ( i > 0 && i%1000000==0 ) std::cout << i << "  events processed! " << std::endl;
+      if ( i > 0 && i%1000000==0 ) std::cout << i << " events processed!" << std::endl;
+      int run = analysis.run();
+      int run_crit = 304508;
+
+      /*if (analysis.run() > 304508){
+        triggerObjects_[0] = triggerObjects_[5];
+	}*/
   
       //cout << "run number of event " << i << ": " << analysis.run() << endl; 
       /*for (unsigned int i = 0; i < triggerObjects_.size(); i++){
 	cout << triggerObjects_[i] << endl;
 	}*/
-    
+     
       analysis.event(i);
       if (! isMC_ )
 	{
@@ -234,39 +240,30 @@ int main(int argc, char * argv[])
       
       
       // Is matched?
-      bool matched[10] = {true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
+      bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
+      
+      //if (run > run_crit) triggerObjects_.;
+      //else if (run <= run_crit) triggerObjects_.;
+      //else cout << "What the fuck is happening here?" << endl;
+      
       for ( int j = 0; j < 2; ++j )
 	{
 	  Jet * jet = selectedJets[j];
-	  //         for ( auto & obj : triggerObjects_ )   matched = (matched && jet->matched(obj));
-	  if(analysis.run() <= 304508){
-	    for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
-	      { 
-		if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
-	      }
-	  }
-	  else{
-	    for ( size_t io = 1; io < triggerObjects_.size()+1 ; ++io )
-              {
-                if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
-              }
-	  }
+	  for ( size_t io = 0; io < triggerObjects_.size(); ++io )
+	    {
+	      if (run > run_crit && io == 0) continue;
+	      else if (run <= run_crit && io == 1) continue;
+	      if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
+	    }
 	}
       
-      if(analysis.run() <= 304508){
-	for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
-	  {
-	    if ( matched[io] ) ++nmatch[io];
-	    goodEvent = ( goodEvent && matched[io] );
-	  }
-      }
-      else{
-	for ( size_t io = 1; io < triggerObjects_.size()+1 ; ++io )
-          {
-            if ( matched[io] ) ++nmatch[io];
-            goodEvent = ( goodEvent && matched[io] );
-          }
-      }
+      for ( size_t io = 0; io < triggerObjects_.size(); ++io )
+	{
+	  if (run > run_crit && io == 0) continue;
+	  else if (run <= run_crit && io == 1) continue;
+	  if ( matched[io] ) ++nmatch[io];
+	  goodEvent = ( goodEvent && matched[io] );
+	}
       
       if ( ! goodEvent ) continue;
       
@@ -381,20 +378,14 @@ int main(int argc, char * argv[])
   // CSV output
   printf ("%-23s , %10s , %10s , %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
   for ( int i = 0; i < 7; ++i )
-    printf ("%-23s , %10d , %10.3f , %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] ); 
+    printf ("%-23s , %10d , %10.3f , %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] );
 
   // Trigger objects counts   
-  std::cout << std::endl;
-  printf ("%-40s  %10s \n", std::string("Trigger object").c_str(), std::string("# events").c_str() ); 
+  //std::cout << std::endl;
+  //printf ("%-40s  %10s \n", std::string("Trigger object").c_str(), std::string("# events").c_str() ); 
   //   for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
   //   {
   //      printf ("%-40s  %10d \n", triggerObjects_[io].c_str(), nmatch[io] ); 
-  //   }
-   
-   
-   
-   
-      
-   
+  //   }   
 } //end main
 
