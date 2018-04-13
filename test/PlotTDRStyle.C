@@ -13,27 +13,105 @@ void PlotTDRStyle (){
   HbbStylesNew style;
   style.SetStyle();
 
-  bool ptaftercuts = false;
+  bool masses = true;
+  bool ptaftercuts = true;
   bool etaaftercuts = true;
-  bool kinbefcuts = false;
-  bool drawbtag = false;
+  bool kinbefcuts = true;
+  bool btagbefcuts = true;
+  bool btagaftercuts = true;
+  std::string reco = 'rereco';
 
-  TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/C-CR-csv-mediumJetMuon_CR.root","READ");
-  TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/D-CR-csv-mediumJetMuon_CR.root","READ");
-  TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/E-CR-csv-mediumJetMuon_CR.root","READ");
-  TFile* FileFcrCSV = new TFile("PlotsWithMuonInformation/F-CR-csv-mediumJetMuon_CR.root","READ");
-  TFile* FileCsrCSV = new TFile("PlotsWithMuonInformation/C-SR-csv-mediumJetMuon_SR.root","READ");
-  TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/D-SR-csv-mediumJetMuon_SR.root","READ");
-  TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/E-SR-csv-mediumJetMuon_SR.root","READ");
-  TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/F-SR-csv-mediumJetMuon_SR.root","READ");
-  TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/C-CR-deepcsv-mediumJetMuon_CR.root","READ");
-  TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/D-CR-deepcsv-mediumJetMuon_CR.root","READ");
-  TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/E-CR-deepcsv-mediumJetMuon_CR.root","READ");
-  TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/F-CR-deepcsv-mediumJetMuon_CR.root","READ");
-  TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/C-SR-deepcsv-mediumJetMuon_SR.root","READ");
-  TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/D-SR-deepcsv-mediumJetMuon_SR.root","READ");
-  TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/E-SR-deepcsv-mediumJetMuon_SR.root","READ");
-  TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/F-SR-deepcsv-mediumJetMuon_SR.root","READ");
+  if (reco=='prompt'){
+    TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-csv-mediumJetMuon_CR.root","READ");
+    TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-csv-mediumJetMuon_CR.root","READ");
+    TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-CR-csv-mediumJetMuon_CR.root","READ");
+    TFile* FileFcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/F-CR-csv-mediumJetMuon_CR.root","READ");
+    TFile* FileCsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-SR-csv-mediumJetMuon_SR.root","READ");
+    TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-SR-csv-mediumJetMuon_SR.root","READ");
+    TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-SR-csv-mediumJetMuon_SR.root","READ");
+    TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/F-SR-csv-mediumJetMuon_SR.root","READ");
+    TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-deepcsv-mediumJetMuon_CR.root","READ");
+    TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-deepcsv-mediumJetMuon_CR.root","READ");
+    TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/E-CR-deepcsv-mediumJetMuon_CR.root","READ");
+    TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/F-CR-deepcsv-mediumJetMuon_CR.root","READ");
+    TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/C-SR-deepcsv-mediumJetMuon_SR.root","READ");
+    TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/D-SR-deepcsv-mediumJetMuon_SR.root","READ");
+    TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/E-SR-deepcsv-mediumJetMuon_SR.root","READ");
+    TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/F-SR-deepcsv-mediumJetMuon_SR.root","READ");
+  }
+  else if (reco=='rereco'){
+    TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileFcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileCsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+    TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+    TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+    TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+    TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+    TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+    TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+    TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+    TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
+  }
+  else std::cout << "Please select prompt or rereco." << std::endl; return -1;
+
+  if (masses){//only CR, SR should be blinded for data (ok to look at it for MC, since that is what MC is for)
+    TH1F* m12_bc_C_deep_hist = (TH1F*)FileCcrdeep->Get("m12");
+    TH1F* m12_bc_D_deep_hist = (TH1F*)FileDcrdeep->Get("m12");
+    TH1F* m12_bc_E_deep_hist = (TH1F*)FileEcrdeep->Get("m12");
+    TH1F* m12_bc_F_deep_hist = (TH1F*)FileFcrdeep->Get("m12");
+
+    TH1F* m12_ac_C_deep_hist = (TH1F*)FileCcrdeep->Get("m12_csv");
+    TH1F* m12_ac_D_deep_hist = (TH1F*)FileDcrdeep->Get("m12_csv");
+    TH1F* m12_ac_E_deep_hist = (TH1F*)FileEcrdeep->Get("m12_csv");
+    TH1F* m12_ac_F_deep_hist = (TH1F*)FileFcrdeep->Get("m12_csv");
+
+    TCanvas* m12_bc_cr_deep_can = style.MakeCanvas("m12_bc_cr_deep_can","mass of leading two jets before cuts (CR, deep CSV)",700,700);
+    m12_bc_cr_deep_can -> SetLogy();
+    style.InitHist(m12_bc_C_deep_hist,"m_{12}, before cuts, CR, deep CSV","Entries",kBlack,0);
+    m12_bc_C_deep_hist -> GetYaxis()->SetRangeUser(0.1,100000);
+    m12_bc_C_deep_hist -> Draw();
+    style.InitHist(m12_bc_D_deep_hist,"m_{12}, before cuts, CR, deep CSV","Entries",kRed,0);
+    m12_bc_D_deep_hist -> Draw("SAME");
+    style.InitHist(m12_bc_E_deep_hist,"m_{12}, before cuts, CR, deep CSV","Entries",kBlue,0);
+    m12_bc_E_deep_hist -> Draw("SAME");
+    style.InitHist(m12_bc_F_deep_hist,"m_{12}, before cuts, CR, deep CSV","Entries",kGreen,0);
+    m12_bc_F_deep_hist -> Draw("SAME");
+
+    TLegend* legm12bcCRdeep = new TLegend(0.5,0.65,0.95,0.9);
+    style.SetLegendStyle(legm12bcCRdeep);
+    legm12bcCRdeep -> SetNColumns(2);
+    legm12bcCRdeep -> AddEntry(m12_bc_C_deep_hist,"era C","L");
+    legm12bcCRdeep -> AddEntry(m12_bc_D_deep_hist,"era D","L");
+    legm12bcCRdeep -> AddEntry(m12_bc_E_deep_hist,"era E","L");
+    legm12bcCRdeep -> AddEntry(m12_bc_F_deep_hist,"era F","L");
+    legm12bcCRdeep -> Draw("SAME");
+
+    TCanvas* m12_ac_cr_deep_can = style.MakeCanvas("m12_ac_cr_deep_can","mass of leading two jets after cuts (CR, deep CSV)",700,700);
+    m12_ac_cr_deep_can -> SetLogy();
+    style.InitHist(m12_ac_C_deep_hist,"m_{12}, after cuts, CR, deep CSV","Entries",kBlack,0);
+    m12_ac_C_deep_hist -> GetYaxis()->SetRangeUser(0.1,100000);
+    m12_ac_C_deep_hist -> Draw();
+    style.InitHist(m12_ac_D_deep_hist,"m_{12}, after cuts, CR, deep CSV","Entries",kRed,0);
+    m12_ac_D_deep_hist -> Draw("SAME");
+    style.InitHist(m12_ac_E_deep_hist,"m_{12}, after cuts, CR, deep CSV","Entries",kBlue,0);
+    m12_ac_E_deep_hist -> Draw("SAME");
+    style.InitHist(m12_ac_F_deep_hist,"m_{12}, after cuts, CR, deep CSV","Entries",kGreen,0);
+    m12_ac_F_deep_hist -> Draw("SAME");
+
+    TLegend* legm12acCRdeep = new TLegend(0.5,0.65,0.95,0.9);
+    style.SetLegendStyle(legm12acCRdeep);
+    legm12acCRdeep -> SetNColumns(2);
+    legm12acCRdeep -> AddEntry(m12_ac_C_deep_hist,"era C","L");
+    legm12acCRdeep -> AddEntry(m12_ac_D_deep_hist,"era D","L");
+    legm12acCRdeep -> AddEntry(m12_ac_E_deep_hist,"era E","L");
+    legm12acCRdeep -> AddEntry(m12_ac_F_deep_hist,"era F","L");
+    legm12acCRdeep -> Draw("SAME");
+  }
   
   if(ptaftercuts){
     TH1F* pt_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("pt_0_csv");
@@ -803,7 +881,7 @@ void PlotTDRStyle (){
     legeta3bc->Draw("SAME");
   }
 
-  if (drawbtag){
+  if (btagbefcuts){
     TH1F* btag_csv_C_hist_1 = (TH1F*)FileCcrCSV->Get("btag_0");
     TH1F* btag_csv_C_hist_2 = (TH1F*)FileCcrCSV->Get("btag_1");
     TH1F* btag_csv_C_hist_3 = (TH1F*)FileCcrCSV->Get("btag_2");
@@ -952,5 +1030,311 @@ void PlotTDRStyle (){
     leg3deepcsv->AddEntry(btag_deep_E_hist_3,"era E","L");
     leg3deepcsv->AddEntry(btag_deep_F_hist_3,"era F","L");
     leg3deepcsv->Draw("SAME");
+  }
+
+  if (btagaftercuts){
+    TH1F* btag_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_C_crCSV_hist_2 = (TH1F*)FileCcrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_C_crCSV_hist_3 = (TH1F*)FileCcrCSV->Get("btag_2_csv");
+    TH1F* btag_cuts_D_crCSV_hist_1 = (TH1F*)FileDcrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_D_crCSV_hist_2 = (TH1F*)FileDcrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_D_crCSV_hist_3 = (TH1F*)FileDcrCSV->Get("btag_2_csv");
+    TH1F* btag_cuts_E_crCSV_hist_1 = (TH1F*)FileEcrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_E_crCSV_hist_2 = (TH1F*)FileEcrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_E_crCSV_hist_3 = (TH1F*)FileEcrCSV->Get("btag_2_csv");
+    TH1F* btag_cuts_F_crCSV_hist_1 = (TH1F*)FileFcrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_F_crCSV_hist_2 = (TH1F*)FileFcrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_F_crCSV_hist_3 = (TH1F*)FileFcrCSV->Get("btag_2_csv");
+
+    TH1F* btag_cuts_C_srCSV_hist_1 = (TH1F*)FileCsrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_C_srCSV_hist_2 = (TH1F*)FileCsrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_C_srCSV_hist_3 = (TH1F*)FileCsrCSV->Get("btag_2_csv");
+    TH1F* btag_cuts_D_srCSV_hist_1 = (TH1F*)FileDsrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_D_srCSV_hist_2 = (TH1F*)FileDsrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_D_srCSV_hist_3 = (TH1F*)FileDsrCSV->Get("btag_2_csv");
+    TH1F* btag_cuts_E_srCSV_hist_1 = (TH1F*)FileEsrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_E_srCSV_hist_2 = (TH1F*)FileEsrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_E_srCSV_hist_3 = (TH1F*)FileEsrCSV->Get("btag_2_csv");
+    TH1F* btag_cuts_F_srCSV_hist_1 = (TH1F*)FileFsrCSV->Get("btag_0_csv");
+    TH1F* btag_cuts_F_srCSV_hist_2 = (TH1F*)FileFsrCSV->Get("btag_1_csv");
+    TH1F* btag_cuts_F_srCSV_hist_3 = (TH1F*)FileFsrCSV->Get("btag_2_csv");
+
+    TH1F* btag_cuts_C_crdeep_hist_1 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_C_crdeep_hist_2 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_C_crdeep_hist_3 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_2_csv");
+    TH1F* btag_cuts_D_crdeep_hist_1 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_D_crdeep_hist_2 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_D_crdeep_hist_3 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_2_csv");
+    TH1F* btag_cuts_E_crdeep_hist_1 = (TH1F*)FileEcrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_E_crdeep_hist_2 = (TH1F*)FileEcrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_E_crdeep_hist_3 = (TH1F*)FileEcrdeep->Get("deepcsvbtag_2_csv");
+    TH1F* btag_cuts_F_crdeep_hist_1 = (TH1F*)FileFcrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_F_crdeep_hist_2 = (TH1F*)FileFcrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_F_crdeep_hist_3 = (TH1F*)FileFcrdeep->Get("deepcsvbtag_2_csv");
+
+    TH1F* btag_cuts_C_srdeep_hist_1 = (TH1F*)FileCsrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_C_srdeep_hist_2 = (TH1F*)FileCsrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_C_srdeep_hist_3 = (TH1F*)FileCsrdeep->Get("deepcsvbtag_2_csv");
+    TH1F* btag_cuts_D_srdeep_hist_1 = (TH1F*)FileDsrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_D_srdeep_hist_2 = (TH1F*)FileDsrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_D_srdeep_hist_3 = (TH1F*)FileDsrdeep->Get("deepcsvbtag_2_csv");
+    TH1F* btag_cuts_E_srdeep_hist_1 = (TH1F*)FileEsrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_E_srdeep_hist_2 = (TH1F*)FileEsrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_E_srdeep_hist_3 = (TH1F*)FileEsrdeep->Get("deepcsvbtag_2_csv");
+    TH1F* btag_cuts_F_srdeep_hist_1 = (TH1F*)FileFsrdeep->Get("deepcsvbtag_0_csv");
+    TH1F* btag_cuts_F_srdeep_hist_2 = (TH1F*)FileFsrdeep->Get("deepcsvbtag_1_csv");
+    TH1F* btag_cuts_F_srdeep_hist_3 = (TH1F*)FileFsrdeep->Get("deepcsvbtag_2_csv");
+
+    TCanvas* btag_cuts_1_crCSV_can = style.MakeCanvas("btag_cuts_1_crCSV_can","btag 1st jet cuts (CR, CSV)",700,700);
+    btag_cuts_1_crCSV_can -> SetLogy();
+    style.InitHist(btag_cuts_C_crCSV_hist_1,"b tag, after cuts, CR, CSV, first jet","Entries",kBlack,0);
+    btag_cuts_C_crCSV_hist_1->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_crCSV_hist_1->Draw();
+    style.InitHist(btag_cuts_D_crCSV_hist_1,"b tag, after cuts, CR, CSV, first jet","Entries",kRed,0);
+    btag_cuts_D_crCSV_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_E_crCSV_hist_1,"b tag, after cuts, CR, CSV, first jet","Entries",kBlue,0);
+    btag_cuts_E_crCSV_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_F_crCSV_hist_1,"b tag, after cuts, CR, CSV, first jet","Entries",kGreen,0);
+    btag_cuts_F_crCSV_hist_1->Draw("SAME");
+
+    TLegend* legbtag1acCRcsv = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag1acCRcsv);
+    legbtag1acCRcsv->SetNColumns(2);
+    legbtag1acCRcsv->AddEntry(btag_cuts_C_crCSV_hist_1,"era C","L");
+    legbtag1acCRcsv->AddEntry(btag_cuts_D_crCSV_hist_1,"era D","L");
+    legbtag1acCRcsv->AddEntry(btag_cuts_E_crCSV_hist_1,"era E","L");
+    legbtag1acCRcsv->AddEntry(btag_cuts_F_crCSV_hist_1,"era F","L");
+    legbtag1acCRcsv->Draw("SAME");
+    
+    TCanvas* btag_cuts_2_crCSV_can = style.MakeCanvas("btag_cuts_2_crCSV_can","btag 2nd jet cuts (CR, CSV)",700,700);
+    btag_cuts_2_crCSV_can -> SetLogy();
+    style.InitHist(btag_cuts_C_crCSV_hist_2,"b tag, after cuts, CR, CSV, second jet","Entries",kBlack,0);
+    btag_cuts_C_crCSV_hist_2->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_crCSV_hist_2->Draw();
+    style.InitHist(btag_cuts_D_crCSV_hist_2,"b tag, after cuts, CR, CSV, second jet","Entries",kRed,0);
+    btag_cuts_D_crCSV_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_E_crCSV_hist_2,"b tag, after cuts, CR, CSV, second jet","Entries",kBlue,0);
+    btag_cuts_E_crCSV_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_F_crCSV_hist_2,"b tag, after cuts, CR, CSV, second jet","Entries",kGreen,0);
+    btag_cuts_F_crCSV_hist_2->Draw("SAME");
+
+    TLegend* legbtag2acCRcsv = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag2acCRcsv);
+    legbtag2acCRcsv->SetNColumns(2);
+    legbtag2acCRcsv->AddEntry(btag_cuts_C_crCSV_hist_2,"era C","L");
+    legbtag2acCRcsv->AddEntry(btag_cuts_D_crCSV_hist_2,"era D","L");
+    legbtag2acCRcsv->AddEntry(btag_cuts_E_crCSV_hist_2,"era E","L");
+    legbtag2acCRcsv->AddEntry(btag_cuts_F_crCSV_hist_2,"era F","L");
+    legbtag2acCRcsv->Draw("SAME");
+    
+    TCanvas* btag_cuts_3_crCSV_can = style.MakeCanvas("btag_cuts_3_crCSV_can","btag 3rd jet cuts (CR, CSV)",700,700);
+    btag_cuts_3_crCSV_can -> SetLogy();
+    style.InitHist(btag_cuts_C_crCSV_hist_3,"b tag, after cuts, CR, CSV, third jet","Entries",kBlack,0);
+    btag_cuts_C_crCSV_hist_3->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_crCSV_hist_3->Draw();
+    style.InitHist(btag_cuts_D_crCSV_hist_3,"b tag, after cuts, CR, CSV, third jet","Entries",kRed,0);
+    btag_cuts_D_crCSV_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_E_crCSV_hist_3,"b tag, after cuts, CR, CSV, third jet","Entries",kBlue,0);
+    btag_cuts_E_crCSV_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_F_crCSV_hist_3,"b tag, after cuts, CR, CSV, third jet","Entries",kGreen,0);
+    btag_cuts_F_crCSV_hist_3->Draw("SAME");
+
+    TLegend* legbtag3acCRcsv = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag3acCRcsv);
+    legbtag3acCRcsv->SetNColumns(2);
+    legbtag3acCRcsv->AddEntry(btag_cuts_C_crCSV_hist_3,"era C","L");
+    legbtag3acCRcsv->AddEntry(btag_cuts_D_crCSV_hist_3,"era D","L");
+    legbtag3acCRcsv->AddEntry(btag_cuts_E_crCSV_hist_3,"era E","L");
+    legbtag3acCRcsv->AddEntry(btag_cuts_F_crCSV_hist_3,"era F","L");
+    legbtag3acCRcsv->Draw("SAME");
+
+    TCanvas* btag_cuts_1_srCSV_can = style.MakeCanvas("btag_cuts_1_srCSV_can","btag 1st jet cuts (SR, CSV)",700,700);
+    btag_cuts_1_srCSV_can -> SetLogy();
+    style.InitHist(btag_cuts_C_srCSV_hist_1,"b tag, after cuts, SR, CSV, first jet","Entries",kBlack,0);
+    btag_cuts_C_srCSV_hist_1->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_srCSV_hist_1->Draw();
+    style.InitHist(btag_cuts_D_srCSV_hist_1,"b tag, after cuts, SR, CSV, first jet","Entries",kRed,0);
+    btag_cuts_D_srCSV_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_E_srCSV_hist_1,"b tag, after cuts, SR, CSV, first jet","Entries",kBlue,0);
+    btag_cuts_E_srCSV_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_F_srCSV_hist_1,"b tag, after cuts, SR, CSV, first jet","Entries",kGreen,0);
+    btag_cuts_F_srCSV_hist_1->Draw("SAME");
+
+    TLegend* legbtag1acSRcsv = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag1acSRcsv);
+    legbtag1acSRcsv->SetNColumns(2);
+    legbtag1acSRcsv->AddEntry(btag_cuts_C_srCSV_hist_1,"era C","L");
+    legbtag1acSRcsv->AddEntry(btag_cuts_D_srCSV_hist_1,"era D","L");
+    legbtag1acSRcsv->AddEntry(btag_cuts_E_srCSV_hist_1,"era E","L");
+    legbtag1acSRcsv->AddEntry(btag_cuts_F_srCSV_hist_1,"era F","L");
+    legbtag1acSRcsv->Draw("SAME");
+    
+    TCanvas* btag_cuts_2_srCSV_can = style.MakeCanvas("btag_cuts_2_srCSV_can","btag 2nd jet cuts (SR, CSV)",700,700);
+    btag_cuts_2_srCSV_can -> SetLogy();
+    style.InitHist(btag_cuts_C_srCSV_hist_2,"b tag, after cuts, SR, CSV, second jet","Entries",kBlack,0);
+    btag_cuts_C_srCSV_hist_2->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_srCSV_hist_2->Draw();
+    style.InitHist(btag_cuts_D_srCSV_hist_2,"b tag, after cuts, SR, CSV, second jet","Entries",kRed,0);
+    btag_cuts_D_srCSV_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_E_srCSV_hist_2,"b tag, after cuts, SR, CSV, second jet","Entries",kBlue,0);
+    btag_cuts_E_srCSV_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_F_srCSV_hist_2,"b tag, after cuts, SR, CSV, second jet","Entries",kGreen,0);
+    btag_cuts_F_srCSV_hist_2->Draw("SAME");
+
+    TLegend* legbtag2acSRcsv = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag2acSRcsv);
+    legbtag2acSRcsv->SetNColumns(2);
+    legbtag2acSRcsv->AddEntry(btag_cuts_C_srCSV_hist_2,"era C","L");
+    legbtag2acSRcsv->AddEntry(btag_cuts_D_srCSV_hist_2,"era D","L");
+    legbtag2acSRcsv->AddEntry(btag_cuts_E_srCSV_hist_2,"era E","L");
+    legbtag2acSRcsv->AddEntry(btag_cuts_F_srCSV_hist_2,"era F","L");
+    legbtag2acSRcsv->Draw("SAME");
+    
+    TCanvas* btag_cuts_3_srCSV_can = style.MakeCanvas("btag_cuts_3_srCSV_can","btag 3rd jet cuts (SR, CSV)",700,700);
+    btag_cuts_3_srCSV_can -> SetLogy();
+    style.InitHist(btag_cuts_C_srCSV_hist_3,"b tag, after cuts, SR, CSV, third jet","Entries",kBlack,0);
+    btag_cuts_C_srCSV_hist_3->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_srCSV_hist_3->Draw();
+    style.InitHist(btag_cuts_D_srCSV_hist_3,"b tag, after cuts, SR, CSV, third jet","Entries",kRed,0);
+    btag_cuts_D_srCSV_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_E_srCSV_hist_3,"b tag, after cuts, SR, CSV, third jet","Entries",kBlue,0);
+    btag_cuts_E_srCSV_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_F_srCSV_hist_3,"b tag, after cuts, SR, CSV, third jet","Entries",kGreen,0);
+    btag_cuts_F_srCSV_hist_3->Draw("SAME");
+
+    TLegend* legbtag3acSRcsv = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag3acSRcsv);
+    legbtag3acSRcsv->SetNColumns(2);
+    legbtag3acSRcsv->AddEntry(btag_cuts_C_srCSV_hist_3,"era C","L");
+    legbtag3acSRcsv->AddEntry(btag_cuts_D_srCSV_hist_3,"era D","L");
+    legbtag3acSRcsv->AddEntry(btag_cuts_E_srCSV_hist_3,"era E","L");
+    legbtag3acSRcsv->AddEntry(btag_cuts_F_srCSV_hist_3,"era F","L");
+    legbtag3acSRcsv->Draw("SAME");
+    
+    TCanvas* btag_cuts_1_crdeep_can = style.MakeCanvas("btag_cuts_1_crdeep_can","btag 1st jet cuts (CR, deep)",700,700);
+    btag_cuts_1_crdeep_can -> SetLogy();
+    style.InitHist(btag_cuts_C_crdeep_hist_1,"b tag, after cuts, CR, deep CSV, first jet","Entries",kBlack,0);
+    btag_cuts_C_crdeep_hist_1->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_crdeep_hist_1->Draw();
+    style.InitHist(btag_cuts_D_crdeep_hist_1,"b tag, after cuts, CR, deep CSV, first jet","Entries",kRed,0);
+    btag_cuts_D_crdeep_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_E_crdeep_hist_1,"b tag, after cuts, CR, deep CSV, first jet","Entries",kBlue,0);
+    btag_cuts_E_crdeep_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_F_crdeep_hist_1,"b tag, after cuts, CR, deep CSV, first jet","Entries",kGreen,0);
+    btag_cuts_F_crdeep_hist_1->Draw("SAME");
+
+    TLegend* legbtag1acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag1acCRdeep);
+    legbtag1acCRdeep->SetNColumns(2);
+    legbtag1acCRdeep->AddEntry(btag_cuts_C_crdeep_hist_1,"era C","L");
+    legbtag1acCRdeep->AddEntry(btag_cuts_D_crdeep_hist_1,"era D","L");
+    legbtag1acCRdeep->AddEntry(btag_cuts_E_crdeep_hist_1,"era E","L");
+    legbtag1acCRdeep->AddEntry(btag_cuts_F_crdeep_hist_1,"era F","L");
+    legbtag1acCRdeep->Draw("SAME");
+    
+    TCanvas* btag_cuts_2_crdeep_can = style.MakeCanvas("btag_cuts_2_crdeep_can","btag 2nd jet cuts (CR, deep)",700,700);
+    btag_cuts_2_crdeep_can -> SetLogy();
+    style.InitHist(btag_cuts_C_crdeep_hist_2,"b tag, after cuts, CR, deep CSV, second jet","Entries",kBlack,0);
+    btag_cuts_C_crdeep_hist_2->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_crdeep_hist_2->Draw();
+    style.InitHist(btag_cuts_D_crdeep_hist_2,"b tag, after cuts, CR, deep CSV, second jet","Entries",kRed,0);
+    btag_cuts_D_crdeep_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_E_crdeep_hist_2,"b tag, after cuts, CR, deep CSV, second jet","Entries",kBlue,0);
+    btag_cuts_E_crdeep_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_F_crdeep_hist_2,"b tag, after cuts, CR, deep CSV, second jet","Entries",kGreen,0);
+    btag_cuts_F_crdeep_hist_2->Draw("SAME");
+
+    TLegend* legbtag2acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag2acCRdeep);
+    legbtag2acCRdeep->SetNColumns(2);
+    legbtag2acCRdeep->AddEntry(btag_cuts_C_crdeep_hist_2,"era C","L");
+    legbtag2acCRdeep->AddEntry(btag_cuts_D_crdeep_hist_2,"era D","L");
+    legbtag2acCRdeep->AddEntry(btag_cuts_E_crdeep_hist_2,"era E","L");
+    legbtag2acCRdeep->AddEntry(btag_cuts_F_crdeep_hist_2,"era F","L");
+    legbtag2acCRdeep->Draw("SAME");
+    
+    TCanvas* btag_cuts_3_crdeep_can = style.MakeCanvas("btag_cuts_3_crdeep_can","btag 3rd jet cuts (CR, deep)",700,700);
+    btag_cuts_3_crdeep_can -> SetLogy();
+    style.InitHist(btag_cuts_C_crdeep_hist_3,"b tag, after cuts, CR, deep CSV, third jet","Entries",kBlack,0);
+    btag_cuts_C_crdeep_hist_3->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_crdeep_hist_3->Draw();
+    style.InitHist(btag_cuts_D_crdeep_hist_3,"b tag, after cuts, CR, deep CSV, third jet","Entries",kRed,0);
+    btag_cuts_D_crdeep_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_E_crdeep_hist_3,"b tag, after cuts, CR, deep CSV, third jet","Entries",kBlue,0);
+    btag_cuts_E_crdeep_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_F_crdeep_hist_3,"b tag, after cuts, CR, deep CSV, third jet","Entries",kGreen,0);
+    btag_cuts_F_crdeep_hist_3->Draw("SAME");
+
+    TLegend* legbtag3acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag3acCRdeep);
+    legbtag3acCRdeep->SetNColumns(2);
+    legbtag3acCRdeep->AddEntry(btag_cuts_C_crdeep_hist_3,"era C","L");
+    legbtag3acCRdeep->AddEntry(btag_cuts_D_crdeep_hist_3,"era D","L");
+    legbtag3acCRdeep->AddEntry(btag_cuts_E_crdeep_hist_3,"era E","L");
+    legbtag3acCRdeep->AddEntry(btag_cuts_F_crdeep_hist_3,"era F","L");
+    legbtag3acCRdeep->Draw("SAME");
+
+    TCanvas* btag_cuts_1_srdeep_can = style.MakeCanvas("btag_cuts_1_srdeep_can","btag 1st jet cuts (SR, deep)",700,700);
+    btag_cuts_1_srdeep_can -> SetLogy();
+    style.InitHist(btag_cuts_C_srdeep_hist_1,"b tag, after cuts, SR, deep CSV, first jet","Entries",kBlack,0);
+    btag_cuts_C_srdeep_hist_1->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_srdeep_hist_1->Draw();
+    style.InitHist(btag_cuts_D_srdeep_hist_1,"b tag, after cuts, SR, deep CSV, first jet","Entries",kRed,0);
+    btag_cuts_D_srdeep_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_E_srdeep_hist_1,"b tag, after cuts, SR, deep CSV, first jet","Entries",kBlue,0);
+    btag_cuts_E_srdeep_hist_1->Draw("SAME");
+    style.InitHist(btag_cuts_F_srdeep_hist_1,"b tag, after cuts, SR, deep CSV, first jet","Entries",kGreen,0);
+    btag_cuts_F_srdeep_hist_1->Draw("SAME");
+
+    TLegend* legbtag1acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag1acSRdeep);
+    legbtag1acSRdeep->SetNColumns(2);
+    legbtag1acSRdeep->AddEntry(btag_cuts_C_srdeep_hist_1,"era C","L");
+    legbtag1acSRdeep->AddEntry(btag_cuts_D_srdeep_hist_1,"era D","L");
+    legbtag1acSRdeep->AddEntry(btag_cuts_E_srdeep_hist_1,"era E","L");
+    legbtag1acSRdeep->AddEntry(btag_cuts_F_srdeep_hist_1,"era F","L");
+    legbtag1acSRdeep->Draw("SAME");
+    
+    TCanvas* btag_cuts_2_srdeep_can = style.MakeCanvas("btag_cuts_2_srdeep_can","btag 2nd jet cuts (SR, deep)",700,700);
+    btag_cuts_2_srdeep_can -> SetLogy();
+    style.InitHist(btag_cuts_C_srdeep_hist_2,"b tag, after cuts, SR, deep CSV, second jet","Entries",kBlack,0);
+    btag_cuts_C_srdeep_hist_2->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_srdeep_hist_2->Draw();
+    style.InitHist(btag_cuts_D_srdeep_hist_2,"b tag, after cuts, SR, deep CSV, second jet","Entries",kRed,0);
+    btag_cuts_D_srdeep_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_E_srdeep_hist_2,"b tag, after cuts, SR, deep CSV, second jet","Entries",kBlue,0);
+    btag_cuts_E_srdeep_hist_2->Draw("SAME");
+    style.InitHist(btag_cuts_F_srdeep_hist_2,"b tag, after cuts, SR, deep CSV, second jet","Entries",kGreen,0);
+    btag_cuts_F_srdeep_hist_2->Draw("SAME");
+
+    TLegend* legbtag2acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag2acSRdeep);
+    legbtag2acSRdeep->SetNColumns(2);
+    legbtag2acSRdeep->AddEntry(btag_cuts_C_srdeep_hist_2,"era C","L");
+    legbtag2acSRdeep->AddEntry(btag_cuts_D_srdeep_hist_2,"era D","L");
+    legbtag2acSRdeep->AddEntry(btag_cuts_E_srdeep_hist_2,"era E","L");
+    legbtag2acSRdeep->AddEntry(btag_cuts_F_srdeep_hist_2,"era F","L");
+    legbtag2acSRdeep->Draw("SAME");
+
+    TCanvas* btag_cuts_3_srdeep_can = style.MakeCanvas("btag_cuts_3_srdeep_can","btag 3rd jet cuts (SR, deep)",700,700);
+    btag_cuts_3_srdeep_can -> SetLogy();
+    style.InitHist(btag_cuts_C_srdeep_hist_3,"b tag, after cuts, SR, deep CSV, third jet","Entries",kBlack,0);
+    btag_cuts_C_srdeep_hist_3->GetYaxis()->SetRangeUser(10,100000);
+    btag_cuts_C_srdeep_hist_3->Draw();
+    style.InitHist(btag_cuts_D_srdeep_hist_3,"b tag, after cuts, SR, deep CSV, third jet","Entries",kRed,0);
+    btag_cuts_D_srdeep_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_E_srdeep_hist_3,"b tag, after cuts, SR, deep CSV, third jet","Entries",kBlue,0);
+    btag_cuts_E_srdeep_hist_3->Draw("SAME");
+    style.InitHist(btag_cuts_F_srdeep_hist_3,"b tag, after cuts, SR, deep CSV, third jet","Entries",kGreen,0);
+    btag_cuts_F_srdeep_hist_3->Draw("SAME");
+
+    TLegend* legbtag3acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legbtag3acSRdeep);
+    legbtag3acSRdeep->SetNColumns(2);
+    legbtag3acSRdeep->AddEntry(btag_cuts_C_srdeep_hist_3,"era C","L");
+    legbtag3acSRdeep->AddEntry(btag_cuts_D_srdeep_hist_3,"era D","L");
+    legbtag3acSRdeep->AddEntry(btag_cuts_E_srdeep_hist_3,"era E","L");
+    legbtag3acSRdeep->AddEntry(btag_cuts_F_srdeep_hist_3,"era F","L");
+    legbtag3acSRdeep->Draw("SAME");
   }
 }

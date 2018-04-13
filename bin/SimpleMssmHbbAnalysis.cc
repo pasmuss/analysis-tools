@@ -30,10 +30,21 @@ int main(int argc, char * argv[])
   // Input files list
   Analysis analysis(inputlist_);
 
-  std::string btagalgo = btagalgo_;
+  string btagalgo = btagalgo_;
+  string reco = reco_;
    
-  analysis.addTree<Jet> ("Jets","MssmHbb/Events/slimmedJetsPuppi");
-  analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
+  if (reco == "prompt"){
+    analysis.addTree<Jet> ("Jets","MssmHbb/Events/slimmedJetsPuppi");
+    analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
+  }
+  else if (reco == "rereco"){
+    analysis.addTree<Jet> ("Jets","MssmHbb/Events/updatedPatJetsPuppi");
+    analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
+  }
+  else{
+    cout << "Neither prompt nor rereco data selected. Aborting." << endl;
+    return -1;
+  }
    
   for ( auto & obj : triggerObjects_ )
     {
@@ -57,6 +68,8 @@ int main(int argc, char * argv[])
   boost::algorithm::replace_last(outputRoot_, ".root", "_"+sr_s+".root"); 
    
   TFile hout(outputRoot_.c_str(),"recreate");
+  ofstream txtoutputfile;
+  txtoutputfile.open("output.txt",ios::app);
    
   std::map<std::string, TH1F*> h1;
   h1["n"]        = new TH1F("n" , "" , 30, 0, 30);
@@ -99,7 +112,18 @@ int main(int argc, char * argv[])
   tree->Branch("weight",&weight,"weight/D");
    
   // Analysis of events
-  std::cout << "This analysis has " << analysis.size() << " events" << std::endl;
+  cout << "This analysis has " << analysis.size() << " events" << endl;
+  cout << nevtmax_ << " events have been selected." << endl;
+  cout << "btag algorithm: " << btagalgo << endl;
+  cout << "region: " << sr_s << endl;
+  cout << "reco: " << reco << endl;
+  cout << "output file: " << outputRoot_.c_str() <<endl;
+  txtoutputfile << "This analysis has " << analysis.size() << " events" << endl;
+  txtoutputfile << nevtmax_ << " events have been selected." << endl;
+  txtoutputfile << "btag algorithm: " << btagalgo << endl;
+  txtoutputfile << "region: " << sr_s << endl;
+  txtoutputfile << "reco: " << reco << endl;
+  txtoutputfile << "output file: " << outputRoot_.c_str() << endl;
   
   // Cut flow
   // 0: triggered events
@@ -123,7 +147,10 @@ int main(int argc, char * argv[])
       bool goodEvent = true;
       bool muonpresent = false;
 
-      if ( i > 0 && i%1000000==0 ) std::cout << i << " events processed!" << std::endl;
+      if ( i > 0 && i%1000000==0 ){
+	std::cout << i << " events processed!" << std::endl;
+	txtoutputfile << i << " events processed!" << endl;
+	  }
       int run = analysis.run();
       int run_crit = 304508;
 
@@ -143,6 +170,8 @@ int main(int argc, char * argv[])
 	}
       
       int triggerFired = analysis.triggerResult(hltPath_);
+      //int triggerFiredL1;
+      //if ( !(triggerFired && triggerFiredL1) ) continue;
       if ( !triggerFired ) continue;
       
       ++nsel[0];
@@ -366,6 +395,7 @@ int main(int argc, char * argv[])
   cuts[6] = "Matched to online j1;j2";
    
   printf ("%-23s  %10s  %10s  %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
+  txtoutputfile << "Cut flow " << "# events " << "absolute " << "relative" << endl;;
   for ( int i = 0; i < 7; ++i )
     {
       fracAbs[i] = double(nsel[i])/nsel[0];
@@ -374,6 +404,7 @@ int main(int argc, char * argv[])
       else
 	fracRel[i] = fracAbs[i];
       printf ("%-23s  %10d  %10.3f  %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] ); 
+      txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
     }
   // CSV output
   printf ("%-23s , %10s , %10s , %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
