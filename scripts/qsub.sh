@@ -27,6 +27,8 @@ cat > $1.zsh <<EOF
 #$ -o $1.out
 #
 #$ -e $1.err
+which SimpleMssmHbbAnalysis
+echo $3
 $2 -c $3
 
 EOF

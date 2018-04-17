@@ -19,9 +19,9 @@ void PlotTDRStyle (){
   bool kinbefcuts = true;
   bool btagbefcuts = true;
   bool btagaftercuts = true;
-  std::string reco = 'rereco';
+  //bool prompt = false;
 
-  if (reco=='prompt'){
+  //if (prompt){
     TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-csv-mediumJetMuon_CR.root","READ");
     TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-csv-mediumJetMuon_CR.root","READ");
     TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-CR-csv-mediumJetMuon_CR.root","READ");
@@ -38,8 +38,8 @@ void PlotTDRStyle (){
     TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/D-SR-deepcsv-mediumJetMuon_SR.root","READ");
     TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/E-SR-deepcsv-mediumJetMuon_SR.root","READ");
     TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/F-SR-deepcsv-mediumJetMuon_SR.root","READ");
-  }
-  else if (reco=='rereco'){
+  /* }
+  else{
     TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
     TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
     TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
@@ -55,9 +55,8 @@ void PlotTDRStyle (){
     TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
     TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
     TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
-    TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
-  }
-  else std::cout << "Please select prompt or rereco." << std::endl; return -1;
+    TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");*/
+    //}
 
   if (masses){//only CR, SR should be blinded for data (ok to look at it for MC, since that is what MC is for)
     TH1F* m12_bc_C_deep_hist = (TH1F*)FileCcrdeep->Get("m12");
@@ -82,7 +81,7 @@ void PlotTDRStyle (){
     style.InitHist(m12_bc_F_deep_hist,"m_{12}, before cuts, CR, deep CSV","Entries",kGreen,0);
     m12_bc_F_deep_hist -> Draw("SAME");
 
-    TLegend* legm12bcCRdeep = new TLegend(0.5,0.65,0.95,0.9);
+    TLegend* legm12bcCRdeep = new TLegend(0.4,0.25,0.8,0.5);
     style.SetLegendStyle(legm12bcCRdeep);
     legm12bcCRdeep -> SetNColumns(2);
     legm12bcCRdeep -> AddEntry(m12_bc_C_deep_hist,"era C","L");
@@ -103,7 +102,7 @@ void PlotTDRStyle (){
     style.InitHist(m12_ac_F_deep_hist,"m_{12}, after cuts, CR, deep CSV","Entries",kGreen,0);
     m12_ac_F_deep_hist -> Draw("SAME");
 
-    TLegend* legm12acCRdeep = new TLegend(0.5,0.65,0.95,0.9);
+    TLegend* legm12acCRdeep = new TLegend(0.4,0.25,0.8,0.5);
     style.SetLegendStyle(legm12acCRdeep);
     legm12acCRdeep -> SetNColumns(2);
     legm12acCRdeep -> AddEntry(m12_ac_C_deep_hist,"era C","L");

@@ -170,7 +170,7 @@ int main(int argc, char * argv[])
 	}
       
       int triggerFired = analysis.triggerResult(hltPath_);
-      //int triggerFiredL1;
+      //int triggerFiredL1; //here should be a reference to the L1 path (i.e. 100, 100or112) // check with JSON: should give same result with proper JSON file (with removed lumi sections in which L1_100 is prescaled to 0) and with this L1 check
       //if ( !(triggerFired && triggerFiredL1) ) continue;
       if ( !triggerFired ) continue;
       
