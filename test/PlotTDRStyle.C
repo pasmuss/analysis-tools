@@ -12,51 +12,55 @@
 void PlotTDRStyle (){
   HbbStylesNew style;
   style.SetStyle();
-
-  bool masses = true;
+  
+  bool masses = false;
   bool ptaftercuts = true;
-  bool etaaftercuts = true;
-  bool kinbefcuts = true;
-  bool btagbefcuts = true;
-  bool btagaftercuts = true;
-  //bool prompt = false;
+  bool etaaftercuts = false;
+  bool kinbefcuts = false;
+  bool btagbefcuts = false;
+  bool btagaftercuts = false;
+ 
+  /*TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-csv-mediumJetMuon_CR.root","READ");
+  TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-csv-mediumJetMuon_CR.root","READ");
+  TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-CR-csv-mediumJetMuon_CR.root","READ");
+  TFile* FileFcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/F-CR-csv-mediumJetMuon_CR.root","READ");
+  TFile* FileCsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-SR-csv-mediumJetMuon_SR.root","READ");
+  TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-SR-csv-mediumJetMuon_SR.root","READ");
+  TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-SR-csv-mediumJetMuon_SR.root","READ");
+  TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/F-SR-csv-mediumJetMuon_SR.root","READ");*/
+  /*TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/C-CR-deep-prompt.root","READ");
+  TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/D-CR-deep-prompt.root","READ");
+  TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/E-CR-deep-prompt.root","READ");
+  TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/F-CR-deep-prompt.root","READ");
+  TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/C-SR-deep-prompt.root","READ");
+  TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/D-SR-deep-prompt.root","READ");
+  TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/E-SR-deep-prompt.root","READ");
+  TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/F-SR-deep-prompt.root","READ");*/
 
-  //if (prompt){
-    TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-csv-mediumJetMuon_CR.root","READ");
-    TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-csv-mediumJetMuon_CR.root","READ");
-    TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-CR-csv-mediumJetMuon_CR.root","READ");
-    TFile* FileFcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/F-CR-csv-mediumJetMuon_CR.root","READ");
-    TFile* FileCsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-SR-csv-mediumJetMuon_SR.root","READ");
-    TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-SR-csv-mediumJetMuon_SR.root","READ");
-    TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-SR-csv-mediumJetMuon_SR.root","READ");
-    TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/F-SR-csv-mediumJetMuon_SR.root","READ");
-    TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-deepcsv-mediumJetMuon_CR.root","READ");
-    TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-deepcsv-mediumJetMuon_CR.root","READ");
-    TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/E-CR-deepcsv-mediumJetMuon_CR.root","READ");
-    TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/F-CR-deepcsv-mediumJetMuon_CR.root","READ");
-    TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/C-SR-deepcsv-mediumJetMuon_SR.root","READ");
-    TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/D-SR-deepcsv-mediumJetMuon_SR.root","READ");
-    TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/E-SR-deepcsv-mediumJetMuon_SR.root","READ");
-    TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/PromptHistograms/F-SR-deepcsv-mediumJetMuon_SR.root","READ");
-  /* }
-  else{
-    TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
+  /*TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
     TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
     TFile* FileEcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
     TFile* FileFcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
     TFile* FileCsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
     TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
     TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
-    TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
-    TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
-    TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
-    TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
-    TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-CR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
-    TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
-    TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
-    TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
-    TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-deepcsv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");*/
-    //}
+    TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");*/
+    TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/C-CR-deep-rerecoc1.root","READ");
+    TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/D-CR-deep-rerecoc1.root","READ");
+    //TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/E-CR-deep-rerecoc1.root","READ");
+    //TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/F-CR-deep-rerecoc1.root","READ");
+    TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/C-SR-deep-rerecoc1.root","READ");
+    TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/D-SR-deep-rerecoc1.root","READ");
+    //TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/E-SR-deep-rerecoc1.root","READ");
+    //TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/F-SR-deep-rerecoc1.root","READ");
+
+  ///rerecoc2///
+  TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/E-CR-deep-rerecoc2.root","READ");
+  TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/F-CR-deep-rerecoc2.root","READ");
+  TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/E-SR-deep-rerecoc2.root","READ");
+  TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/F-SR-deep-rerecoc2.root","READ");
+
+
 
   if (masses){//only CR, SR should be blinded for data (ok to look at it for MC, since that is what MC is for)
     TH1F* m12_bc_C_deep_hist = (TH1F*)FileCcrdeep->Get("m12");
@@ -81,7 +85,7 @@ void PlotTDRStyle (){
     style.InitHist(m12_bc_F_deep_hist,"m_{12}, before cuts, CR, deep CSV","Entries",kGreen,0);
     m12_bc_F_deep_hist -> Draw("SAME");
 
-    TLegend* legm12bcCRdeep = new TLegend(0.4,0.25,0.8,0.5);
+    TLegend* legm12bcCRdeep = new TLegend(0.5,0.6,0.9,0.9);
     style.SetLegendStyle(legm12bcCRdeep);
     legm12bcCRdeep -> SetNColumns(2);
     legm12bcCRdeep -> AddEntry(m12_bc_C_deep_hist,"era C","L");
@@ -102,7 +106,7 @@ void PlotTDRStyle (){
     style.InitHist(m12_ac_F_deep_hist,"m_{12}, after cuts, CR, deep CSV","Entries",kGreen,0);
     m12_ac_F_deep_hist -> Draw("SAME");
 
-    TLegend* legm12acCRdeep = new TLegend(0.4,0.25,0.8,0.5);
+    TLegend* legm12acCRdeep = new TLegend(0.5,0.6,0.9,0.9);
     style.SetLegendStyle(legm12acCRdeep);
     legm12acCRdeep -> SetNColumns(2);
     legm12acCRdeep -> AddEntry(m12_ac_C_deep_hist,"era C","L");
@@ -113,7 +117,7 @@ void PlotTDRStyle (){
   }
   
   if(ptaftercuts){
-    TH1F* pt_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("pt_0_csv");
+    /*TH1F* pt_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("pt_0_csv");
     TH1F* pt_cuts_C_crCSV_hist_2 = (TH1F*)FileCcrCSV->Get("pt_1_csv");
     TH1F* pt_cuts_C_crCSV_hist_3 = (TH1F*)FileCcrCSV->Get("pt_2_csv");
     TH1F* pt_cuts_D_crCSV_hist_1 = (TH1F*)FileDcrCSV->Get("pt_0_csv");
@@ -137,8 +141,8 @@ void PlotTDRStyle (){
     TH1F* pt_cuts_E_srCSV_hist_3 = (TH1F*)FileEsrCSV->Get("pt_2_csv");
     TH1F* pt_cuts_F_srCSV_hist_1 = (TH1F*)FileFsrCSV->Get("pt_0_csv");
     TH1F* pt_cuts_F_srCSV_hist_2 = (TH1F*)FileFsrCSV->Get("pt_1_csv");
-    TH1F* pt_cuts_F_srCSV_hist_3 = (TH1F*)FileFsrCSV->Get("pt_2_csv");
-
+    TH1F* pt_cuts_F_srCSV_hist_3 = (TH1F*)FileFsrCSV->Get("pt_2_csv");*/
+    
     TH1F* pt_cuts_C_crdeep_hist_1 = (TH1F*)FileCcrdeep->Get("pt_0_csv");
     TH1F* pt_cuts_C_crdeep_hist_2 = (TH1F*)FileCcrdeep->Get("pt_1_csv");
     TH1F* pt_cuts_C_crdeep_hist_3 = (TH1F*)FileCcrdeep->Get("pt_2_csv");
@@ -165,7 +169,7 @@ void PlotTDRStyle (){
     TH1F* pt_cuts_F_srdeep_hist_2 = (TH1F*)FileFsrdeep->Get("pt_1_csv");
     TH1F* pt_cuts_F_srdeep_hist_3 = (TH1F*)FileFsrdeep->Get("pt_2_csv");
 
-    TCanvas* pt_cuts_1_crCSV_can = style.MakeCanvas("pt_cuts_1_crCSV_can","pt 1st jet cuts (CR, CSV)",700,700);
+    /*TCanvas* pt_cuts_1_crCSV_can = style.MakeCanvas("pt_cuts_1_crCSV_can","pt 1st jet cuts (CR, CSV)",700,700);
     pt_cuts_1_crCSV_can -> SetLogy();
     style.InitHist(pt_cuts_C_crCSV_hist_1,"p_{T}, after cuts, CR, CSV, first jet","Entries",kBlack,0);
     pt_cuts_C_crCSV_hist_1->GetYaxis()->SetRangeUser(0.1,100000);
@@ -289,11 +293,12 @@ void PlotTDRStyle (){
     legpt3acSRcsv->AddEntry(pt_cuts_D_srCSV_hist_3,"era D","L");
     legpt3acSRcsv->AddEntry(pt_cuts_E_srCSV_hist_3,"era E","L");
     legpt3acSRcsv->AddEntry(pt_cuts_F_srCSV_hist_3,"era F","L");
-    legpt3acSRcsv->Draw("SAME");
+    legpt3acSRcsv->Draw("SAME");*/
     
     TCanvas* pt_cuts_1_crdeep_can = style.MakeCanvas("pt_cuts_1_crdeep_can","pt 1st jet cuts (CR, deep)",700,700);
     pt_cuts_1_crdeep_can -> SetLogy();
     style.InitHist(pt_cuts_C_crdeep_hist_1,"p_{T}, after cuts, CR, deep CSV, first jet","Entries",kBlack,0);
+    pt_cuts_C_crdeep_hist_1->GetXaxis()->SetRangeUser(0,1500);
     pt_cuts_C_crdeep_hist_1->GetYaxis()->SetRangeUser(0.1,100000);
     pt_cuts_C_crdeep_hist_1->Draw();
     style.InitHist(pt_cuts_D_crdeep_hist_1,"p_{T}, after cuts, CR, deep CSV, first jet","Entries",kRed,0);
@@ -315,6 +320,7 @@ void PlotTDRStyle (){
     TCanvas* pt_cuts_2_crdeep_can = style.MakeCanvas("pt_cuts_2_crdeep_can","pt 2nd jet cuts (CR, deep)",700,700);
     pt_cuts_2_crdeep_can -> SetLogy();
     style.InitHist(pt_cuts_C_crdeep_hist_2,"p_{T}, after cuts, CR, deep CSV, second jet","Entries",kBlack,0);
+    pt_cuts_C_crdeep_hist_2->GetXaxis()->SetRangeUser(0,1500);
     pt_cuts_C_crdeep_hist_2->GetYaxis()->SetRangeUser(0.1,100000);
     pt_cuts_C_crdeep_hist_2->Draw();
     style.InitHist(pt_cuts_D_crdeep_hist_2,"p_{T}, after cuts, CR, deep CSV, second jet","Entries",kRed,0);
@@ -336,6 +342,7 @@ void PlotTDRStyle (){
     TCanvas* pt_cuts_3_crdeep_can = style.MakeCanvas("pt_cuts_3_crdeep_can","pt 3rd jet cuts (CR, deep)",700,700);
     pt_cuts_3_crdeep_can -> SetLogy();
     style.InitHist(pt_cuts_C_crdeep_hist_3,"p_{T}, after cuts, CR, deep CSV, third jet","Entries",kBlack,0);
+    pt_cuts_C_crdeep_hist_3->GetXaxis()->SetRangeUser(0,1500);
     pt_cuts_C_crdeep_hist_3->GetYaxis()->SetRangeUser(0.1,100000);
     pt_cuts_C_crdeep_hist_3->Draw();
     style.InitHist(pt_cuts_D_crdeep_hist_3,"p_{T}, after cuts, CR, deep CSV, third jet","Entries",kRed,0);
@@ -357,6 +364,7 @@ void PlotTDRStyle (){
     TCanvas* pt_cuts_1_srdeep_can = style.MakeCanvas("pt_cuts_1_srdeep_can","pt 1st jet cuts (SR, deep)",700,700);
     pt_cuts_1_srdeep_can -> SetLogy();
     style.InitHist(pt_cuts_C_srdeep_hist_1,"p_{T}, after cuts, SR, deep CSV, first jet","Entries",kBlack,0);
+    pt_cuts_C_srdeep_hist_1->GetXaxis()->SetRangeUser(0,1500);
     pt_cuts_C_srdeep_hist_1->GetYaxis()->SetRangeUser(0.1,100000);
     pt_cuts_C_srdeep_hist_1->Draw();
     style.InitHist(pt_cuts_D_srdeep_hist_1,"p_{T}, after cuts, SR, deep CSV, first jet","Entries",kRed,0);
@@ -378,6 +386,7 @@ void PlotTDRStyle (){
     TCanvas* pt_cuts_2_srdeep_can = style.MakeCanvas("pt_cuts_2_srdeep_can","pt 2nd jet cuts (SR, deep)",700,700);
     pt_cuts_2_srdeep_can -> SetLogy();
     style.InitHist(pt_cuts_C_srdeep_hist_2,"p_{T}, after cuts, SR, deep CSV, second jet","Entries",kBlack,0);
+    pt_cuts_C_srdeep_hist_2->GetXaxis()->SetRangeUser(0,1500);
     pt_cuts_C_srdeep_hist_2->GetYaxis()->SetRangeUser(0.1,100000);
     pt_cuts_C_srdeep_hist_2->Draw();
     style.InitHist(pt_cuts_D_srdeep_hist_2,"p_{T}, after cuts, SR, deep CSV, second jet","Entries",kRed,0);
@@ -399,6 +408,7 @@ void PlotTDRStyle (){
     TCanvas* pt_cuts_3_srdeep_can = style.MakeCanvas("pt_cuts_3_srdeep_can","pt 3rd jet cuts (SR, deep)",700,700);
     pt_cuts_3_srdeep_can -> SetLogy();
     style.InitHist(pt_cuts_C_srdeep_hist_3,"p_{T}, after cuts, SR, deep CSV, third jet","Entries",kBlack,0);
+    pt_cuts_C_srdeep_hist_3->GetXaxis()->SetRangeUser(0,1500);
     pt_cuts_C_srdeep_hist_3->GetYaxis()->SetRangeUser(0.1,100000);
     pt_cuts_C_srdeep_hist_3->Draw();
     style.InitHist(pt_cuts_D_srdeep_hist_3,"p_{T}, after cuts, SR, deep CSV, third jet","Entries",kRed,0);
@@ -419,7 +429,7 @@ void PlotTDRStyle (){
   }
 
   if (etaaftercuts){
-    TH1F* eta_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("eta_0_csv");
+    /*TH1F* eta_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("eta_0_csv");
     TH1F* eta_cuts_C_crCSV_hist_2 = (TH1F*)FileCcrCSV->Get("eta_1_csv");
     TH1F* eta_cuts_C_crCSV_hist_3 = (TH1F*)FileCcrCSV->Get("eta_2_csv");
     TH1F* eta_cuts_D_crCSV_hist_1 = (TH1F*)FileDcrCSV->Get("eta_0_csv");
@@ -443,8 +453,8 @@ void PlotTDRStyle (){
     TH1F* eta_cuts_E_srCSV_hist_3 = (TH1F*)FileEsrCSV->Get("eta_2_csv");
     TH1F* eta_cuts_F_srCSV_hist_1 = (TH1F*)FileFsrCSV->Get("eta_0_csv");
     TH1F* eta_cuts_F_srCSV_hist_2 = (TH1F*)FileFsrCSV->Get("eta_1_csv");
-    TH1F* eta_cuts_F_srCSV_hist_3 = (TH1F*)FileFsrCSV->Get("eta_2_csv");
-
+    TH1F* eta_cuts_F_srCSV_hist_3 = (TH1F*)FileFsrCSV->Get("eta_2_csv");*/
+    
     TH1F* eta_cuts_C_crdeep_hist_1 = (TH1F*)FileCcrdeep->Get("eta_0_csv");
     TH1F* eta_cuts_C_crdeep_hist_2 = (TH1F*)FileCcrdeep->Get("eta_1_csv");
     TH1F* eta_cuts_C_crdeep_hist_3 = (TH1F*)FileCcrdeep->Get("eta_2_csv");
@@ -471,7 +481,7 @@ void PlotTDRStyle (){
     TH1F* eta_cuts_F_srdeep_hist_2 = (TH1F*)FileFsrdeep->Get("eta_1_csv");
     TH1F* eta_cuts_F_srdeep_hist_3 = (TH1F*)FileFsrdeep->Get("eta_2_csv");
 
-    TCanvas* eta_cuts_1_crCSV_can = style.MakeCanvas("eta_cuts_1_crCSV_can","eta 1st jet cuts (CR, CSV)",700,700);
+    /*TCanvas* eta_cuts_1_crCSV_can = style.MakeCanvas("eta_cuts_1_crCSV_can","eta 1st jet cuts (CR, CSV)",700,700);
     eta_cuts_1_crCSV_can -> SetLogy();
     style.InitHist(eta_cuts_C_crCSV_hist_1,"#eta, after cuts, CR, CSV, first jet","Entries",kBlack,0);
     eta_cuts_C_crCSV_hist_1->GetYaxis()->SetRangeUser(10,100000);
@@ -595,7 +605,7 @@ void PlotTDRStyle (){
     legeta3acSRcsv->AddEntry(eta_cuts_D_srCSV_hist_3,"era D","L");
     legeta3acSRcsv->AddEntry(eta_cuts_E_srCSV_hist_3,"era E","L");
     legeta3acSRcsv->AddEntry(eta_cuts_F_srCSV_hist_3,"era F","L");
-    legeta3acSRcsv->Draw("SAME");
+    legeta3acSRcsv->Draw("SAME");*/
     
     TCanvas* eta_cuts_1_crdeep_can = style.MakeCanvas("eta_cuts_1_crdeep_can","eta 1st jet cuts (CR, deep)",700,700);
     eta_cuts_1_crdeep_can -> SetLogy();
@@ -725,7 +735,7 @@ void PlotTDRStyle (){
   }
 
   if(kinbefcuts){
-    TH1F* pt_befcuts_C_hist_1 = (TH1F*)FileCcrCSV->Get("pt_0");
+    /*TH1F* pt_befcuts_C_hist_1 = (TH1F*)FileCcrCSV->Get("pt_0");
     TH1F* pt_befcuts_C_hist_2 = (TH1F*)FileCcrCSV->Get("pt_1");
     TH1F* pt_befcuts_C_hist_3 = (TH1F*)FileCcrCSV->Get("pt_2");
     TH1F* eta_befcuts_C_hist_1 = (TH1F*)FileCcrCSV->Get("eta_0");
@@ -751,7 +761,35 @@ void PlotTDRStyle (){
     TH1F* pt_befcuts_F_hist_3 = (TH1F*)FileFcrCSV->Get("pt_2");
     TH1F* eta_befcuts_F_hist_1 = (TH1F*)FileFcrCSV->Get("eta_0");
     TH1F* eta_befcuts_F_hist_2 = (TH1F*)FileFcrCSV->Get("eta_1");
-    TH1F* eta_befcuts_F_hist_3 = (TH1F*)FileFcrCSV->Get("eta_2");
+    TH1F* eta_befcuts_F_hist_3 = (TH1F*)FileFcrCSV->Get("eta_2");*/
+
+    TH1F* pt_befcuts_C_hist_1 = (TH1F*)FileCcrdeep->Get("pt_0");
+    TH1F* pt_befcuts_C_hist_2 = (TH1F*)FileCcrdeep->Get("pt_1");
+    TH1F* pt_befcuts_C_hist_3 = (TH1F*)FileCcrdeep->Get("pt_2");
+    TH1F* eta_befcuts_C_hist_1 = (TH1F*)FileCcrdeep->Get("eta_0");
+    TH1F* eta_befcuts_C_hist_2 = (TH1F*)FileCcrdeep->Get("eta_1");
+    TH1F* eta_befcuts_C_hist_3 = (TH1F*)FileCcrdeep->Get("eta_2");
+
+    TH1F* pt_befcuts_D_hist_1 = (TH1F*)FileDcrdeep->Get("pt_0");
+    TH1F* pt_befcuts_D_hist_2 = (TH1F*)FileDcrdeep->Get("pt_1");
+    TH1F* pt_befcuts_D_hist_3 = (TH1F*)FileDcrdeep->Get("pt_2");
+    TH1F* eta_befcuts_D_hist_1 = (TH1F*)FileDcrdeep->Get("eta_0");
+    TH1F* eta_befcuts_D_hist_2 = (TH1F*)FileDcrdeep->Get("eta_1");
+    TH1F* eta_befcuts_D_hist_3 = (TH1F*)FileDcrdeep->Get("eta_2");
+
+    TH1F* pt_befcuts_E_hist_1 = (TH1F*)FileEcrdeep->Get("pt_0");
+    TH1F* pt_befcuts_E_hist_2 = (TH1F*)FileEcrdeep->Get("pt_1");
+    TH1F* pt_befcuts_E_hist_3 = (TH1F*)FileEcrdeep->Get("pt_2");
+    TH1F* eta_befcuts_E_hist_1 = (TH1F*)FileEcrdeep->Get("eta_0");
+    TH1F* eta_befcuts_E_hist_2 = (TH1F*)FileEcrdeep->Get("eta_1");
+    TH1F* eta_befcuts_E_hist_3 = (TH1F*)FileEcrdeep->Get("eta_2");
+
+    TH1F* pt_befcuts_F_hist_1 = (TH1F*)FileFcrdeep->Get("pt_0");
+    TH1F* pt_befcuts_F_hist_2 = (TH1F*)FileFcrdeep->Get("pt_1");
+    TH1F* pt_befcuts_F_hist_3 = (TH1F*)FileFcrdeep->Get("pt_2");
+    TH1F* eta_befcuts_F_hist_1 = (TH1F*)FileFcrdeep->Get("eta_0");
+    TH1F* eta_befcuts_F_hist_2 = (TH1F*)FileFcrdeep->Get("eta_1");
+    TH1F* eta_befcuts_F_hist_3 = (TH1F*)FileFcrdeep->Get("eta_2");
 
     TCanvas* pt_befcuts_1_can = style.MakeCanvas("pt_befcuts_1_can","pt 1st jet before cuts",700,700);
     pt_befcuts_1_can -> SetLogy();
@@ -881,35 +919,33 @@ void PlotTDRStyle (){
   }
 
   if (btagbefcuts){
-    TH1F* btag_csv_C_hist_1 = (TH1F*)FileCcrCSV->Get("btag_0");
+    /*TH1F* btag_csv_C_hist_1 = (TH1F*)FileCcrCSV->Get("btag_0");
     TH1F* btag_csv_C_hist_2 = (TH1F*)FileCcrCSV->Get("btag_1");
     TH1F* btag_csv_C_hist_3 = (TH1F*)FileCcrCSV->Get("btag_2");
-    TH1F* btag_deep_C_hist_1 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_0");
-    TH1F* btag_deep_C_hist_2 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_1");
-    TH1F* btag_deep_C_hist_3 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_2");
-
     TH1F* btag_csv_D_hist_1 = (TH1F*)FileDcrCSV->Get("btag_0");
     TH1F* btag_csv_D_hist_2 = (TH1F*)FileDcrCSV->Get("btag_1");
     TH1F* btag_csv_D_hist_3 = (TH1F*)FileDcrCSV->Get("btag_2");
-    TH1F* btag_deep_D_hist_1 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_0");
-    TH1F* btag_deep_D_hist_2 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_1");
-    TH1F* btag_deep_D_hist_3 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_2");
-
     TH1F* btag_csv_E_hist_1 = (TH1F*)FileEcrCSV->Get("btag_0");
     TH1F* btag_csv_E_hist_2 = (TH1F*)FileEcrCSV->Get("btag_1");
     TH1F* btag_csv_E_hist_3 = (TH1F*)FileEcrCSV->Get("btag_2");
+    TH1F* btag_csv_F_hist_1 = (TH1F*)FileFcrCSV->Get("btag_0");
+    TH1F* btag_csv_F_hist_2 = (TH1F*)FileFcrCSV->Get("btag_1");
+    TH1F* btag_csv_F_hist_3 = (TH1F*)FileFcrCSV->Get("btag_2");*/
+
+    TH1F* btag_deep_C_hist_1 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_0");
+    TH1F* btag_deep_C_hist_2 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_1");
+    TH1F* btag_deep_C_hist_3 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_2");
+    TH1F* btag_deep_D_hist_1 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_0");
+    TH1F* btag_deep_D_hist_2 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_1");
+    TH1F* btag_deep_D_hist_3 = (TH1F*)FileDcrdeep->Get("deepcsvbtag_2");
     TH1F* btag_deep_E_hist_1 = (TH1F*)FileEcrdeep->Get("deepcsvbtag_0");
     TH1F* btag_deep_E_hist_2 = (TH1F*)FileEcrdeep->Get("deepcsvbtag_1");
     TH1F* btag_deep_E_hist_3 = (TH1F*)FileEcrdeep->Get("deepcsvbtag_2");
-
-    TH1F* btag_csv_F_hist_1 = (TH1F*)FileFcrCSV->Get("btag_0");
-    TH1F* btag_csv_F_hist_2 = (TH1F*)FileFcrCSV->Get("btag_1");
-    TH1F* btag_csv_F_hist_3 = (TH1F*)FileFcrCSV->Get("btag_2");
     TH1F* btag_deep_F_hist_1 = (TH1F*)FileFcrdeep->Get("deepcsvbtag_0");
     TH1F* btag_deep_F_hist_2 = (TH1F*)FileFcrdeep->Get("deepcsvbtag_1");
     TH1F* btag_deep_F_hist_3 = (TH1F*)FileFcrdeep->Get("deepcsvbtag_2");
 
-    TCanvas* btagcsv1_can = style.MakeCanvas("btagcsv1_can","btagcsv1",700,700);
+    /*TCanvas* btagcsv1_can = style.MakeCanvas("btagcsv1_can","btagcsv1",700,700);
     btagcsv1_can -> SetLogy();
     style.InitHist(btag_csv_C_hist_1,"b tag, CSV, first jet","Entries",kBlack,0);
     btag_csv_C_hist_1->Draw();
@@ -967,8 +1003,7 @@ void PlotTDRStyle (){
     leg3csv->AddEntry(btag_csv_D_hist_3,"era D","L");
     leg3csv->AddEntry(btag_csv_E_hist_3,"era E","L");
     leg3csv->AddEntry(btag_csv_F_hist_3,"era F","L");
-    leg3csv->Draw("SAME");
-
+    leg3csv->Draw("SAME");*/
 
     TCanvas* btagdeepcsv1_can = style.MakeCanvas("btagdeepcsv1_can","btagdeepcsv1",700,700);
     btagdeepcsv1_can -> SetLogy();
@@ -1032,7 +1067,7 @@ void PlotTDRStyle (){
   }
 
   if (btagaftercuts){
-    TH1F* btag_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("btag_0_csv");
+    /*TH1F* btag_cuts_C_crCSV_hist_1 = (TH1F*)FileCcrCSV->Get("btag_0_csv");
     TH1F* btag_cuts_C_crCSV_hist_2 = (TH1F*)FileCcrCSV->Get("btag_1_csv");
     TH1F* btag_cuts_C_crCSV_hist_3 = (TH1F*)FileCcrCSV->Get("btag_2_csv");
     TH1F* btag_cuts_D_crCSV_hist_1 = (TH1F*)FileDcrCSV->Get("btag_0_csv");
@@ -1056,7 +1091,7 @@ void PlotTDRStyle (){
     TH1F* btag_cuts_E_srCSV_hist_3 = (TH1F*)FileEsrCSV->Get("btag_2_csv");
     TH1F* btag_cuts_F_srCSV_hist_1 = (TH1F*)FileFsrCSV->Get("btag_0_csv");
     TH1F* btag_cuts_F_srCSV_hist_2 = (TH1F*)FileFsrCSV->Get("btag_1_csv");
-    TH1F* btag_cuts_F_srCSV_hist_3 = (TH1F*)FileFsrCSV->Get("btag_2_csv");
+    TH1F* btag_cuts_F_srCSV_hist_3 = (TH1F*)FileFsrCSV->Get("btag_2_csv");*/
 
     TH1F* btag_cuts_C_crdeep_hist_1 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_0_csv");
     TH1F* btag_cuts_C_crdeep_hist_2 = (TH1F*)FileCcrdeep->Get("deepcsvbtag_1_csv");
@@ -1084,7 +1119,7 @@ void PlotTDRStyle (){
     TH1F* btag_cuts_F_srdeep_hist_2 = (TH1F*)FileFsrdeep->Get("deepcsvbtag_1_csv");
     TH1F* btag_cuts_F_srdeep_hist_3 = (TH1F*)FileFsrdeep->Get("deepcsvbtag_2_csv");
 
-    TCanvas* btag_cuts_1_crCSV_can = style.MakeCanvas("btag_cuts_1_crCSV_can","btag 1st jet cuts (CR, CSV)",700,700);
+    /*TCanvas* btag_cuts_1_crCSV_can = style.MakeCanvas("btag_cuts_1_crCSV_can","btag 1st jet cuts (CR, CSV)",700,700);
     btag_cuts_1_crCSV_can -> SetLogy();
     style.InitHist(btag_cuts_C_crCSV_hist_1,"b tag, after cuts, CR, CSV, first jet","Entries",kBlack,0);
     btag_cuts_C_crCSV_hist_1->GetYaxis()->SetRangeUser(10,100000);
@@ -1208,7 +1243,7 @@ void PlotTDRStyle (){
     legbtag3acSRcsv->AddEntry(btag_cuts_D_srCSV_hist_3,"era D","L");
     legbtag3acSRcsv->AddEntry(btag_cuts_E_srCSV_hist_3,"era E","L");
     legbtag3acSRcsv->AddEntry(btag_cuts_F_srCSV_hist_3,"era F","L");
-    legbtag3acSRcsv->Draw("SAME");
+    legbtag3acSRcsv->Draw("SAME");*/
     
     TCanvas* btag_cuts_1_crdeep_can = style.MakeCanvas("btag_cuts_1_crdeep_can","btag 1st jet cuts (CR, deep)",700,700);
     btag_cuts_1_crdeep_can -> SetLogy();

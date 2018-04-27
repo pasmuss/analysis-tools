@@ -64,7 +64,7 @@ void HbbStylesNew::SetStyle()
   HbbStyle->SetPadBorderSize  (10);
   HbbStyle->SetPadBorderMode  (0);
   HbbStyle->SetPadBottomMargin(0.1);
-  HbbStyle->SetPadTopMargin   (0.08);
+  HbbStyle->SetPadTopMargin   (0.05);
   HbbStyle->SetPadLeftMargin  (0.1);
   HbbStyle->SetPadRightMargin (0.05);
   HbbStyle->SetPadGridX       (0);
@@ -114,7 +114,7 @@ void HbbStylesNew::SetStyle()
   HbbStyle->SetLineStyleString(11,"20 10");
 
   HbbStyle->SetTitleSize  (0.055,"Y");
-  HbbStyle->SetTitleOffset(1.700,"Y");
+  HbbStyle->SetTitleOffset(1.000,"Y");
   HbbStyle->SetLabelOffset(0.010,"Y");
   HbbStyle->SetLabelSize  (0.050,"Y");
   HbbStyle->SetLabelFont  (42   ,"Y");
@@ -140,7 +140,7 @@ TCanvas* HbbStylesNew::MakeCanvas(const char* name, const char *title, int dX, i
   canvas->SetBorderMode     (0);
   canvas->SetBorderSize     (10);
   // Set margins to reasonable defaults
-  canvas->SetLeftMargin     (0.18);
+  canvas->SetLeftMargin     (0.14);
   canvas->SetRightMargin    (0.05);
   canvas->SetTopMargin      (0.08);
   canvas->SetBottomMargin   (0.15);
@@ -186,7 +186,7 @@ void HbbStylesNew::InitHist(TH1 *hist, const char *xtit, const char *ytit, int c
   hist->SetFillStyle(style);
   //  hist->GetYaxis()->SetRangeUser(0.1,100000);
   hist->SetTitleSize  (0.055,"Y");
-  hist->SetTitleOffset(1.600,"Y");
+  hist->SetTitleOffset(1.200,"Y");
   hist->SetLabelOffset(0.014,"Y");
   hist->SetLabelSize  (0.040,"Y");
   hist->SetLabelFont  (42   ,"Y");

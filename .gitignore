@@ -10,3 +10,15 @@ __init__.py
 .#*
 #*#
 *~
+Drawer/
+Other_Tools/
+Sandbox/
+nohup.out
+*/nohup.out
+test/Archive_NAF/
+test/Archive_scripts/
+test/ConfigMC/
+test/ConfigPrompt
+test/ConfigRerecoNewJSON/
+test/Results_Apr_26_Prompt_ReReco_MCsig_MCbg/
+test/PlotsWithMuonInformation/
