@@ -220,7 +220,7 @@ void HbbStylesNew::SetLegendStyle(TLegend* leg)
   leg->SetTextSize(textSize_);
 }
 
-void CMSPrelim(const char* dataset, double lowX, double lowY)
+void CMSPrelim(const char* dataset, const char* status, double lowX, double lowY)
 {
   TPaveText* cmsprel  = new TPaveText(lowX, lowY+0.06, lowX+0.30, lowY+0.16, "NDC");
   cmsprel->SetBorderSize(   0 );
@@ -232,7 +232,7 @@ void CMSPrelim(const char* dataset, double lowX, double lowY)
   cmsprel->AddText("CMS");
   cmsprel->Draw();
 
-  TPaveText* lumi     = new TPaveText(lowX+0.08, lowY+0.061, lowX+0.45, lowY+0.161, "NDC");
+  TPaveText* lumi     = new TPaveText(lowX+0.08, lowY+0.06, lowX+0.45, lowY+0.16, "NDC");
   lumi->SetBorderSize(   0 );
   lumi->SetFillStyle(    0 );
   lumi->SetTextAlign(   12 );
@@ -241,6 +241,16 @@ void CMSPrelim(const char* dataset, double lowX, double lowY)
   lumi->SetTextFont (   62 );
   lumi->AddText(dataset);
   lumi->Draw();
+
+  TPaveText* wip     = new TPaveText(lowX-0.005, lowY+0.05, lowX+0.4, lowY+0.06, "NDC");
+  wip->SetBorderSize(   0 );
+  wip->SetFillStyle(    0 );
+  wip->SetTextAlign(   12 );
+  wip->SetTextSize ( 0.04 );
+  wip->SetTextColor(    1 );
+  wip->SetTextFont (   52 );
+  wip->AddText(status);
+  wip->Draw();
 
 }
 void plotchannel(TString channel) {

@@ -111,7 +111,6 @@ int main(int argc, char * argv[])
       h1[Form("deepcsvbtag_%i_csv",i)] = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 500, 0, 1);
     }
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
-  h1["m12_bef_offl_btag"] = new TH1F("m12_bef_offl_btag" , "" , 150, 0, 3000);
   h1["m12_csv"]           = new TH1F("m12_csv"           , "" , 150, 0, 3000);
    
   double mbb;
@@ -245,7 +244,6 @@ int main(int argc, char * argv[])
       h1["n"] -> Fill(selectedJets.size());
       h1["n_ptmin20"] -> Fill(njets);
 
-      h1["m12_bef_offl_btag"] -> Fill( (selectedJets[0]->p4() + selectedJets[1]->p4()).M() );
 
       //b tagging
       for ( int j = 0; j < njetsmin_; ++j )
@@ -387,9 +385,6 @@ int main(int argc, char * argv[])
       ih1.second -> Write();
     }
    
-  hout.Write();
-  hout.Close();
-   
   // PRINT OUTS
 
   // Cut flow
@@ -401,7 +396,7 @@ int main(int argc, char * argv[])
   // 5: btag (bbnb)
   // 6: matching
   // 7: ONLY MC: trigger
-   
+
   double fracAbs[10];
   double fracRel[10];
   std::string cuts[10];
@@ -415,20 +410,22 @@ int main(int argc, char * argv[])
   if ( signalregion_ ) cuts[5] = "btagged (bbb)";
   cuts[6] = "Matched to online j1;j2";
   if (isMC_) cuts[7] = "Triggered";
-   
+
   printf ("%-23s  %10s  %10s  %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
   txtoutputfile << "Cut flow " << "# events " << "absolute " << "relative" << endl;
   if (!isMC_){
     for ( int i = 0; i < 7; ++i )
       {
 	fracAbs[i] = double(nsel[i])/nsel[0];
-	if ( i>0 )
+	if ( i>0 ){
 	  fracRel[i] = double(nsel[i])/nsel[i-1];
-	else
+	}
+	else{
 	  fracRel[i] = fracAbs[i];
+	}
 	printf ("%-23s  %10d  %10.3f  %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] ); 
 	txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
-	h1["cutflow"] -> SetBinContent(i,fracAbs[i]);
+	h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
       }
   }
   else if (isMC_){
@@ -441,9 +438,13 @@ int main(int argc, char * argv[])
 	  fracRel[i] = fracAbs[i];
 	printf ("%-23s  %10d  %10.3f  %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] ); 
 	txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
-	h1["cutflow"] -> SetBinContent(i,fracAbs[i]);
+	h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
       }
   }
+
+  hout.Write();
+  hout.Close();
+  
   // CSV output
   printf ("%-23s , %10s , %10s , %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
   for ( int i = 0; i < 7; ++i )

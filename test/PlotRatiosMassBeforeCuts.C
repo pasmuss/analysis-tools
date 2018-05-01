@@ -9,7 +9,7 @@
 
 #include "HbbStylesNew.cc"
 
-void PlotMassRatiosPerEra(){
+void PlotRatiosMassBeforeCuts(){
 
   HbbStylesNew style;
   style.SetStyle();
@@ -33,21 +33,21 @@ void PlotMassRatiosPerEra(){
   TFile* file_Fc2_rereco = new TFile("Results_Apr_26_Prompt_ReReco_MCsig_MCbg/ReRecoRes/ReRecoC2-F-deep-CR.root","READ");
   
   ///
-  /// Mass histograms
+  /// Mass histograms (before applying b tags and matching)
   ///
-  TH1F* hist_m_C_prompt = (TH1F*)file_C_prompt -> Get("m12_csv");
-  TH1F* hist_m_D_prompt = (TH1F*)file_D_prompt -> Get("m12_csv");
-  TH1F* hist_m_E_prompt = (TH1F*)file_E_prompt -> Get("m12_csv");
-  TH1F* hist_m_F_prompt = (TH1F*)file_F_prompt -> Get("m12_csv");
-  TH1F* hist_m_C_rereco = (TH1F*)file_C_rereco -> Get("m12_csv");
-  TH1F* hist_m_D_rereco = (TH1F*)file_D_rereco -> Get("m12_csv");
-  TH1F* hist_m_E_rereco = (TH1F*)file_E_rereco -> Get("m12_csv");
-  TH1F* hist_m_F_rereco = (TH1F*)file_F_rereco -> Get("m12_csv");
-  TH1F* hist_m_Ec2_rereco = (TH1F*)file_Ec2_rereco -> Get("m12_csv");
-  TH1F* hist_m_Fc2_rereco = (TH1F*)file_Fc2_rereco -> Get("m12_csv");
+  TH1F* hist_m_C_prompt = (TH1F*)file_C_prompt -> Get("m12");
+  TH1F* hist_m_D_prompt = (TH1F*)file_D_prompt -> Get("m12");
+  TH1F* hist_m_E_prompt = (TH1F*)file_E_prompt -> Get("m12");
+  TH1F* hist_m_F_prompt = (TH1F*)file_F_prompt -> Get("m12");
+  TH1F* hist_m_C_rereco = (TH1F*)file_C_rereco -> Get("m12");
+  TH1F* hist_m_D_rereco = (TH1F*)file_D_rereco -> Get("m12");
+  TH1F* hist_m_E_rereco = (TH1F*)file_E_rereco -> Get("m12");
+  TH1F* hist_m_F_rereco = (TH1F*)file_F_rereco -> Get("m12");
+  TH1F* hist_m_Ec2_rereco = (TH1F*)file_Ec2_rereco -> Get("m12");
+  TH1F* hist_m_Fc2_rereco = (TH1F*)file_Fc2_rereco -> Get("m12");
 
   std::vector<double> lines1 = {1.0, 1.5, 2.0};
-  //  std::vector<double> linesF = {1.0, 2.0, 3.0, 4.0};
+  //std::vector<double> linesF = {1.0, 2.0, 3.0, 4.0};
 
   ///
   /// Era C
@@ -103,11 +103,11 @@ void PlotMassRatiosPerEra(){
   leg_C -> Draw("SAME");
 
   can_C -> Update();
-  
+
+
   ///
   /// Era D
   ///
-
   TCanvas* can_D = style.MakeCanvas("can_D","era D: m prompt vs. rereco",700,700);
   can_D -> SetLogy();
   style.InitHist(hist_m_D_prompt,"m_{12} / GeV","Entries / 60 GeV",kRed,0);
@@ -163,7 +163,6 @@ void PlotMassRatiosPerEra(){
   ///
   /// Era E
   ///
-
   TCanvas* can_E = style.MakeCanvas("can_E","era E: m prompt vs. rereco",700,700);
   can_E -> SetLogy();
   style.InitHist(hist_m_E_prompt,"m_{12} / GeV","Entries / 60 GeV",kRed,0);
@@ -215,11 +214,10 @@ void PlotMassRatiosPerEra(){
   leg_E -> Draw("SAME");
 
   can_E -> Update();
-  
+
   ///
   /// Era F
   ///
-
   TCanvas* can_F = style.MakeCanvas("can_F","era F: m prompt vs. rereco",700,700);
   can_F -> SetLogy();
   style.InitHist(hist_m_F_prompt,"m_{12} / GeV","Entries / 60 GeV",kRed,0);
@@ -273,9 +271,8 @@ void PlotMassRatiosPerEra(){
   can_F -> Update();
 
   ///
-  /// Era E / case 2
+  /// Era E, case 2
   ///
-
   TCanvas* can_Ec2 = style.MakeCanvas("can_Ec2","era E, case 2: m prompt vs. rereco",700,700);
   can_Ec2 -> SetLogy();
   style.InitHist(hist_m_E_prompt,"m_{12} / GeV","Entries / 60 GeV",kRed,0);
@@ -328,9 +325,8 @@ void PlotMassRatiosPerEra(){
   can_Ec2 -> Update();
 
   ///
-  /// Era F / case 2
+  /// Era F, case 2
   ///
-  
   TCanvas* can_Fc2 = style.MakeCanvas("can_Fc2","era F, case 2: m prompt vs. rereco",700,700);
   can_Fc2 -> SetLogy();
   style.InitHist(hist_m_F_prompt,"m_{12} / GeV","Entries / 60 GeV",kRed,0);
@@ -381,5 +377,4 @@ void PlotMassRatiosPerEra(){
   leg_Fc2 -> Draw("SAME");
 
   can_Fc2 -> Update();
-  
 }
