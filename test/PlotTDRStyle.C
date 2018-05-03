@@ -13,12 +13,12 @@ void PlotTDRStyle (){
   HbbStylesNew style;
   style.SetStyle();
   
-  bool masses = false;
+  bool masses = true;
   bool ptaftercuts = true;
-  bool etaaftercuts = false;
-  bool kinbefcuts = false;
-  bool btagbefcuts = false;
-  bool btagaftercuts = false;
+  bool etaaftercuts = true;
+  bool kinbefcuts =true ;
+  bool btagbefcuts = true;
+  bool btagaftercuts = true;
  
   /*TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-csv-mediumJetMuon_CR.root","READ");
   TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-csv-mediumJetMuon_CR.root","READ");
@@ -28,14 +28,14 @@ void PlotTDRStyle (){
   TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-SR-csv-mediumJetMuon_SR.root","READ");
   TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/E-SR-csv-mediumJetMuon_SR.root","READ");
   TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/F-SR-csv-mediumJetMuon_SR.root","READ");*/
-  /*TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/C-CR-deep-prompt.root","READ");
+  TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/C-CR-deep-prompt.root","READ");
   TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/D-CR-deep-prompt.root","READ");
   TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/E-CR-deep-prompt.root","READ");
   TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/PromptHist/F-CR-deep-prompt.root","READ");
   TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/C-SR-deep-prompt.root","READ");
   TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/D-SR-deep-prompt.root","READ");
   TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/E-SR-deep-prompt.root","READ");
-  TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/F-SR-deep-prompt.root","READ");*/
+  TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/PromptHist/F-SR-deep-prompt.root","READ");
 
   /*TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/C-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
     TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-CR-csv-mediumJetMuon-rereco-ReRecoJSON_CR.root","READ");
@@ -45,20 +45,20 @@ void PlotTDRStyle (){
     TFile* FileDsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/D-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
     TFile* FileEsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/E-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");
     TFile* FileFsrCSV = new TFile("PlotsWithMuonInformation/ReRecoHistograms/ReRecoJSON/F-SR-csv-mediumJetMuon-rereco-ReRecoJSON_SR.root","READ");*/
-    TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/C-CR-deep-rerecoc1.root","READ");
+  /*TFile* FileCcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/C-CR-deep-rerecoc1.root","READ");
     TFile* FileDcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/D-CR-deep-rerecoc1.root","READ");
     //TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/E-CR-deep-rerecoc1.root","READ");
     //TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/F-CR-deep-rerecoc1.root","READ");
     TFile* FileCsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/C-SR-deep-rerecoc1.root","READ");
     TFile* FileDsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/D-SR-deep-rerecoc1.root","READ");
     //TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/E-SR-deep-rerecoc1.root","READ");
-    //TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/F-SR-deep-rerecoc1.root","READ");
+    //TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc1Hist/F-SR-deep-rerecoc1.root","READ");*/
 
   ///rerecoc2///
-  TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/E-CR-deep-rerecoc2.root","READ");
+  /*TFile* FileEcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/E-CR-deep-rerecoc2.root","READ");
   TFile* FileFcrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/F-CR-deep-rerecoc2.root","READ");
   TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/E-SR-deep-rerecoc2.root","READ");
-  TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/F-SR-deep-rerecoc2.root","READ");
+  TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/F-SR-deep-rerecoc2.root","READ");*/
 
 
 

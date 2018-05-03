@@ -24,7 +24,8 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   gStyle->SetOptStat(0);
 
   //setTDRStyle();
-
+  
+  std::string era = era_;
   std::string var = var_;
   std::string region = region_;
   std::string xtitle = xtitle_;
@@ -52,7 +53,8 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   TH1F * hist_prompt = (TH1F*)f1->Get(var.c_str());
   TH1F * hist_rereco = (TH1F*)f2->Get(var.c_str());
 
-  std::vector<double> lines1 = {1.0, 1.5, 2.0};
+  std::vector<double> lines1 = {0.5, 1.0, 1.5, 2.0, 2.5};
+  std::vector<double> linespt = {0.5, 1.0, 1.5, 2.0, 2.5};
   //std::vector<double> linesF = {1.0, 2.0, 3.0, 4.0};
 
   TCanvas* c1 = style.MakeCanvas("c1","",700,700);
@@ -64,6 +66,22 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
       style.InitHist(hist_rereco, xtitle.c_str(),"Entries / 60 GeV ",kRed,0);
       hist_rereco -> Rebin(3);
     }
+  else if ( (var_ == "pt_0_csv") || (var_ == "pt_0") || (var_ == "pt_1_csv") || (var_ == "pt_1") )
+    {
+      c1 -> SetLogy();
+      style.InitHist(hist_prompt, xtitle.c_str(),"Entries / 50 GeV ",kBlue,0);
+      hist_prompt -> Rebin(5);
+      style.InitHist(hist_rereco, xtitle.c_str(),"Entries / 50 GeV ",kRed,0);
+      hist_rereco -> Rebin(5);
+    }
+    else if ( (var_ == "deepcsvbtag_0_csv") || (var_ == "deepcsvbtag_0") || (var_ == "deepcsvbtag_1_csv") || (var_ == "deepcsvbtag_1") )
+    {
+      c1 -> SetLogy();
+      style.InitHist(hist_prompt, xtitle.c_str(),"Entries / 0.01 ",kBlue,0);
+      hist_prompt -> Rebin(5);
+      style.InitHist(hist_rereco, xtitle.c_str(),"Entries / 0.01 ",kRed,0);
+      hist_rereco -> Rebin(5);
+    }
   else
     {
       style.InitHist(hist_prompt, xtitle.c_str(),"Entries / 20 GeV ",kBlue,0);
@@ -74,7 +92,9 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   auto rp = new TRatioPlot(hist_rereco,hist_prompt);
   rp -> SetH1DrawOpt("E");
   rp -> SetH2DrawOpt("E");
-  rp -> SetGridlines(lines1);
+  if ( (var_ == "pt_0_csv") || (var_ == "pt_0") || (var_ == "pt_1_csv") || (var_ == "pt_1") )
+    rp -> SetGridlines(linespt);
+  else rp -> SetGridlines(lines1);
   rp -> Draw();
   
   rp -> GetLowerRefGraph() -> SetLineWidth(2);
@@ -112,14 +132,20 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   
   TLegend* leg = new TLegend(0.58,0.63,0.98,0.93);
   style.SetLegendStyle(leg);
-  leg -> AddEntry(hist_prompt,("Era "+era_+ ", Prompt").c_str(),"L");
-  leg -> AddEntry(hist_rereco,("Era "+era_+ ", ReReco").c_str(),"L");
+  if (era_ == "CDEF"){
+  leg -> AddEntry(hist_prompt,"2017 Prompt","L");
+  leg -> AddEntry(hist_rereco,"2017 ReReco","L");
+  }
+  else{
+  leg -> AddEntry(hist_prompt,("Era "+era+ ", Prompt").c_str(),"L");
+  leg -> AddEntry(hist_rereco,("Era "+era+ ", ReReco").c_str(),"L");
+  }
   leg -> Draw("SAME");
   
   CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.78);
 
   c1 -> Update();
-  c1 -> SaveAs(("Outputdata/CompReco_"+ var_+ "-" + era_ + ".pdf").c_str());
+  c1 -> SaveAs(("Outputdata/CompReco_"+ var_+ "-" + era_ + "-" + region +".pdf").c_str());
 
   //pad1 -> SetLogy();
   //c1 -> SaveAs(("PLOTS/CompReco"+ era_ + "Log.png").c_str());
