@@ -53,7 +53,7 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   TH1F * hist_era1 = (TH1F*)f1->Get(var.c_str());
   TH1F * hist_era2 = (TH1F*)f2->Get(var.c_str());
 
-  std::vector<double> lines1 = {1.0, 1.5, 2.0};
+  std::vector<double> lines1 = {0.5, 1.0, 1.5, 2.0};
   std::vector<double> linespt = {0.5, 1.0, 1.5, 2.0, 2.5};
   //std::vector<double> linesF = {1.0, 2.0, 3.0, 4.0};
 
@@ -94,7 +94,7 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   rp -> GetLowerRefGraph() -> SetMarkerSize(1);
   
   rp -> SetRightMargin(0.05);
-  rp -> SetUpTopMargin(0.055); // 0.03
+  rp -> SetUpTopMargin(0.08); // 0.03
   rp -> SetLeftMargin(0.13);
   rp -> SetSeparationMargin(0.07);
   rp -> SetLowBottomMargin(0.4); 
@@ -123,7 +123,7 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   rp -> GetLowYaxis() -> SetNdivisions(505);
   rp -> GetUpperPad() -> cd();
   
-  TLegend* leg = new TLegend(0.58,0.63,0.98,0.93);
+  TLegend* leg = new TLegend(0.65,0.6,0.95,0.9);
   style.SetLegendStyle(leg);
   if ( (var_ == "pt_0_csv") || (var_ == "pt_0") ) {
     leg -> AddEntry(hist_era1,("p_{T}, 1^{st} jet, Era "+era1_).c_str(),"L");
@@ -133,13 +133,17 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
     leg -> AddEntry(hist_era1,("p_{T}, 2^{nd} jet, Era "+era1_).c_str(),"L");
     leg -> AddEntry(hist_era2,("p_{T}, 2^{nd} jet, Era "+era2_).c_str(),"L");
   }
+  else if ( (var_ == "m12_csv") || (var_ == "m12") ) {
+    leg -> AddEntry(hist_era1,("m_{12}, Era "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("m_{12}, Era "+era2_).c_str(),"L");
+  }
   else{
   leg -> AddEntry(hist_era1,(var_+", Era "+era1_).c_str(),"L");
   leg -> AddEntry(hist_era2,(var_+", Era "+era2_).c_str(),"L");
   }
   leg -> Draw("SAME");
   
-  CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.78);
+  CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.75);
 
   c1 -> Update();
   c1 -> SaveAs(("Outputdata/Comp_"+ var_+ "-" + era1_ + "-vs-" + era2_ + "-" + reco_ + "-" + region_ + ".pdf").c_str());

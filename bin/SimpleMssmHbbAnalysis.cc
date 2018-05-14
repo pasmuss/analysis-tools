@@ -37,7 +37,7 @@ int main(int argc, char * argv[])
     analysis.addTree<Jet> ("Jets","MssmHbb/Events/slimmedJetsPuppi");
     analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
   }
-  else if (reco == "rereco"){
+  else if (reco == "rereco"){//this is the default and also applicable for MC!
     analysis.addTree<Jet> ("Jets","MssmHbb/Events/updatedPatJetsPuppi");
     analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
   }
@@ -161,15 +161,6 @@ int main(int argc, char * argv[])
       }
       int run = analysis.run();
       int run_crit = 304508;
-
-      /*if (analysis.run() > 304508){
-        triggerObjects_[0] = triggerObjects_[5];
-	}*/
-  
-      //cout << "run number of event " << i << ": " << analysis.run() << endl; 
-      /*for (unsigned int i = 0; i < triggerObjects_.size(); i++){
-	cout << triggerObjects_[i] << endl;
-	}*/
      
       analysis.event(i);
       if (! isMC_ )
@@ -177,14 +168,14 @@ int main(int argc, char * argv[])
 	  if (!analysis.selectJson() ) continue; // To use only goodJSonFiles
 	}
       
-      if(!isMC_){
+      if(!isMC_ && !invertCutflow_){
 	int triggerFired = analysis.triggerResult(hltPath_);
 	//int triggerFiredL1 = analysis.triggerResult(l1Seed_);
 	//if ( !(triggerFired && triggerFiredL1) ) continue;
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
 
-      ++nsel[0]; //also for MC: equals no. of events then
+      if (!invertCutflow_) ++nsel[0]; //also for MC: equals no. of events then
       
       // match offline to online
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
@@ -310,7 +301,7 @@ int main(int argc, char * argv[])
       ++nsel[6];
 
       //last step of cutflow for MC: trigger
-      if(isMC_){
+      if(isMC_ || invertCutflow_){
 	int triggerFired = analysis.triggerResult(hltPath_);
 	if ( !triggerFired ) continue;
 	++nsel[7];
@@ -409,7 +400,7 @@ int main(int argc, char * argv[])
   cuts[5] = "btagged (bbnb)";
   if ( signalregion_ ) cuts[5] = "btagged (bbb)";
   cuts[6] = "Matched to online j1;j2";
-  if (isMC_) cuts[7] = "Triggered";
+  if (isMC_ || invertCutflow_) cuts[7] = "Triggered";
 
   printf ("%-23s  %10s  %10s  %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
   txtoutputfile << "Cut flow " << "# events " << "absolute " << "relative" << endl;
@@ -433,6 +424,19 @@ int main(int argc, char * argv[])
       {
 	fracAbs[i] = double(nsel[i])/nsel[0];
 	if ( i>0 )
+	  fracRel[i] = double(nsel[i])/nsel[i-1];
+	else
+	  fracRel[i] = fracAbs[i];
+	printf ("%-23s  %10d  %10.3f  %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] ); 
+	txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
+	h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
+      }
+  }
+  else if (invertCutflow_){
+    for ( int i = 1; i < 8; ++i )
+      {
+	fracAbs[i] = double(nsel[i])/nsel[1];
+	if ( i>1 )
 	  fracRel[i] = double(nsel[i])/nsel[i-1];
 	else
 	  fracRel[i] = fracAbs[i];

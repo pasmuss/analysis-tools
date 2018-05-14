@@ -17,8 +17,6 @@ void PlotMCsigMasses120_350_600_1200(){
   style.SetStyle();
 
   gStyle->SetOptStat(0);
-
-  //obviously only CR, SR needs to remain blinded!
   
   ///
   /// Files

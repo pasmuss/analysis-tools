@@ -232,7 +232,8 @@ void CMSPrelim(const char* dataset, const char* status, double lowX, double lowY
   cmsprel->AddText("CMS");
   cmsprel->Draw();
 
-  TPaveText* lumi     = new TPaveText(lowX+0.11, lowY+0.06, lowX+0.5, lowY+0.16, "NDC");
+  //TPaveText* lumi     = new TPaveText(lowX+0.52, lowY+0.15, lowX+0.84, lowY+0.26, "NDC");
+  TPaveText* lumi = new TPaveText(lowX+0.33, lowY+0.14, lowX+0.7, lowY+0.25, "NDC"); // for Simulation
   lumi->SetBorderSize(   0 );
   lumi->SetFillStyle(    0 );
   lumi->SetTextAlign(   12 );

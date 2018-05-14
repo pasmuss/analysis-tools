@@ -13,12 +13,13 @@ void PlotTDRStyle (){
   HbbStylesNew style;
   style.SetStyle();
   
-  bool masses = true;
-  bool ptaftercuts = true;
-  bool etaaftercuts = true;
-  bool kinbefcuts =true ;
-  bool btagbefcuts = true;
-  bool btagaftercuts = true;
+  bool phi = true;//bc and ac, SR and SR, only deep CSV
+  bool masses = false;
+  bool ptaftercuts = false;
+  bool etaaftercuts = false;
+  bool kinbefcuts = false;
+  bool btagbefcuts = false;
+  bool btagaftercuts = false;
  
   /*TFile* FileCcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/C-CR-csv-mediumJetMuon_CR.root","READ");
   TFile* FileDcrCSV = new TFile("PlotsWithMuonInformation/PromptHistograms/D-CR-csv-mediumJetMuon_CR.root","READ");
@@ -60,7 +61,235 @@ void PlotTDRStyle (){
   TFile* FileEsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/E-SR-deep-rerecoc2.root","READ");
   TFile* FileFsrdeep = new TFile("PlotsWithMuonInformation/ReRecoc2Hist/F-SR-deep-rerecoc2.root","READ");*/
 
+  if (phi){
+    TH1F* phi_befcuts_C_hist_1 = (TH1F*)FileCcrdeep->Get("phi_0");
+    TH1F* phi_befcuts_C_hist_2 = (TH1F*)FileCcrdeep->Get("phi_1");
+    TH1F* phi_befcuts_C_hist_3 = (TH1F*)FileCcrdeep->Get("phi_2");
+    TH1F* phi_befcuts_D_hist_1 = (TH1F*)FileDcrdeep->Get("phi_0");
+    TH1F* phi_befcuts_D_hist_2 = (TH1F*)FileDcrdeep->Get("phi_1");
+    TH1F* phi_befcuts_D_hist_3 = (TH1F*)FileDcrdeep->Get("phi_2");
+    TH1F* phi_befcuts_E_hist_1 = (TH1F*)FileEcrdeep->Get("phi_0");
+    TH1F* phi_befcuts_E_hist_2 = (TH1F*)FileEcrdeep->Get("phi_1");
+    TH1F* phi_befcuts_E_hist_3 = (TH1F*)FileEcrdeep->Get("phi_2");
+    TH1F* phi_befcuts_F_hist_1 = (TH1F*)FileFcrdeep->Get("phi_0");
+    TH1F* phi_befcuts_F_hist_2 = (TH1F*)FileFcrdeep->Get("phi_1");
+    TH1F* phi_befcuts_F_hist_3 = (TH1F*)FileFcrdeep->Get("phi_2");
 
+    TCanvas* phi_befcuts_1_can = style.MakeCanvas("phi_befcuts_1_can","phi 1st jet before cuts",700,700);
+    phi_befcuts_1_can -> SetLogy();
+    style.InitHist(phi_befcuts_C_hist_1,"#phi, before cuts, first jet","Entries",kBlack,0);
+    phi_befcuts_C_hist_1->GetYaxis()->SetRangeUser(10,1000000);
+    phi_befcuts_C_hist_1->Draw();
+    style.InitHist(phi_befcuts_D_hist_1,"#phi, before cuts, first jet","Entries",kRed,0);
+    phi_befcuts_D_hist_1->Draw("SAME");
+    style.InitHist(phi_befcuts_E_hist_1,"#phi, before cuts, first jet","Entries",kBlue,0);
+    phi_befcuts_E_hist_1->Draw("SAME");
+    style.InitHist(phi_befcuts_F_hist_1,"#phi, before cuts, first jet","Entries",kGreen,0);
+    phi_befcuts_F_hist_1->Draw("SAME");
+
+    TLegend* legphi1bc = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi1bc);
+    legphi1bc->SetNColumns(2);
+    legphi1bc->AddEntry(phi_befcuts_C_hist_1,"era C","L");
+    legphi1bc->AddEntry(phi_befcuts_D_hist_1,"era D","L");
+    legphi1bc->AddEntry(phi_befcuts_E_hist_1,"era E","L");
+    legphi1bc->AddEntry(phi_befcuts_F_hist_1,"era F","L");
+    legphi1bc->Draw("SAME");
+
+    TCanvas* phi_befcuts_2_can = style.MakeCanvas("phi_befcuts_2_can","phi 2nd jet before cuts",700,700);
+    phi_befcuts_2_can -> SetLogy();
+    phi_befcuts_C_hist_2->GetYaxis()->SetRangeUser(10,1000000);
+    style.InitHist(phi_befcuts_C_hist_2,"#phi, before cuts, second jet","Entries",kBlack,0);
+    phi_befcuts_C_hist_2->Draw();
+    style.InitHist(phi_befcuts_D_hist_2,"#phi, before cuts, second jet","Entries",kRed,0);
+    phi_befcuts_D_hist_2->Draw("SAME");
+    style.InitHist(phi_befcuts_E_hist_2,"#phi, before cuts, second jet","Entries",kBlue,0);
+    phi_befcuts_E_hist_2->Draw("SAME");
+    style.InitHist(phi_befcuts_F_hist_2,"#phi, before cuts, second jet","Entries",kGreen,0);
+    phi_befcuts_F_hist_2->Draw("SAME");
+
+    TLegend* legphi2bc = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi2bc);
+    legphi2bc->SetNColumns(2);
+    legphi2bc->AddEntry(phi_befcuts_C_hist_2,"era C","L");
+    legphi2bc->AddEntry(phi_befcuts_D_hist_2,"era D","L");
+    legphi2bc->AddEntry(phi_befcuts_E_hist_2,"era E","L");
+    legphi2bc->AddEntry(phi_befcuts_F_hist_2,"era F","L");
+    legphi2bc->Draw("SAME");
+
+    TCanvas* phi_befcuts_3_can = style.MakeCanvas("phi_befcuts_3_can","phi 3rd jet before cuts",700,700);
+    phi_befcuts_3_can -> SetLogy();
+    style.InitHist(phi_befcuts_C_hist_3,"#phi, before cuts, third jet","Entries",kBlack,0);
+    phi_befcuts_C_hist_3->GetYaxis()->SetRangeUser(10,1000000);
+    phi_befcuts_C_hist_3->Draw();
+    style.InitHist(phi_befcuts_D_hist_3,"#phi, before cuts, third jet","Entries",kRed,0);
+    phi_befcuts_D_hist_3->Draw("SAME");
+    style.InitHist(phi_befcuts_E_hist_3,"#phi, before cuts, third jet","Entries",kBlue,0);
+    phi_befcuts_E_hist_3->Draw("SAME");
+    style.InitHist(phi_befcuts_F_hist_3,"#phi, before cuts, third jet","Entries",kGreen,0);
+    phi_befcuts_F_hist_3->Draw("SAME");
+
+    TLegend* legphi3bc = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi3bc);
+    legphi3bc->SetNColumns(2);
+    legphi3bc->AddEntry(phi_befcuts_C_hist_3,"era C","L");
+    legphi3bc->AddEntry(phi_befcuts_D_hist_3,"era D","L");
+    legphi3bc->AddEntry(phi_befcuts_E_hist_3,"era E","L");
+    legphi3bc->AddEntry(phi_befcuts_F_hist_3,"era F","L");
+    legphi3bc->Draw("SAME");
+
+    TH1F* phi_cuts_C_crdeep_hist_1 = (TH1F*)FileCcrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_C_crdeep_hist_2 = (TH1F*)FileCcrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_C_crdeep_hist_3 = (TH1F*)FileCcrdeep->Get("phi_2_csv");
+    TH1F* phi_cuts_D_crdeep_hist_1 = (TH1F*)FileDcrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_D_crdeep_hist_2 = (TH1F*)FileDcrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_D_crdeep_hist_3 = (TH1F*)FileDcrdeep->Get("phi_2_csv");
+    TH1F* phi_cuts_E_crdeep_hist_1 = (TH1F*)FileEcrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_E_crdeep_hist_2 = (TH1F*)FileEcrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_E_crdeep_hist_3 = (TH1F*)FileEcrdeep->Get("phi_2_csv");
+    TH1F* phi_cuts_F_crdeep_hist_1 = (TH1F*)FileFcrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_F_crdeep_hist_2 = (TH1F*)FileFcrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_F_crdeep_hist_3 = (TH1F*)FileFcrdeep->Get("phi_2_csv");
+
+    TH1F* phi_cuts_C_srdeep_hist_1 = (TH1F*)FileCsrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_C_srdeep_hist_2 = (TH1F*)FileCsrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_C_srdeep_hist_3 = (TH1F*)FileCsrdeep->Get("phi_2_csv");
+    TH1F* phi_cuts_D_srdeep_hist_1 = (TH1F*)FileDsrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_D_srdeep_hist_2 = (TH1F*)FileDsrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_D_srdeep_hist_3 = (TH1F*)FileDsrdeep->Get("phi_2_csv");
+    TH1F* phi_cuts_E_srdeep_hist_1 = (TH1F*)FileEsrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_E_srdeep_hist_2 = (TH1F*)FileEsrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_E_srdeep_hist_3 = (TH1F*)FileEsrdeep->Get("phi_2_csv");
+    TH1F* phi_cuts_F_srdeep_hist_1 = (TH1F*)FileFsrdeep->Get("phi_0_csv");
+    TH1F* phi_cuts_F_srdeep_hist_2 = (TH1F*)FileFsrdeep->Get("phi_1_csv");
+    TH1F* phi_cuts_F_srdeep_hist_3 = (TH1F*)FileFsrdeep->Get("phi_2_csv");
+
+    TCanvas* phi_cuts_1_crdeep_can = style.MakeCanvas("phi_cuts_1_crdeep_can","phi 1st jet cuts (CR, deep)",700,700);
+    phi_cuts_1_crdeep_can -> SetLogy();
+    style.InitHist(phi_cuts_C_crdeep_hist_1,"#phi, after cuts, CR, deep CSV, first jet","Entries",kBlack,0);
+    phi_cuts_C_crdeep_hist_1->GetYaxis()->SetRangeUser(10,1000000);
+    phi_cuts_C_crdeep_hist_1->Draw();
+    style.InitHist(phi_cuts_D_crdeep_hist_1,"#phi, after cuts, CR, deep CSV, first jet","Entries",kRed,0);
+    phi_cuts_D_crdeep_hist_1->Draw("SAME");
+    style.InitHist(phi_cuts_E_crdeep_hist_1,"#phi, after cuts, CR, deep CSV, first jet","Entries",kBlue,0);
+    phi_cuts_E_crdeep_hist_1->Draw("SAME");
+    style.InitHist(phi_cuts_F_crdeep_hist_1,"#phi, after cuts, CR, deep CSV, first jet","Entries",kGreen,0);
+    phi_cuts_F_crdeep_hist_1->Draw("SAME");
+
+    TLegend* legphi1acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi1acCRdeep);
+    legphi1acCRdeep->SetNColumns(2);
+    legphi1acCRdeep->AddEntry(phi_cuts_C_crdeep_hist_1,"era C","L");
+    legphi1acCRdeep->AddEntry(phi_cuts_D_crdeep_hist_1,"era D","L");
+    legphi1acCRdeep->AddEntry(phi_cuts_E_crdeep_hist_1,"era E","L");
+    legphi1acCRdeep->AddEntry(phi_cuts_F_crdeep_hist_1,"era F","L");
+    legphi1acCRdeep->Draw("SAME");
+    
+    TCanvas* phi_cuts_2_crdeep_can = style.MakeCanvas("phi_cuts_2_crdeep_can","phi 2nd jet cuts (CR, deep)",700,700);
+    phi_cuts_2_crdeep_can -> SetLogy();
+    style.InitHist(phi_cuts_C_crdeep_hist_2,"#phi, after cuts, CR, deep CSV, second jet","Entries",kBlack,0);
+    phi_cuts_C_crdeep_hist_2->GetYaxis()->SetRangeUser(10,1000000);
+    phi_cuts_C_crdeep_hist_2->Draw();
+    style.InitHist(phi_cuts_D_crdeep_hist_2,"#phi, after cuts, CR, deep CSV, second jet","Entries",kRed,0);
+    phi_cuts_D_crdeep_hist_2->Draw("SAME");
+    style.InitHist(phi_cuts_E_crdeep_hist_2,"#phi, after cuts, CR, deep CSV, second jet","Entries",kBlue,0);
+    phi_cuts_E_crdeep_hist_2->Draw("SAME");
+    style.InitHist(phi_cuts_F_crdeep_hist_2,"#phi, after cuts, CR, deep CSV, second jet","Entries",kGreen,0);
+    phi_cuts_F_crdeep_hist_2->Draw("SAME");
+
+    TLegend* legphi2acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi2acCRdeep);
+    legphi2acCRdeep->SetNColumns(2);
+    legphi2acCRdeep->AddEntry(phi_cuts_C_crdeep_hist_2,"era C","L");
+    legphi2acCRdeep->AddEntry(phi_cuts_D_crdeep_hist_2,"era D","L");
+    legphi2acCRdeep->AddEntry(phi_cuts_E_crdeep_hist_2,"era E","L");
+    legphi2acCRdeep->AddEntry(phi_cuts_F_crdeep_hist_2,"era F","L");
+    legphi2acCRdeep->Draw("SAME");
+    
+    TCanvas* phi_cuts_3_crdeep_can = style.MakeCanvas("phi_cuts_3_crdeep_can","phi 3rd jet cuts (CR, deep)",700,700);
+    phi_cuts_3_crdeep_can -> SetLogy();
+    style.InitHist(phi_cuts_C_crdeep_hist_3,"#phi, after cuts, CR, deep CSV, third jet","Entries",kBlack,0);
+    phi_cuts_C_crdeep_hist_3->GetYaxis()->SetRangeUser(10,1000000);
+    phi_cuts_C_crdeep_hist_3->Draw();
+    style.InitHist(phi_cuts_D_crdeep_hist_3,"#phi, after cuts, CR, deep CSV, third jet","Entries",kRed,0);
+    phi_cuts_D_crdeep_hist_3->Draw("SAME");
+    style.InitHist(phi_cuts_E_crdeep_hist_3,"#phi, after cuts, CR, deep CSV, third jet","Entries",kBlue,0);
+    phi_cuts_E_crdeep_hist_3->Draw("SAME");
+    style.InitHist(phi_cuts_F_crdeep_hist_3,"#phi, after cuts, CR, deep CSV, third jet","Entries",kGreen,0);
+    phi_cuts_F_crdeep_hist_3->Draw("SAME");
+
+    TLegend* legphi3acCRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi3acCRdeep);
+    legphi3acCRdeep->SetNColumns(2);
+    legphi3acCRdeep->AddEntry(phi_cuts_C_crdeep_hist_3,"era C","L");
+    legphi3acCRdeep->AddEntry(phi_cuts_D_crdeep_hist_3,"era D","L");
+    legphi3acCRdeep->AddEntry(phi_cuts_E_crdeep_hist_3,"era E","L");
+    legphi3acCRdeep->AddEntry(phi_cuts_F_crdeep_hist_3,"era F","L");
+    legphi3acCRdeep->Draw("SAME");
+
+    TCanvas* phi_cuts_1_srdeep_can = style.MakeCanvas("phi_cuts_1_srdeep_can","phi 1st jet cuts (SR, deep)",700,700);
+    phi_cuts_1_srdeep_can -> SetLogy();
+    style.InitHist(phi_cuts_C_srdeep_hist_1,"#phi, after cuts, SR, deep CSV, first jet","Entries",kBlack,0);
+    phi_cuts_C_srdeep_hist_1->GetYaxis()->SetRangeUser(10,1000000);
+    phi_cuts_C_srdeep_hist_1->Draw();
+    style.InitHist(phi_cuts_D_srdeep_hist_1,"#phi, after cuts, SR, deep CSV, first jet","Entries",kRed,0);
+    phi_cuts_D_srdeep_hist_1->Draw("SAME");
+    style.InitHist(phi_cuts_E_srdeep_hist_1,"#phi, after cuts, SR, deep CSV, first jet","Entries",kBlue,0);
+    phi_cuts_E_srdeep_hist_1->Draw("SAME");
+    style.InitHist(phi_cuts_F_srdeep_hist_1,"#phi, after cuts, SR, deep CSV, first jet","Entries",kGreen,0);
+    phi_cuts_F_srdeep_hist_1->Draw("SAME");
+
+    TLegend* legphi1acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi1acSRdeep);
+    legphi1acSRdeep->SetNColumns(2);
+    legphi1acSRdeep->AddEntry(phi_cuts_C_srdeep_hist_1,"era C","L");
+    legphi1acSRdeep->AddEntry(phi_cuts_D_srdeep_hist_1,"era D","L");
+    legphi1acSRdeep->AddEntry(phi_cuts_E_srdeep_hist_1,"era E","L");
+    legphi1acSRdeep->AddEntry(phi_cuts_F_srdeep_hist_1,"era F","L");
+    legphi1acSRdeep->Draw("SAME");
+    
+    TCanvas* phi_cuts_2_srdeep_can = style.MakeCanvas("phi_cuts_2_srdeep_can","phi 2nd jet cuts (SR, deep)",700,700);
+    phi_cuts_2_srdeep_can -> SetLogy();
+    style.InitHist(phi_cuts_C_srdeep_hist_2,"#phi, after cuts, SR, deep CSV, second jet","Entries",kBlack,0);
+    phi_cuts_C_srdeep_hist_2->GetYaxis()->SetRangeUser(10,1000000);
+    phi_cuts_C_srdeep_hist_2->Draw();
+    style.InitHist(phi_cuts_D_srdeep_hist_2,"#phi, after cuts, SR, deep CSV, second jet","Entries",kRed,0);
+    phi_cuts_D_srdeep_hist_2->Draw("SAME");
+    style.InitHist(phi_cuts_E_srdeep_hist_2,"#phi, after cuts, SR, deep CSV, second jet","Entries",kBlue,0);
+    phi_cuts_E_srdeep_hist_2->Draw("SAME");
+    style.InitHist(phi_cuts_F_srdeep_hist_2,"#phi, after cuts, SR, deep CSV, second jet","Entries",kGreen,0);
+    phi_cuts_F_srdeep_hist_2->Draw("SAME");
+
+    TLegend* legphi2acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi2acSRdeep);
+    legphi2acSRdeep->SetNColumns(2);
+    legphi2acSRdeep->AddEntry(phi_cuts_C_srdeep_hist_2,"era C","L");
+    legphi2acSRdeep->AddEntry(phi_cuts_D_srdeep_hist_2,"era D","L");
+    legphi2acSRdeep->AddEntry(phi_cuts_E_srdeep_hist_2,"era E","L");
+    legphi2acSRdeep->AddEntry(phi_cuts_F_srdeep_hist_2,"era F","L");
+    legphi2acSRdeep->Draw("SAME");
+
+    TCanvas* phi_cuts_3_srdeep_can = style.MakeCanvas("phi_cuts_3_srdeep_can","phi 3rd jet cuts (SR, deep)",700,700);
+    phi_cuts_3_srdeep_can -> SetLogy();
+    style.InitHist(phi_cuts_C_srdeep_hist_3,"#phi, after cuts, SR, deep CSV, third jet","Entries",kBlack,0);
+    phi_cuts_C_srdeep_hist_3->GetYaxis()->SetRangeUser(10,1000000);
+    phi_cuts_C_srdeep_hist_3->Draw();
+    style.InitHist(phi_cuts_D_srdeep_hist_3,"#phi, after cuts, SR, deep CSV, third jet","Entries",kRed,0);
+    phi_cuts_D_srdeep_hist_3->Draw("SAME");
+    style.InitHist(phi_cuts_E_srdeep_hist_3,"#phi, after cuts, SR, deep CSV, third jet","Entries",kBlue,0);
+    phi_cuts_E_srdeep_hist_3->Draw("SAME");
+    style.InitHist(phi_cuts_F_srdeep_hist_3,"#phi, after cuts, SR, deep CSV, third jet","Entries",kGreen,0);
+    phi_cuts_F_srdeep_hist_3->Draw("SAME");
+
+    TLegend* legphi3acSRdeep = new TLegend(0.35,0.65,0.8,0.9);
+    style.SetLegendStyle(legphi3acSRdeep);
+    legphi3acSRdeep->SetNColumns(2);
+    legphi3acSRdeep->AddEntry(phi_cuts_C_srdeep_hist_3,"era C","L");
+    legphi3acSRdeep->AddEntry(phi_cuts_D_srdeep_hist_3,"era D","L");
+    legphi3acSRdeep->AddEntry(phi_cuts_E_srdeep_hist_3,"era E","L");
+    legphi3acSRdeep->AddEntry(phi_cuts_F_srdeep_hist_3,"era F","L");
+    legphi3acSRdeep->Draw("SAME");
+  }
 
   if (masses){//only CR, SR should be blinded for data (ok to look at it for MC, since that is what MC is for)
     TH1F* m12_bc_C_deep_hist = (TH1F*)FileCcrdeep->Get("m12");

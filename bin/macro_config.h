@@ -15,6 +15,7 @@ std::string cfg_;
 int nevtmax_;
 int nlumis_;
 bool isMC_;
+bool invertCutflow_;
 bool signalregion_;
 std::string inputlist_;
 std::string outputRoot_;
@@ -184,6 +185,7 @@ int macro_config(int argc, char * argv[])
 	("ptImbalanceMax",po::value <float> (&ptimbalmax_)->default_value(1000.),"Maximum relative imbalance between two candidates")
 	//      
 	("isMC",po::value <bool> (&isMC_)->default_value(true),"Flag for MC dataset")
+	("invertCutflow",po::value <bool> (&invertCutflow_)->default_value(false),"Flag for inverting Cutflow (placing trigger as last step)")
 	("signalRegion",po::value <bool> (&signalregion_)->default_value(true),"Flag for signal region")
 	("hltPath",po::value <std::string> (&hltPath_),"HLT path name")
 	("l1Seed",po::value <std::string> (&l1Seed_)->default_value(""),"L1 seed name")

@@ -82,6 +82,16 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
       style.InitHist(hist_rereco, xtitle.c_str(),"Entries / 0.01 ",kRed,0);
       hist_rereco -> Rebin(5);
     }
+    else if ( (var_ == "eta_0") || (var_ == "eta_1") || (var_ == "eta_0_csv") || (var_ == "eta_1_csv") ){
+      c1 -> SetLogy();
+      style.InitHist(hist_prompt, xtitle.c_str(),"Entries / 0.1 ",kBlue,0);
+      style.InitHist(hist_rereco, xtitle.c_str(),"Entries / 0.1 ",kRed,0);
+    }
+    else if ( (var_ == "phi_0") || (var_ == "phi_1") || (var_ == "phi_0_csv") || (var_ == "phi_1_csv") ){
+      style.InitHist(hist_prompt, xtitle.c_str(),"Entries / 0.08 ",kBlue,0);
+      style.InitHist(hist_rereco, xtitle.c_str(),"Entries / 0.08 ",kRed,0);
+      //TGaxis::SetMaxDigits(3);
+    }
   else
     {
       style.InitHist(hist_prompt, xtitle.c_str(),"Entries / 20 GeV ",kBlue,0);
@@ -101,7 +111,7 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   rp -> GetLowerRefGraph() -> SetMarkerSize(1);
   
   rp -> SetRightMargin(0.05);
-  rp -> SetUpTopMargin(0.055); // 0.03
+  rp -> SetUpTopMargin(0.08); // 0.03
   rp -> SetLeftMargin(0.13);
   rp -> SetSeparationMargin(0.07);
   rp -> SetLowBottomMargin(0.4); 
@@ -130,19 +140,23 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   rp -> GetLowYaxis() -> SetNdivisions(505);
   rp -> GetUpperPad() -> cd();
   
-  TLegend* leg = new TLegend(0.58,0.63,0.98,0.93);
+  TLegend* leg = new TLegend(0.58,0.6,0.98,0.9);
   style.SetLegendStyle(leg);
   if (era_ == "CDEF"){
-  leg -> AddEntry(hist_prompt,"2017 Prompt","L");
-  leg -> AddEntry(hist_rereco,"2017 ReReco","L");
+    leg -> AddEntry(hist_prompt,"2017 Prompt","L");
+    leg -> AddEntry(hist_rereco,"2017 ReReco","L");
+  }
+  else if (era_ == "CDE"){
+    leg -> AddEntry(hist_prompt,"Eras C to E, Prompt","L");
+    leg -> AddEntry(hist_rereco,"Eras C to E, ReReco","L");
   }
   else{
-  leg -> AddEntry(hist_prompt,("Era "+era+ ", Prompt").c_str(),"L");
-  leg -> AddEntry(hist_rereco,("Era "+era+ ", ReReco").c_str(),"L");
+    leg -> AddEntry(hist_prompt,("Era "+era+ ", Prompt").c_str(),"L");
+    leg -> AddEntry(hist_rereco,("Era "+era+ ", ReReco").c_str(),"L");
   }
   leg -> Draw("SAME");
   
-  CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.78);
+  CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.75);
 
   c1 -> Update();
   c1 -> SaveAs(("Outputdata/CompReco_"+ var_+ "-" + era_ + "-" + region +".pdf").c_str());
