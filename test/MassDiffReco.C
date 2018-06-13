@@ -37,14 +37,14 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   const float yRlow  = yRlow_;
   const float yRhigh = yRhigh_;
 
-  float lumi = 36.1; // all 2017 C to F
+  float lumi = 36.0; // all 2017 C to F
 
   if ( era_ == "C"   ) lumi = 9.58;
   if ( era_ == "D"   ) lumi = 4.22;
   if ( era_ == "E"   ) lumi = 8.85;
   if ( era_ == "F"   ) lumi = 13.5;
   if ( era_ == "CD"  ) lumi = 13.8;
-  if ( era_ == "CDE" ) lumi = 22.7;
+  if ( era_ == "CDE" ) lumi = 22.6;
  
 
   TFile * f1 = new TFile( ("rootfiles/prompt/prompt-"+era_+"-deep-"+region+".root").c_str(),"READ");//prompt
@@ -140,7 +140,7 @@ int MassDiffReco( string era_, string var_, string region_ , string xtitle_, flo
   rp -> GetLowYaxis() -> SetNdivisions(505);
   rp -> GetUpperPad() -> cd();
   
-  TLegend* leg = new TLegend(0.58,0.6,0.98,0.9);
+  TLegend* leg = new TLegend(0.37,0.6,0.78,0.9);
   style.SetLegendStyle(leg);
   if (era_ == "CDEF"){
     leg -> AddEntry(hist_prompt,"2017 Prompt","L");

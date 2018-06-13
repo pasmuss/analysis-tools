@@ -22,3 +22,6 @@ test/ConfigPrompt
 test/ConfigRerecoNewJSON/
 test/Results_Apr_26_Prompt_ReReco_MCsig_MCbg/
 test/PlotsWithMuonInformation/
+test/Outputdata/
+test/OtherConfigs/
+test/Condor_*/

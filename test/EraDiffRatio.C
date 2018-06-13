@@ -16,7 +16,7 @@
 
 using namespace std;
 
-int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string region_ , string xtitle_, float xlow_ ,float xhigh_ , float ylow_ ,float yhigh_ , float yRlow_ ,float yRhigh_  )
+int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string region_ , string xtitle_, float xlow_ ,float xhigh_ , float ylow_ ,float yhigh_ , float yRlow_ ,float yRhigh_ , double sfe1_, double sfe2_  )
 {
 
   HbbStylesNew style;
@@ -62,23 +62,39 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   if ( (var_ == "m12_csv") || (var_ == "m12") )
     {
       c1 -> SetLogy();
-      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 60 GeV ",kBlue,0);
+      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 60 GeV",kBlue,0);
       hist_era1 -> Rebin(3);
-      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 60 GeV ",kRed,0);
+      if (sfe1_) hist_era1 -> Scale(sfe1_);
+      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 60 GeV",kRed,0);
       hist_era2 -> Rebin(3);
+      if (sfe2_) hist_era2 -> Scale(sfe2_);
     }
   else if ( (var_ == "pt_0_csv") || (var_ == "pt_0") || (var_ == "pt_1_csv") || (var_ == "pt_1") )
     {
       c1 -> SetLogy();
-      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 50 GeV ",kBlue,0);
+      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 50 GeV",kBlue,0);
       hist_era1 -> Rebin(5);
-      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 50 GeV ",kRed,0);
+      if (sfe1_) hist_era1 -> Scale(sfe1_);
+      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 50 GeV",kRed,0);
       hist_era2 -> Rebin(5);
+      if (sfe2_) hist_era2 -> Scale(sfe2_);
+    }
+    else if ( (var_ == "deepcsvbtag_0_csv") || (var_ == "deepcsvbtag_0") || (var_ == "deepcsvbtag_1_csv") || (var_ == "deepcsvbtag_1") )
+    {
+      c1 -> SetLogy();
+      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 0.01",kBlue,0);
+      hist_era1 -> Rebin(5);
+      if (sfe1_) hist_era1 -> Scale(sfe1_);
+      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 0.01",kRed,0);
+      hist_era2 -> Rebin(5);
+      if (sfe2_) hist_era2 -> Scale(sfe2_);
     }
   else
     {
-      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 10 GeV ",kBlue,0);
-      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 10 GeV ",kRed,0);
+      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 10 GeV",kBlue,0);
+      if (sfe1_) hist_era1 -> Scale(sfe1_);
+      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 10 GeV",kRed,0);
+      if (sfe2_) hist_era2 -> Scale(sfe2_);
     }
 
   //Ratio plot
@@ -123,7 +139,8 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   rp -> GetLowYaxis() -> SetNdivisions(505);
   rp -> GetUpperPad() -> cd();
   
-  TLegend* leg = new TLegend(0.65,0.6,0.95,0.9);
+  //TLegend* leg = new TLegend(0.57,0.6,0.87,0.9);
+  TLegend* leg = new TLegend(0.406,0.575,0.706,0.876);//b tag
   style.SetLegendStyle(leg);
   if ( (var_ == "pt_0_csv") || (var_ == "pt_0") ) {
     leg -> AddEntry(hist_era1,("p_{T}, 1^{st} jet, Era "+era1_).c_str(),"L");
@@ -136,6 +153,14 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   else if ( (var_ == "m12_csv") || (var_ == "m12") ) {
     leg -> AddEntry(hist_era1,("m_{12}, Era "+era1_).c_str(),"L");
     leg -> AddEntry(hist_era2,("m_{12}, Era "+era2_).c_str(),"L");
+  }
+  else if ( (var_ == "deepcsvbtag_0_csv") || (var_ == "deepcsvbtag_0") ) {
+    leg -> AddEntry(hist_era1,("b tag disc., 1^{st} jet, Era "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("b tag disc., 1^{st} jet, Era "+era2_).c_str(),"L");
+  }
+  else if ( (var_ == "deepcsvbtag_1_csv") || (var_ == "deepcsvbtag_1") ) {
+    leg -> AddEntry(hist_era1,("b tag disc., 2^{nd} jet, Era "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("b tag disc., 2^{nd} jet, Era "+era2_).c_str(),"L");
   }
   else{
   leg -> AddEntry(hist_era1,(var_+", Era "+era1_).c_str(),"L");

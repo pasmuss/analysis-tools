@@ -27,11 +27,9 @@ cat > $1.zsh <<EOF
 #$ -o $1.out
 #
 #$ -e $1.err
-which SimpleMssmHbbAnalysis
-echo $3
 $2 -c $3
 
 EOF
 
 chmod u+x $1.zsh
-qsub -q "short.q" $1.zsh
+qsub -q "default.q" $1.zsh

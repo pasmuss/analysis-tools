@@ -25,8 +25,8 @@ int main(int argc, char * argv[])
   TH1::SetDefaultSumw2();  // proper treatment of errors when scaling histograms
    
   // Cuts
-  float btagmin[3] = { btagwp_, btagwp_, btagwp_};
-   
+  float btagmin[4] = { btagwp_, btagwp_, btagwp_, btagwp_ };
+
   // Input files list
   Analysis analysis(inputlist_);
 
@@ -72,10 +72,11 @@ int main(int argc, char * argv[])
   txtoutputfile.open("output.txt",ios::app);
    
   std::map<std::string, TH1F*> h1;
-  h1["n"]             = new TH1F("n"             , "" , 30, 0, 30);
-  h1["n_csv"]         = new TH1F("n_csv"         , "" , 30, 0, 30);
-  h1["n_ptmin20"]     = new TH1F("n_ptmin20"     , "" , 30, 0, 30);
-  h1["n_ptmin20_csv"] = new TH1F("n_ptmin20_csv" , "" , 30, 0, 30);
+  h1["noofevents_h"]      = new TH1F("noofevents_h", "" ,  3, 0,  3);
+  h1["n"]                 = new TH1F("n"               , "" , 30, 0, 30);
+  h1["n_csv"]             = new TH1F("n_csv"           , "" , 30, 0, 30);
+  h1["n_ptmin20"]         = new TH1F("n_ptmin20"       , "" , 30, 0, 30);
+  h1["n_ptmin20_csv"]     = new TH1F("n_ptmin20_csv"   , "" , 30, 0, 30);
 
   h1["jetswomu"] = new TH1F("jetswomu" , "" , 30, 0, 30);
   
@@ -145,9 +146,13 @@ int main(int argc, char * argv[])
   int nsel[10] = { };
   int nmatch[10] = { };
 
+  int noofeventsstart = 0;
+
   if ( nevtmax_ < 0 ) nevtmax_ = analysis.size();
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
+      noofeventsstart ++;
+
       int njets = 0;
       int njets_csv = 0;
       int nmuons = 0;
@@ -178,7 +183,7 @@ int main(int argc, char * argv[])
       if (!invertCutflow_) ++nsel[0]; //also for MC: equals no. of events then
       
       // match offline to online
-      analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
+      //analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
@@ -252,14 +257,14 @@ int main(int argc, char * argv[])
 	  else if (btagalgo == "deep_csv") btagdisc = jet->btag("btag_deepb") + jet->btag("btag_deepbb");
 	  else return -1;
          
-	  if ( j < 2 && btagdisc < btagmin[j] )     goodEvent = false;
+	  if ( j < 2 && btagdisc < btagmin[j] )      goodEvent = false;
 	  if ( ! signalregion_ )
 	    {
-	      if ( j == 2 && btagdisc > nonbtagwp_ )    goodEvent = false; 
+	      if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false; 
 	    }
 	  else
 	    {
-	      if ( j == 2 && btagdisc < btagmin[j] ) goodEvent = false; 
+	      if ( j >= 2 && btagdisc < btagmin[j] ) goodEvent = false; 
 	    }
 	}
       
@@ -271,12 +276,16 @@ int main(int argc, char * argv[])
       
       
       // Is matched?
+      analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
       
-      //if (run > run_crit) triggerObjects_.;
-      //else if (run <= run_crit) triggerObjects_.;
-      //else cout << "What the fuck is happening here?" << endl;
-      
+      //last step of cutflow for MC: trigger
+      if(isMC_ || invertCutflow_){
+	int triggerFired = analysis.triggerResult(hltPath_);
+	if ( !triggerFired ) continue;
+	//++nsel[7];
+      }
+
       for ( int j = 0; j < 2; ++j )
 	{
 	  Jet * jet = selectedJets[j];
@@ -298,14 +307,7 @@ int main(int argc, char * argv[])
       
       if ( ! goodEvent ) continue;
       h1["3rdJet_pT_step6"] -> Fill( selectedJets[2]->pt() );
-      ++nsel[6];
-
-      //last step of cutflow for MC: trigger
-      if(isMC_ || invertCutflow_){
-	int triggerFired = analysis.triggerResult(hltPath_);
-	if ( !triggerFired ) continue;
-	++nsel[7];
-      }
+      ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
      
       // Fill histograms of passed bbnb btagging selection
       for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
@@ -370,7 +372,11 @@ int main(int argc, char * argv[])
 	  if (!muonpresent) ++nomujet;
 	}//end: loop over muons
     }//end: event loop
-   
+
+  h1["noofevents_start"] -> SetBinContent(1,noofeventsstart); //total number of events
+  h1["noofevents_start"] -> SetBinContent(2,nsel[0]); //triggered
+  h1["noofevents_start"] -> SetBinContent(3,nsel[6]); //final selection
+
   for (auto & ih1 : h1)
     {
       ih1.second -> Write();
@@ -380,7 +386,7 @@ int main(int argc, char * argv[])
 
   // Cut flow
   // 0: triggered events (MC: no. of events)
-  // 1: 3+ idloose jets
+  // 1: 3+ or 4+ idloose jets
   // 2: kinematics
   // 3: delta R(ij)
   // 4: delta eta(12) (up to this point: purely kinematics)
@@ -393,18 +399,20 @@ int main(int argc, char * argv[])
   std::string cuts[10];
   cuts[0] = "Triggered";
   if (isMC_) cuts[0] = "Number of events";
-  cuts[1] = "Triple idloose-jet";
-  cuts[2] = "Triple jet kinematics";
+  cuts[1] = "Triple/quadruple idloose-jet";
+  cuts[2] = "Triple/quadruple jet kinematics";
   cuts[3] = "Delta R(i;j)";
   cuts[4] = "Delta eta(j1;j2)";
-  cuts[5] = "btagged (bbnb)";
-  if ( signalregion_ ) cuts[5] = "btagged (bbb)";
+  cuts[5] = "btagged (bbnb/bbnbnb)";
+  if (signalregion_) cuts[5] = "btagged (bbb/bbbb)";
   cuts[6] = "Matched to online j1;j2";
-  if (isMC_ || invertCutflow_) cuts[7] = "Triggered";
+  if (invertCutflow_) cuts[6] = "Trigger and matching j1;j2";
+  //if (isMC_ || invertCutflow_) cuts[7] = "Triggered";
 
   printf ("%-23s  %10s  %10s  %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
   txtoutputfile << "Cut flow " << "# events " << "absolute " << "relative" << endl;
-  if (!isMC_){
+  //if (!isMC_){
+  if (!invertCutflow_){
     for ( int i = 0; i < 7; ++i )
       {
 	fracAbs[i] = double(nsel[i])/nsel[0];
@@ -418,8 +426,8 @@ int main(int argc, char * argv[])
 	txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
 	h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
       }
-  }
-  else if (isMC_){
+    }
+  /* else if (isMC_){
     for ( int i = 0; i < 8; ++i )
       {
 	fracAbs[i] = double(nsel[i])/nsel[0];
@@ -431,9 +439,9 @@ int main(int argc, char * argv[])
 	txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
 	h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
       }
-  }
+      }*/
   else if (invertCutflow_){
-    for ( int i = 1; i < 8; ++i )
+    for ( int i = 1; i < 7; ++i )
       {
 	fracAbs[i] = double(nsel[i])/nsel[1];
 	if ( i>1 )

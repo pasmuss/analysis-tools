@@ -17,7 +17,7 @@ endif
 
 set json = $5
 
-set maindir = "Condor_"$macro"_"`basename $config .cfg`
+set maindir = "NAF_"$macro"_"`basename $config .cfg`
 
 if ( -d $maindir ) then
    echo "$maindir exist, rename or remove it and then resubmit" 
@@ -50,7 +50,7 @@ foreach file ( $files )
    if ( $json != "" ) then
       cp -p ../../$json .
    endif
-   condor_submit.csh "job_"$counter $macro `basename $config`
+   qsub.sh "job_"$counter $macro `basename $config`
    sleep 0.2
    cd -
 end
