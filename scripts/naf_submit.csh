@@ -1,23 +1,33 @@
 #!/bin/csh -f
 
-if ( $#argv < 4 ) then
-   echo Need to give sample name, the macro name, the config file name and the number of splits
+if ( $#argv < 3 ) then
+   echo 'Need to give the parameters in this order:'
+   echo 'Macro name, sample file name (e.g.rootFileList.txt), number of files per job'
+   echo 'Optionally: configuration file name and json file name'
    exit
 endif
 
-set rootfilelist = $1
-set macro = $2
-set config = $3
-set nsplit = $4
+set macro = $1
+set rootfilelist = $2
+set nsplit = $3
+set config = ""
 set json = ""
 
+
+if ( $#argv == 4 ) then
+   set config = $4
+endif
+
 if ( $#argv == 5 ) then
+   set config = $4
    set json = $5
 endif
 
-set json = $5
+set maindir = "Condor_"$macro
+if ( $config != "" ) then
+   set maindir = "Condor_"$macro"_"`basename $config .cfg`
+endif
 
-set maindir = "Condor_"$macro"_"`basename $config .cfg`
 
 if ( -d $maindir ) then
    echo "$maindir exist, rename or remove it and then resubmit" 
@@ -45,12 +55,17 @@ foreach file ( $files )
    endif
    mkdir -p $exedir
    cd $exedir
-   mv ../../$tmpdir/$file ./rootFileList.txt
-   cp -p ../../$config .
+   mv ../../$tmpdir/$file ./$rootfilelist
    if ( $json != "" ) then
       cp -p ../../$json .
    endif
-   condor_submit.csh "job_"$counter $macro `basename $config`
+   if ( $config == "" ) then
+      condor_submit.csh "job_"$counter $macro
+   else
+      cp -p ../../$config .
+      condor_submit.csh "job_"$counter $macro `basename $config`
+   endif
+   
    sleep 0.2
    cd -
 end
@@ -58,5 +73,8 @@ end
 rm -fR $tmpdir
 
 exit
+
+
+
 
 #./qsub.sh $exeName $sampleName

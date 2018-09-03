@@ -40,7 +40,7 @@ private:
   static double textSize_;
 };
 
-double HbbStylesNew::textSize_ = 0.05;
+double HbbStylesNew::textSize_ = 0.03;
 
 void HbbStylesNew::SetStyle()
 {
@@ -232,8 +232,8 @@ void CMSPrelim(const char* dataset, const char* status, double lowX, double lowY
   cmsprel->AddText("CMS");
   cmsprel->Draw();
 
-  //TPaveText* lumi     = new TPaveText(lowX+0.54, lowY+0.15, lowX+0.85, lowY+0.26, "NDC");
-  TPaveText* lumi = new TPaveText(lowX+0.35, lowY+0.14, lowX+0.7, lowY+0.25, "NDC"); // for Simulation
+  TPaveText* lumi     = new TPaveText(lowX+0.44, lowY+0.15, lowX+0.85, lowY+0.26, "NDC");
+  //TPaveText* lumi = new TPaveText(lowX+0.35, lowY+0.14, lowX+0.7, lowY+0.25, "NDC"); // for Simulation
   lumi->SetBorderSize(   0 );
   lumi->SetFillStyle(    0 );
   lumi->SetTextAlign(   12 );

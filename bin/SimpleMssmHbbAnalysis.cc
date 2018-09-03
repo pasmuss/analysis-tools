@@ -24,9 +24,6 @@ int main(int argc, char * argv[])
    
   TH1::SetDefaultSumw2();  // proper treatment of errors when scaling histograms
    
-  // Cuts
-  float btagmin[4] = { btagwp_, btagwp_, btagwp_, btagwp_ };
-
   // Input files list
   Analysis analysis(inputlist_);
 
@@ -72,7 +69,7 @@ int main(int argc, char * argv[])
   txtoutputfile.open("output.txt",ios::app);
    
   std::map<std::string, TH1F*> h1;
-  h1["noofevents_h"]      = new TH1F("noofevents_h", "" ,  3, 0,  3);
+  h1["noofevents_h"]      = new TH1F("noofevents_h"    , "" , 10, 0, 10);
   h1["n"]                 = new TH1F("n"               , "" , 30, 0, 30);
   h1["n_csv"]             = new TH1F("n_csv"           , "" , 30, 0, 30);
   h1["n_ptmin20"]         = new TH1F("n_ptmin20"       , "" , 30, 0, 30);
@@ -82,34 +79,27 @@ int main(int argc, char * argv[])
   
   h1["n_muons"] = new TH1F("n_muons" , "" , 30, 0, 30);
   h1["pt_mu"]   = new TH1F("pt_mu"   , "" , 150, 0, 1500);
-  h1["eta_mu"]  = new TH1F("eta_mu"  , "" , 100, -5, 5);
+  h1["eta_mu"]  = new TH1F("eta_mu"  , "" , 120, -6, 6);
   
-  h1["dR_muj"]  = new TH1F("dR_muj" , "" , 100, 0, 0.5);
-  h1["dR_muj0"] = new TH1F("dR_muj0", "" , 100, 0, 0.5);
-  h1["dR_muj1"] = new TH1F("dR_muj1", "" , 100, 0, 0.5);
-
-  h1["3rdJet_pT_step1"] = new TH1F("3rdJet_pT_step1", "", 200, 0, 2000);//triggered jets, at least 3 id loose jets
-  h1["3rdJet_pT_step2"] = new TH1F("3rdJet_pT_step2", "", 200, 0, 2000);//pT and eta
-  h1["3rdJet_pT_step3"] = new TH1F("3rdJet_pT_step3", "", 200, 0, 2000);//DR(ij)
-  h1["3rdJet_pT_step4"] = new TH1F("3rdJet_pT_step4", "", 200, 0, 2000);//Deta(12)
-  h1["3rdJet_pT_step5"] = new TH1F("3rdJet_pT_step5", "", 200, 0, 2000);//btag
-  h1["3rdJet_pT_step6"] = new TH1F("3rdJet_pT_step6", "", 200, 0, 2000);//matching
+  h1["dR_muj"]  = new TH1F("dR_muj" , "" , 120, 0, 0.6);
+  h1["dR_muj0"] = new TH1F("dR_muj0", "" , 120, 0, 0.6);
+  h1["dR_muj1"] = new TH1F("dR_muj1", "" , 120, 0, 0.6);
 
   h1["cutflow"]              = new TH1F("cutflow"  , "", 10, 0, 10);
    
   for ( int i = 0 ; i < njetsmin_ ; ++i )
     {
-      h1[Form("pt_%i",i)]          = new TH1F(Form("pt_%i",i)          , "" , 200, 0, 2000);
-      h1[Form("eta_%i",i)]         = new TH1F(Form("eta_%i",i)         , "" , 100, -5, 5);
-      h1[Form("phi_%i",i)]         = new TH1F(Form("phi_%i",i)         , "" , 100, -4, 4);
-      h1[Form("btag_%i",i)]        = new TH1F(Form("btag_%i",i)        , "" , 500, 0, 1);
-      h1[Form("deepcsvbtag_%i",i)] = new TH1F(Form("deepcsvbtag_%i",i) , "" , 500, 0, 1);
+      h1[Form("pt_%i",i)]          = new TH1F(Form("pt_%i",i)          , "" , 210, 0, 2100);
+      h1[Form("eta_%i",i)]         = new TH1F(Form("eta_%i",i)         , "" , 120, -6, 6);
+      h1[Form("phi_%i",i)]         = new TH1F(Form("phi_%i",i)         , "" , 120, -6, 6);
+      h1[Form("btag_%i",i)]        = new TH1F(Form("btag_%i",i)        , "" , 600, 0, 1.2);
+      h1[Form("deepcsvbtag_%i",i)] = new TH1F(Form("deepcsvbtag_%i",i) , "" , 600, 0, 1.2);
       
-      h1[Form("pt_%i_csv",i)]     = new TH1F(Form("pt_%i_csv",i)               , "" , 200, 0, 2000);
-      h1[Form("eta_%i_csv",i)]    = new TH1F(Form("eta_%i_csv",i)              , "" , 100, -5, 5);
-      h1[Form("phi_%i_csv",i)]    = new TH1F(Form("phi_%i_csv",i)              , "" , 100, -4, 4);
-      h1[Form("btag_%i_csv",i)]   = new TH1F(Form("btag_%i_csv",i)             , "" , 500, 0, 1);
-      h1[Form("deepcsvbtag_%i_csv",i)] = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 500, 0, 1);
+      h1[Form("pt_%i_csv",i)]     = new TH1F(Form("pt_%i_csv",i)               , "" , 210, 0, 2100);
+      h1[Form("eta_%i_csv",i)]    = new TH1F(Form("eta_%i_csv",i)              , "" , 120, -6, 6);
+      h1[Form("phi_%i_csv",i)]    = new TH1F(Form("phi_%i_csv",i)              , "" , 120, -6, 6);
+      h1[Form("btag_%i_csv",i)]   = new TH1F(Form("btag_%i_csv",i)             , "" , 600, 0, 1.2);
+      h1[Form("deepcsvbtag_%i_csv",i)] = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 600, 0, 1.2);
     }
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
   h1["m12_csv"]           = new TH1F("m12_csv"           , "" , 150, 0, 3000);
@@ -149,16 +139,17 @@ int main(int argc, char * argv[])
   int noofeventsstart = 0;
 
   if ( nevtmax_ < 0 ) nevtmax_ = analysis.size();
+
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
       noofeventsstart ++;
 
       int njets = 0;
       int njets_csv = 0;
-      int nmuons = 0;
-      int nomujet = 0;
+      //int nmuons = 0;
+      //int nomujet = 0;
       bool goodEvent = true;
-      bool muonpresent = false;
+      //bool muonpresent = false;
 
       if ( i > 0 && i%1000000==0 ){
 	std::cout << i << " events processed!" << std::endl;
@@ -182,9 +173,6 @@ int main(int argc, char * argv[])
 
       if (!invertCutflow_) ++nsel[0]; //also for MC: equals no. of events then
       
-      // match offline to online
-      //analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
-      
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
       std::vector<Jet *> selectedJets;
@@ -192,11 +180,13 @@ int main(int argc, char * argv[])
 	{
 	  if ( slimmedJets->at(j).idLoose() ) selectedJets.push_back(&slimmedJets->at(j));
 	}
+
+      //at least 3/4 jets present
       if ( (int)selectedJets.size() < njetsmin_ ) continue;
-      h1["3rdJet_pT_step1"] -> Fill( selectedJets[2]->pt() );
+
       ++nsel[1];
       
-      // Kinematic selection - 3 leading jets
+      // Kinematic selection - 3/4 leading jets
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
@@ -208,7 +198,6 @@ int main(int argc, char * argv[])
 	}
       
       if ( ! goodEvent ) continue;
-      h1["3rdJet_pT_step2"] -> Fill( selectedJets[2]->pt() );
       ++nsel[2];
       
       for ( int j1 = 0; j1 < njetsmin_-1; ++j1 )
@@ -216,17 +205,15 @@ int main(int argc, char * argv[])
 	  const Jet & jet1 = *selectedJets[j1];
 	  for ( int j2 = j1+1; j2 < njetsmin_; ++j2 )
 	    {
-	      const Jet & jet2 = *selectedJets[j2];//if the two leading jets are too close together: no good event
+	      const Jet & jet2 = *selectedJets[j2];//if two jets are too close together: no good event
 	      if ( jet1.deltaR(jet2) < drmin_ ) goodEvent = false;
 	    }
 	}
       
       if ( ! goodEvent ) continue;
-      h1["3rdJet_pT_step3"] -> Fill( selectedJets[2]->pt() );
       ++nsel[3];
       
       if ( fabs(selectedJets[0]->eta() - selectedJets[1]->eta()) > detamax_ ) continue;
-      h1["3rdJet_pT_step4"] -> Fill( selectedJets[2]->pt() );
       ++nsel[4];
       
       
@@ -240,7 +227,6 @@ int main(int argc, char * argv[])
       h1["n"] -> Fill(selectedJets.size());
       h1["n_ptmin20"] -> Fill(njets);
 
-
       //b tagging
       for ( int j = 0; j < njetsmin_; ++j )
 	{
@@ -250,28 +236,30 @@ int main(int argc, char * argv[])
 	  h1[Form("phi_%i",j)]  -> Fill(jet->phi());
 	  h1[Form("btag_%i",j)] -> Fill(jet->btag());
 	  h1[Form("deepcsvbtag_%i",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
-	 
+	  
 	  float btagdisc;
 
 	  if (btagalgo == "csv") btagdisc = jet->btag();
 	  else if (btagalgo == "deep_csv") btagdisc = jet->btag("btag_deepb") + jet->btag("btag_deepbb");
 	  else return -1;
-         
-	  if ( j < 2 && btagdisc < btagmin[j] )      goodEvent = false;
-	  if ( ! signalregion_ )
+	  
+	  if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;
+	  if ( ! signalregion_ )//CR 3 jet categroy: bbnb (3rd must not be b tagged); 4 jet cat: bbnbb
 	    {
-	      if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false; 
+	      if ( j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must never be b tagged in CR
+	      if ( njetsmin_ > 3 ){
+		if ( j > 2 && btagdisc < btagwp_ ) goodEvent = false;//4th jet should be b tagged again
+	      }
 	    }
-	  else
+	  else//SR: all 3/4 jets b tagged
 	    {
-	      if ( j >= 2 && btagdisc < btagmin[j] ) goodEvent = false; 
+	      if ( j >= 2 && btagdisc < btagwp_ ) goodEvent = false; 
 	    }
 	}
       
       h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M());
       
       if ( ! goodEvent ) continue;
-      h1["3rdJet_pT_step5"] -> Fill( selectedJets[2]->pt() );
       ++nsel[5];
       
       
@@ -306,7 +294,6 @@ int main(int argc, char * argv[])
 	}
       
       if ( ! goodEvent ) continue;
-      h1["3rdJet_pT_step6"] -> Fill( selectedJets[2]->pt() );
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
      
       // Fill histograms of passed bbnb btagging selection
@@ -337,7 +324,7 @@ int main(int argc, char * argv[])
 
       // Check for muons in the jets
       
-      std::vector<Muon *> selectedMuons;
+      /*std::vector<Muon *> selectedMuons;
       auto slimmedMuons = analysis.collection<Muon>("Muons");
       for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
 	{
@@ -370,12 +357,17 @@ int main(int argc, char * argv[])
 	      break;
 	    }
 	  if (!muonpresent) ++nomujet;
-	}//end: loop over muons
+	  }*/ //end: loop over muons
     }//end: event loop
 
-  h1["noofevents_start"] -> SetBinContent(1,noofeventsstart); //total number of events
-  h1["noofevents_start"] -> SetBinContent(2,nsel[0]); //triggered
-  h1["noofevents_start"] -> SetBinContent(3,nsel[6]); //final selection
+  h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
+  h1["noofevents_h"] -> SetBinContent(2,nsel[0]); //triggered
+  h1["noofevents_h"] -> SetBinContent(3,nsel[1]); //3/4 jets (loose)
+  h1["noofevents_h"] -> SetBinContent(4,nsel[2]); //kin
+  h1["noofevents_h"] -> SetBinContent(5,nsel[3]); //dR
+  h1["noofevents_h"] -> SetBinContent(6,nsel[4]); //deta
+  h1["noofevents_h"] -> SetBinContent(7,nsel[5]); //btag
+  h1["noofevents_h"] -> SetBinContent(8,nsel[6]); //final selection (perhaps trigger; matching)
 
   for (auto & ih1 : h1)
     {
@@ -461,14 +453,6 @@ int main(int argc, char * argv[])
   printf ("%-23s , %10s , %10s , %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
   for ( int i = 0; i < 7; ++i )
     printf ("%-23s , %10d , %10.3f , %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] );
-
-  // Trigger objects counts   
-  //std::cout << std::endl;
-  //printf ("%-40s  %10s \n", std::string("Trigger object").c_str(), std::string("# events").c_str() ); 
-  //   for ( size_t io = 0; io < triggerObjects_.size() ; ++io )
-  //   {
-  //      printf ("%-40s  %10d \n", triggerObjects_[io].c_str(), nmatch[io] ); 
-  //   }   
 
 } //end main
 

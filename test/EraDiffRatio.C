@@ -16,7 +16,7 @@
 
 using namespace std;
 
-int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string region_ , string xtitle_, float xlow_ ,float xhigh_ , float ylow_ ,float yhigh_ , float yRlow_ ,float yRhigh_ , double sfe1_, double sfe2_  )
+int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string region_ , string xtitle_, float xlow_ ,float xhigh_ , float ylow_ ,float yhigh_ , float yRlow_ ,float yRhigh_/* , double sfe1_, double sfe2_  */)
 {
 
   HbbStylesNew style;
@@ -47,14 +47,14 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   if ( (era1_ == "E" && era2_ == "F") || (era1_ == "F" && era2_ == "E") ) lumi = 22.4;
  
 
-  TFile * f1 = new TFile( ("rootfiles/"+reco+"/"+reco+"-"+era1_+"-deep-"+region+".root").c_str(),"READ");//era 1
-  TFile * f2 = new TFile( ("rootfiles/"+reco+"/"+reco+"-"+era2_+"-deep-"+region+".root").c_str(),"READ");//era 2
+  TFile * f1 = new TFile( ("ResultsJul13-mediumwp-4jets/rootfiles/"+reco+"/"+reco+"-"+era1_+"-deep-"+region+".root").c_str(),"READ");//era 1
+  TFile * f2 = new TFile( ("ResultsJul13-mediumwp-4jets/rootfiles/"+reco+"/"+reco+"-"+era2_+"-deep-"+region+".root").c_str(),"READ");//era 2
 
   TH1F * hist_era1 = (TH1F*)f1->Get(var.c_str());
   TH1F * hist_era2 = (TH1F*)f2->Get(var.c_str());
 
-  std::vector<double> lines1 = {0.5, 1.0, 1.5, 2.0};
-  std::vector<double> linespt = {0.5, 1.0, 1.5, 2.0, 2.5};
+  std::vector<double> lines1 = {0, 0.5, 1.0, 1.5, 2.0};
+  std::vector<double> linespt = {0, 0.5, 1.0, 1.5, 2.0, 2.5};
   //std::vector<double> linesF = {1.0, 2.0, 3.0, 4.0};
 
   TCanvas* c1 = style.MakeCanvas("c1","",700,700);
@@ -62,39 +62,39 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   if ( (var_ == "m12_csv") || (var_ == "m12") )
     {
       c1 -> SetLogy();
-      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 60 GeV",kBlue,0);
-      hist_era1 -> Rebin(3);
-      if (sfe1_) hist_era1 -> Scale(sfe1_);
-      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 60 GeV",kRed,0);
-      hist_era2 -> Rebin(3);
-      if (sfe2_) hist_era2 -> Scale(sfe2_);
+      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 10 GeV",kBlue,0);
+      //hist_era1 -> Rebin(3);
+      //if (sfe1_) hist_era1 -> Scale(sfe1_);
+      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 10 GeV",kRed,0);
+      //hist_era2 -> Rebin(3);
+      //if (sfe2_) hist_era2 -> Scale(sfe2_);
     }
-  else if ( (var_ == "pt_0_csv") || (var_ == "pt_0") || (var_ == "pt_1_csv") || (var_ == "pt_1") )
+  else if ( (var_ == "pt_0_csv") || (var_ == "pt_0") || (var_ == "pt_1_csv") || (var_ == "pt_1") || (var_ == "pt_2_csv") || (var_ == "pt_2") || (var_ == "pt_3_csv") || (var_ == "pt_3"))
     {
       c1 -> SetLogy();
-      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 50 GeV",kBlue,0);
-      hist_era1 -> Rebin(5);
-      if (sfe1_) hist_era1 -> Scale(sfe1_);
-      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 50 GeV",kRed,0);
-      hist_era2 -> Rebin(5);
-      if (sfe2_) hist_era2 -> Scale(sfe2_);
+      style.InitHist(hist_era1, xtitle.c_str(),"Entries / 10 GeV",kBlue,0);
+      //hist_era1 -> Rebin(5);
+      //if (sfe1_) hist_era1 -> Scale(sfe1_);
+      style.InitHist(hist_era2, xtitle.c_str(),"Entries / 10 GeV",kRed,0);
+      //hist_era2 -> Rebin(5);
+      //if (sfe2_) hist_era2 -> Scale(sfe2_);
     }
     else if ( (var_ == "deepcsvbtag_0_csv") || (var_ == "deepcsvbtag_0") || (var_ == "deepcsvbtag_1_csv") || (var_ == "deepcsvbtag_1") )
     {
       c1 -> SetLogy();
       style.InitHist(hist_era1, xtitle.c_str(),"Entries / 0.01",kBlue,0);
-      hist_era1 -> Rebin(5);
-      if (sfe1_) hist_era1 -> Scale(sfe1_);
+      //hist_era1 -> Rebin(5);
+      //if (sfe1_) hist_era1 -> Scale(sfe1_);
       style.InitHist(hist_era2, xtitle.c_str(),"Entries / 0.01",kRed,0);
-      hist_era2 -> Rebin(5);
-      if (sfe2_) hist_era2 -> Scale(sfe2_);
+      //hist_era2 -> Rebin(5);
+      //if (sfe2_) hist_era2 -> Scale(sfe2_);
     }
   else
     {
       style.InitHist(hist_era1, xtitle.c_str(),"Entries / 10 GeV",kBlue,0);
-      if (sfe1_) hist_era1 -> Scale(sfe1_);
+      //if (sfe1_) hist_era1 -> Scale(sfe1_);
       style.InitHist(hist_era2, xtitle.c_str(),"Entries / 10 GeV",kRed,0);
-      if (sfe2_) hist_era2 -> Scale(sfe2_);
+      //if (sfe2_) hist_era2 -> Scale(sfe2_);
     }
 
   //Ratio plot
@@ -150,6 +150,14 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
     leg -> AddEntry(hist_era1,("p_{T}, 2^{nd} jet, Era "+era1_).c_str(),"L");
     leg -> AddEntry(hist_era2,("p_{T}, 2^{nd} jet, Era "+era2_).c_str(),"L");
   }
+  else if ( (var_ == "pt_2_csv") || (var_ == "pt_2") ) {
+    leg -> AddEntry(hist_era1,("p_{T}, 3^{rd} jet, Era "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("p_{T}, 3^{rd} jet, Era "+era2_).c_str(),"L");
+  }
+  else if ( (var_ == "pt_3_csv") || (var_ == "pt_3") ) {
+    leg -> AddEntry(hist_era1,("p_{T}, 4^{th} jet, Era "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("p_{T}, 4^{th} jet, Era "+era2_).c_str(),"L");
+  }
   else if ( (var_ == "m12_csv") || (var_ == "m12") ) {
     leg -> AddEntry(hist_era1,("m_{12}, Era "+era1_).c_str(),"L");
     leg -> AddEntry(hist_era2,("m_{12}, Era "+era2_).c_str(),"L");
@@ -171,7 +179,7 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.75);
 
   c1 -> Update();
-  c1 -> SaveAs(("Outputdata/Comp_"+ var_+ "-" + era1_ + "-vs-" + era2_ + "-" + reco_ + "-" + region_ + ".pdf").c_str());
+  c1 -> SaveAs(("Outputdata_4medium/Comp_"+ var_+ "-" + era1_ + "-vs-" + era2_ + "-" + reco_ + "-" + region_ + ".pdf").c_str());
 
   //pad1 -> SetLogy();
   //c1 -> SaveAs(("PLOTS/CompReco"+ era_ + "Log.png").c_str());
