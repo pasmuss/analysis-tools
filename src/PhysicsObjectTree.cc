@@ -232,7 +232,7 @@ PhysicsObjectTree<Muon>::PhysicsObjectTree(TChain * tree, const std::string & na
   tree_  -> SetBranchAddress ("isTrackerMuon" , isTrackerMuon_) ; 
   tree_  -> SetBranchAddress ("isLooseMuon"   , isLooseMuon_  ) ;   
   tree_  -> SetBranchAddress ("isMediumMuon"  , isMediumMuon_ ) ;  
-  //tree_  -> SetBranchAddress ("isTightMuon"   , isTightMuon_ ) ;  
+  tree_  -> SetBranchAddress ("isTightMuon"   , isTightMuon_ ) ;  
 
   tree_  -> SetBranchAddress ("validFraction" ,validFraction_ ) ;
   tree_  -> SetBranchAddress ("segmentCompatibility" , segmentCompatibility_) ;
@@ -256,7 +256,7 @@ Collection<Muon>  PhysicsObjectTree<Muon>::collection()
       muon.isTrackerMuon(isTrackerMuon_[i]) ; 
       muon.isLooseMuon(isLooseMuon_[i]) ;   
       muon.isMediumMuon(isMediumMuon_[i]) ;  
-      //muon.isTightMuon(isTightMuon_[i]) ;
+      muon.isTightMuon(isTightMuon_[i]) ;
 
       muon.validFraction(validFraction_[i]) ;
       muon.segmentCompatibility(segmentCompatibility_[i]) ;
