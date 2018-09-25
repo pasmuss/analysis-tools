@@ -35,13 +35,15 @@ int main(int argc, char * argv[])
     analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
   }
   else if (reco == "rereco"){//this is the default and also applicable for MC!
-    analysis.addTree<Jet> ("Jets","MssmHbb/Events/updatedPatJetsPuppi");
+    analysis.addTree<Jet> ("Jets","MssmHbb/Events/updatedPatJets");
     analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
   }
   else{
     cout << "Neither prompt nor rereco data selected. Aborting." << endl;
     return -1;
   }
+
+  auto jerinfo = analysis.jetResolutionInfo("path_to_pt_resolution_file/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt", "path_to_scalefactor_file/Summer16_25nsV1_MC_SF_AK4PFchs.txt"); //NEW //UNFINISHED
    
   for ( auto & obj : triggerObjects_ )
     {
@@ -103,6 +105,7 @@ int main(int argc, char * argv[])
     }
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
   h1["m12_csv"]           = new TH1F("m12_csv"           , "" , 150, 0, 3000);
+  h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
    
   double mbb;
   double weight;
@@ -126,7 +129,7 @@ int main(int argc, char * argv[])
   
   // Cut flow
   // 0: triggered events (no. events for MC)
-  // 1: 3+ idloose jets
+  // 1: 3+ idtight jets
   // 2: kinematics
   // 3: delta R(ij)
   // 4: delta eta(12) (up to this point: purely kinematics)
@@ -151,7 +154,7 @@ int main(int argc, char * argv[])
       bool goodEvent = true;
       //bool muonpresent = false;
 
-      if ( i > 0 && i%1000000==0 ){
+      if ( i > 0 && i%100000==0 ){
 	std::cout << i << " events processed!" << std::endl;
 	txtoutputfile << i << " events processed!" << endl;
       }
@@ -175,16 +178,31 @@ int main(int argc, char * argv[])
       
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
+      
+      //Jet Energy Resolution //NEW
+      auto genjets = analysis.collection("GenJets");
+      slimmedJets->addGenJets(genjets);//NEW
+
       std::vector<Jet *> selectedJets;
       for ( int j = 0 ; j < slimmedJets->size() ; ++j )
 	{
-	  if ( slimmedJets->at(j).idLoose() ) selectedJets.push_back(&slimmedJets->at(j));
+	  if (slimmedJets->at(j).pileupJetIdFullId("loose") && slimmedJets->at(j).idTight() ) selectedJets.push_back(&slimmedJets->at(j));
 	}
 
       //at least 3/4 jets present
       if ( (int)selectedJets.size() < njetsmin_ ) continue;
 
       ++nsel[1];
+
+      //Apply Jet Energy Corrections //NEW //UNFINISHED: only if(isMC)?
+      for (int i = 0; i < selectedJets.size(); i++){
+	selectedJets[i].regCorr();//NEW: REGRESSION
+	//Perform JER (jet energy resolution) matching and calculate corrections //NEW
+	selectedJets[i].jerInfo(*jerinfo,0.2);//NEW
+	selectedJets[i].jerCorrection();//THIS LINE AND UP/DOWN? //NEW
+	selectedJets[i].jerCorrection("up");
+	selectedJets[i].jerCorrection("down");//NEW UNTIL HERE: IS THIS DONE CORRECTLY?
+      }
       
       // Kinematic selection - 3/4 leading jets
       for ( int j = 0; j < njetsmin_; ++j )
@@ -243,12 +261,12 @@ int main(int argc, char * argv[])
 	  else if (btagalgo == "deep_csv") btagdisc = jet->btag("btag_deepb") + jet->btag("btag_deepbb");
 	  else return -1;
 	  
-	  if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;
+	  if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	  if ( ! signalregion_ )//CR 3 jet categroy: bbnb (3rd must not be b tagged); 4 jet cat: bbnbb
 	    {
 	      if ( j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must never be b tagged in CR
 	      if ( njetsmin_ > 3 ){
-		if ( j > 2 && btagdisc < btagwp_ ) goodEvent = false;//4th jet should be b tagged again
+		if ( j == 3 && btagdisc < btagwp_ ) goodEvent = false;//4th jet should be b tagged again
 	      }
 	    }
 	  else//SR: all 3/4 jets b tagged
@@ -321,6 +339,11 @@ int main(int argc, char * argv[])
 	  tree -> Fill();
 	}
 
+      if (isMC_){
+	ptH = (selectedJets[0]->p4() + selectedJets[1]->p4()).Pt();
+	h1["pt_HiggsCand"] -> Fill(ptH);
+      }
+
 
       // Check for muons in the jets
       
@@ -362,7 +385,7 @@ int main(int argc, char * argv[])
 
   h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
   h1["noofevents_h"] -> SetBinContent(2,nsel[0]); //triggered
-  h1["noofevents_h"] -> SetBinContent(3,nsel[1]); //3/4 jets (loose)
+  h1["noofevents_h"] -> SetBinContent(3,nsel[1]); //3/4 jets (tight)
   h1["noofevents_h"] -> SetBinContent(4,nsel[2]); //kin
   h1["noofevents_h"] -> SetBinContent(5,nsel[3]); //dR
   h1["noofevents_h"] -> SetBinContent(6,nsel[4]); //deta
@@ -378,7 +401,7 @@ int main(int argc, char * argv[])
 
   // Cut flow
   // 0: triggered events (MC: no. of events)
-  // 1: 3+ or 4+ idloose jets
+  // 1: 3+ or 4+ idtight jets
   // 2: kinematics
   // 3: delta R(ij)
   // 4: delta eta(12) (up to this point: purely kinematics)
@@ -391,7 +414,7 @@ int main(int argc, char * argv[])
   std::string cuts[10];
   cuts[0] = "Triggered";
   if (isMC_) cuts[0] = "Number of events";
-  cuts[1] = "Triple/quadruple idloose-jet";
+  cuts[1] = "Triple/quadruple idtight-jet";
   cuts[2] = "Triple/quadruple jet kinematics";
   cuts[3] = "Delta R(i;j)";
   cuts[4] = "Delta eta(j1;j2)";
@@ -455,4 +478,3 @@ int main(int argc, char * argv[])
     printf ("%-23s , %10d , %10.3f , %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] );
 
 } //end main
-

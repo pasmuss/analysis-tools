@@ -81,7 +81,7 @@ namespace analysis {
             float cMult_   [max_];
             float muFrac_  [max_];
             bool  idLoose_ [max_];
-            //bool  idTight_ [max_];
+            bool  idTight_ [max_];
             float jecUnc_  [max_];
             float jerSF_   [max_];
             float jerSFUp_ [max_];
@@ -177,7 +177,7 @@ namespace analysis {
            bool  isTrackerMuon_   [max_]; 
            bool  isLooseMuon_     [max_]; 
            bool  isMediumMuon_    [max_];
-	   //bool  isTightMuon_     [max_];
+	   bool  isTightMuon_     [max_];
 
            float validFraction_          [max_];
            float segmentCompatibility_   [max_]; 

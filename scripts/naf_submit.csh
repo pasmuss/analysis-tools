@@ -66,15 +66,12 @@ foreach file ( $files )
       condor_submit.csh "job_"$counter $macro `basename $config`
    endif
    
-   sleep 0.2
+   sleep 0.1
    cd -
 end
 
 rm -fR $tmpdir
 
 exit
-
-
-
 
 #./qsub.sh $exeName $sampleName

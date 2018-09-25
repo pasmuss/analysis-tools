@@ -15,9 +15,9 @@ void compare_new_to_old_code(){
 
   //Definition of files (three or four jets required, respectively, all CR)
   TFile* threeold = new TFile("Archive_NAF/ResultsJul13-mediumwp-3jets/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
-  TFile* threenew = new TFile("Archive_NAF/ResultsAug16_Comp_to_former_version_of_analysis_code/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
+  TFile* threenew = new TFile("StandardConfig_3jets_bmedium_nbloose_pT10010040_deta1p5_dRij1/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
   TFile* fourold = new TFile("Archive_NAF/ResultsJul13-mediumwp-4jets/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
-  TFile* fournew = new TFile("Archive_NAF/ResultsAug17_Comp_to_former_version_of_analysis_code/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
+  TFile* fournew = new TFile("StandardConfig_4jets_bmedium_nbloose_pT1001004040_deta1p5_dRij1/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
 
   //Histograms: pt1, pt2, m12 (all after cuts)
   TH1F* pt1_threeold = (TH1F*)threeold->Get("pt_0_csv");
