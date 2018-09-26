@@ -29,6 +29,10 @@ int main(int argc, char * argv[])
 
   string btagalgo = btagalgo_;
   string reco = reco_;
+
+  // Cuts
+  float btagmin[3] = { btagwptight_, btagwptight_, btagwptight_};
+   
    
   if (reco == "prompt"){
     analysis.addTree<Jet> ("Jets","MssmHbb/Events/slimmedJetsPuppi");

@@ -25,3 +25,4 @@ test/PlotsWithMuonInformation/
 test/Outputdata/
 test/OtherConfigs/
 test/Condor_*/
+._*

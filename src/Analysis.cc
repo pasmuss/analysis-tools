@@ -69,6 +69,7 @@ Analysis::Analysis(const std::string & inputFilelist, const std::string & evtinf
    it = std::find(branches.begin(),branches.end(),"pdfx1");        if ( it != branches.end() ) t_event_  -> SetBranchAddress( (*it).c_str(), &pdf_.x.first);
    it = std::find(branches.begin(),branches.end(),"pdfx2");        if ( it != branches.end() ) t_event_  -> SetBranchAddress( (*it).c_str(), &pdf_.x.second);
    
+   it = std::find(branches.begin(),branches.end(),"rho");          if ( it != branches.end() ) t_event_  -> SetBranchAddress( (*it).c_str(), &rho_);
    
 //   t_event_ -> SetBranchAddress("nPileup", &n_pu_);
 //   t_event_ -> SetBranchAddress("nTruePileup", &n_true_pu_);
@@ -134,6 +135,8 @@ void Analysis::event(const int & event, const bool & addCollections)
       if ( type == "JetTag" )         this->addCollection<JetTag>(name);
       if ( type == "L1TMuon" )        this->addCollection<L1TMuon>(name);
       if ( type == "L1TJet" )         this->addCollection<L1TJet>(name);
+      if ( type == "RecoMuon" )       this->addCollection<RecoMuon>(name);
+      if ( type == "RecoTrack" )      this->addCollection<RecoTrack>(name);
    }
    
 }
@@ -198,6 +201,7 @@ void Analysis::triggerResults(const std::string & path)
 
 bool Analysis::triggerResult(const std::string & trig)
 {
+   if ( trig == "" ) return true;
    if ( t_triggerResults_ == NULL ) return false;
    return triggerResults_[trig];
 }
@@ -418,57 +422,6 @@ bool Analysis::selectJson()
     return isGood;
 }
 
-// OLD JSON selection
-
-// void Analysis::processJsonFile(const std::string & fileName)
-// {
-// 	std::string scriptName = "source $CMSSW_BASE/src/Analysis/Tools/interface/strip.sh ";
-// 	std::system((scriptName + fileName).c_str());
-// 	const std::string modifidedJsonFileName("temp");
-//     std::ifstream fileStream(modifidedJsonFileName, std::ifstream::in);
-//     if (!fileStream.good()) 
-//     {
-//     	std::cerr<<"Error in Analysis.cc! Cannot find file with name: "<< fileName <<"\n...break\n"<<std::endl;
-//         exit(12);
-//     }
-//     // Loop over all lines in ccFile
-//     int checker = 0;
-//     while(fileStream.good())
-//     {
-//     	// Read input File
-//     	std::string line;
-//     	std::getline(fileStream, line);
-//     	// Loop over words in cc-File line and fill vWord
-//     	std::vector<std::string> vWord;
-//     	std::string word;
-//     	for (std::stringstream ss(line); ss >> word; )
-//     	{
-//     	    vWord.push_back(word);
-//     	}
-//             goodLumi_[checker] = vWord;
-//             checker ++;
-//     }
-// }
-// 
-// bool Analysis::selectJson()
-// {
-// 	bool lumi = false;
-//     for( std::map<int, std::vector<std::string> >::iterator it = goodLumi_.begin(); it != --goodLumi_.end(); ++it)
-//     {
-//       if(std::stoi(it->second.at(0)) == run_)
-//       {
-//       	for(size_t lumiIt = 1; lumiIt < it->second.size()-1;  lumiIt = lumiIt + 2)
-//       	{
-//       		int lower = std::stoi(it->second.at(lumiIt));
-//       		int bigger = std::stoi(it->second.at(lumiIt+1));
-//       		if(lumi_ >= lower && lumi_ <= bigger ) lumi = true;
-//       	}
-//       }
-//       else continue;
-//     }
-//     return lumi;
-// }
-
 
 void Analysis::addBtagEfficiencies(const std::string & filename)
 {
@@ -542,6 +495,56 @@ void triggerNames(std::string &trueTriggerNames,const char *myTriggerNames, TTre
 	
 }
 */
+      
+std::shared_ptr<JetResolutionInfo> Analysis::jetResolutionInfo(const std::string & f_jer, const std::string & f_jersf)
+{
+   JetResolution res = JetResolution(f_jer);
+   JetResolutionScaleFactor sf = JetResolutionScaleFactor(f_jersf);
+   jerinfo_ = std::make_shared<JetResolutionInfo>(JetResolutionInfo{res,sf});
+   return jerinfo_;
+}
+      
+std::shared_ptr<BTagCalibrationReader> Analysis::btagCalibration(const std::string & tagger,
+                                const std::string & filename,
+                                const std::string & wp,
+                                const std::string & sysType,
+                                const std::vector<std::string> & otherSysTypes)
+{
+   std::string wps = wp;
+   std::transform(wps.begin(), wps.end(), wps.begin(), ::tolower);
+   
+   BTagEntry::OperatingPoint op = BTagEntry::OP_MEDIUM;
+   if ( wps == "loose" )    op = BTagEntry::OP_LOOSE;
+   if ( wps == "medium" )   op = BTagEntry::OP_MEDIUM;
+   if ( wps == "tight" )    op = BTagEntry::OP_TIGHT;
+   if ( wps == "reshape" )  op = BTagEntry::OP_RESHAPING;
+   
+   btagcalib_     = std::shared_ptr<BTagCalibration>      ( new BTagCalibration(tagger,filename));
+   btagcalibread_ = std::shared_ptr<BTagCalibrationReader>( new BTagCalibrationReader(op,sysType,otherSysTypes) );
+   
+   
+   btagcalibread_ -> load(*btagcalib_,             // calibration instance
+                     BTagEntry::FLAV_B,           // btag flavour - B
+                     "comb");                     // measurement type   
+   
+   btagcalibread_ -> load(*btagcalib_,             // calibration instance
+                     BTagEntry::FLAV_C,           // btag flavour - C
+                     "comb");                     // measurement type   
+   
+   btagcalibread_ -> load(*btagcalib_,             // calibration instance
+                     BTagEntry::FLAV_UDSG,        // btag flavour - UDSG
+                     "incl");                     // measurement type   
+   
+   
+   return btagcalibread_;
+   
+}
+      
+
+std::shared_ptr<BTagCalibrationReader> Analysis::btagCalibration()
+{
+   return btagcalibread_;
+}
 
 std::string Analysis::fileName()
 {

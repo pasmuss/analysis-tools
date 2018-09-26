@@ -1,9 +1,7 @@
 #!/bin/csh -f
 
-if ( $#argv < 3 ) then
-   echo 'Need to give the parameters in this order:'
-   echo 'Macro name, sample file name (e.g.rootFileList.txt), number of files per job'
-   echo 'Optionally: configuration file name and json file name'
+if ( $#argv < 4 ) then
+   echo Need to give the sample name, the macro name, the config file name, and the number of files per job, optional json
    exit
 endif
 
@@ -28,6 +26,7 @@ if ( $config != "" ) then
    set maindir = "Condor_"$macro"_"`basename $config .cfg`
 endif
 
+set maindir = "Condor_"$macro"_"`basename $config .cfg`
 
 if ( -d $maindir ) then
    echo "$maindir exist, rename or remove it and then resubmit" 
@@ -59,14 +58,8 @@ foreach file ( $files )
    if ( $json != "" ) then
       cp -p ../../$json .
    endif
-   if ( $config == "" ) then
-      condor_submit.csh "job_"$counter $macro
-   else
-      cp -p ../../$config .
-      condor_submit.csh "job_"$counter $macro `basename $config`
-   endif
-   
-   sleep 0.1
+   condor_submit.csh "job_"$counter $macro `basename $config`
+   sleep 0.2
    cd -
 end
 
