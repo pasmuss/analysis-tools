@@ -17,7 +17,7 @@ using namespace analysis;
 using namespace analysis::tools;
 
 
-float btagMin(const std::string & btagwp);
+float btagMin(const std::string & btagworkingpoint);
 
 // =============================================================================================   
 int main(int argc, char * argv[])
@@ -30,14 +30,14 @@ int main(int argc, char * argv[])
    Analysis analysis(inputlist_);
    
    // btag
-   float btagmin = btagMin(btagwp_);
+   float btagmin = btagMin(btagworkingpoint_);
    
    // b-tag scale factors
    // inputs from the config file test/analysis_bjetsv2.cfg
    // btagalgo_ = "deepcsv";
    // btagsf_   = "../data/DeepCSV_94XSF_V3_B_F.csv";
    // btagwp_   = "tight";
-   auto bsf_reader = analysis.btagCalibration(btagalgo_, btagsf_, btagwp_);
+   auto bsf_reader = analysis.btagCalibration(btagalgo_, btagsf_, btagworkingpoint_);
    
    // Physics Objects Collections
    analysis.addTree<Jet> ("Jets",jetsCol_);
@@ -80,7 +80,7 @@ int main(int argc, char * argv[])
       
    }
    
-   std::cout << "Btag WP = " << btagwp_ << std::endl;
+   std::cout << "Btag WP = " << btagworkingpoint_ << std::endl;
 //    
 }
 

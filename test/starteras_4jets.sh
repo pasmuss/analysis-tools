@@ -62,7 +62,6 @@ naf_submit.csh filelists/rootFileListMCsig1800NLOFall17.txt SimpleMssmHbbAnalysi
 naf_submit.csh filelists/rootFileListMCsig1800NLOFall17.txt SimpleMssmHbbAnalysis Configs/4jets/ConfigMC/1800-SR-deep-MC-NLO-sig.cfg 50
 naf_submit.csh filelists/rootFileListMCsig2000NLOFall17.txt SimpleMssmHbbAnalysis Configs/4jets/ConfigMC/2000-CR-deep-MC-NLO-sig.cfg 50
 naf_submit.csh filelists/rootFileListMCsig2000NLOFall17.txt SimpleMssmHbbAnalysis Configs/4jets/ConfigMC/2000-SR-deep-MC-NLO-sig.cfg 50
-
 ##
 ## MC - BG
 ##

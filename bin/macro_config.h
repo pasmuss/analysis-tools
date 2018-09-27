@@ -103,11 +103,11 @@ float dphimin_;
 float ptimbalmax_;
 
 std::string btagalgo_;
-std::string btagwp_;
+std::string btagworkingpoint_;
 float btagwploose_;
 float btagwpmedium_;
 float btagwptight_;
-//float btagwp_;
+float btagwp_;
 float nonbtagwp_;
 
 
@@ -182,15 +182,13 @@ int macro_config(int argc, char * argv[])
 	("muonsPtMax", po::value<std::vector<float> >(&muonsptmax_)->multitoken(),"Maximum pt of the muons")
 	("muonsEtaMax", po::value<std::vector<float> >(&muonsetamax_)->multitoken(),"Maximum |eta| of the muons")
 	("muonsId",po::value <std::string> (&muonsid_)->default_value("LOOSE"),"muons id criteria for all muons")
-         
+	//
 	("l1tMuonsNMin",po::value <int> (&l1tmuonsnmin_)->default_value(0),"Minimum number of L1T muons")
 	("l1tMuonsPtMin", po::value<std::vector<float> >(&l1tmuonsptmin_)->multitoken(),"Mimium pt of the L1T muons")
 	("l1tMuonsEtaMax", po::value<std::vector<float> >(&l1tmuonsetamax_)->multitoken(),"Maximum |eta| of the L1T muons")
 	("l1tMuonsRefNMin",po::value <int> (&l1tmuonsrefnmin_)->default_value(0),"Minimum number of L1T muons for reference trigger")
 	("l1tMuonsRefPtMin", po::value<std::vector<float> >(&l1tmuonsrefptmin_)->multitoken(),"Mimium pt of the L1T muons for reference trigger")
-	("l1tMuonsRefEtaMax", po::value<std::vector<float> >(&l1tmuonsrefetamax_)->multitoken(),"Maximum |eta| of the L1T muons for reference trigger")
-         
-	<<<<<<< HEAD
+	("l1tMuonsRefEtaMax", po::value<std::vector<float> >(&l1tmuonsrefetamax_)->multitoken(),"Maximum |eta| of the L1T muons for reference trigger")         
 	//
 	("nMin",po::value <int> (&nmin_)->default_value(0),"Minimum number objects")
 	("nMax",po::value <int> (&nmax_)->default_value(0),"Maximum number objects")
@@ -223,7 +221,7 @@ int macro_config(int argc, char * argv[])
 	("triggerObjectsMuons", po::value<std::vector<std::string> >(&triggerObjectsMuons_)->multitoken(),"Trigger objects for muons")
 	//      
 	("btagAlgorithm",po::value <std::string> (&btagalgo_)->default_value("deepcsv"),"BTag algorithm")
-	("btagWorkingPoint",po::value <std::string> (&btagwp_)->default_value("tight"),"BTag working point")
+	("btagWorkingPoint",po::value <std::string> (&btagworkingpoint_)->default_value("tight"),"BTag working point")
 	("btagWPLoose",po::value <float> (&btagwploose_)->default_value(0.1522),"BTag working point LOOSE")
 	("btagWPMedium",po::value <float> (&btagwpmedium_)->default_value(0.4941),"BTag working point MEDIUM")
 	("btagWPTight",po::value <float> (&btagwptight_)->default_value(0.8001),"BTag working point TIGHT")
@@ -321,7 +319,7 @@ int macro_config(int argc, char * argv[])
 	      return -1;
 	    }
 	  std::transform(btagalgo_.begin(), btagalgo_.end(), btagalgo_.begin(), ::tolower);
-	  std::transform(btagwp_.begin(), btagwp_.end(), btagwp_.begin(), ::tolower);
+	  std::transform(btagworkingpoint_.begin(), btagworkingpoint_.end(), btagworkingpoint_.begin(), ::tolower);
 	}
       catch(po::error& e)
 	{ 

@@ -1,7 +1,10 @@
+test/Configs
+test/Archive*
 test/PlotsWithoutMuons/
 test/exampleD.cfg
 test/exampleE.cfg
 test/exampleF.cfg
+test/*cfg
 *txt
 *root
 __init__.py

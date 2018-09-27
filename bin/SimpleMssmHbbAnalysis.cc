@@ -9,6 +9,7 @@
 #include "TFileCollection.h"
 #include "TChain.h"
 #include "TH1.h" 
+#include "TLorentzVector.h"
 
 #include "Analysis/Tools/interface/Analysis.h"
 #include "Analysis/Tools/bin/macro_config.h"
@@ -30,10 +31,6 @@ int main(int argc, char * argv[])
   string btagalgo = btagalgo_;
   string reco = reco_;
 
-  // Cuts
-  float btagmin[3] = { btagwptight_, btagwptight_, btagwptight_};
-   
-   
   if (reco == "prompt"){
     analysis.addTree<Jet> ("Jets","MssmHbb/Events/slimmedJetsPuppi");
     analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
@@ -41,16 +38,15 @@ int main(int argc, char * argv[])
   else if (reco == "rereco"){//this is the default and also applicable for MC!
     analysis.addTree<Jet> ("Jets","MssmHbb/Events/updatedPatJets");
     analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
+    if (isMC_) analysis.addTree<GenJet>("GenJets","MssmHbb/Events/slimmedGenJets");
   }
   else{
     cout << "Neither prompt nor rereco data selected. Aborting." << endl;
     return -1;
   }
   
-  if (isMC_){
-    auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Summer16_25nsV1_MC_SF_AK4PFchs.txt");
-    auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "medium");
-  }
+  auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Summer16_25nsV1_MC_SF_AK4PFchs.txt");
+  auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "medium");
      
   for ( auto & obj : triggerObjects_ )
     {
@@ -115,6 +111,7 @@ int main(int argc, char * argv[])
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
    
   double mbb;
+  double ptH;
   double weight;
   TTree *tree = new TTree("MssmHbb_13TeV","");
   tree->Branch("mbb",&mbb,"mbb/D");
@@ -153,13 +150,13 @@ int main(int argc, char * argv[])
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
       noofeventsstart ++;
-      cout << "Event " << i << " processed." << endl;
       int njets = 0;
       int njets_csv = 0;
       //int nmuons = 0;
       //int nomujet = 0;
       bool goodEvent = true;
       //bool muonpresent = false;
+      float eventweight = 1.0;
 
       if ( i > 0 && i%100000==0 ){
 	std::cout << i << " events processed!" << std::endl;
@@ -186,18 +183,16 @@ int main(int argc, char * argv[])
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
       if (isMC_){
-	auto genjets = analysis.collection("GenJets");
+	auto genjets = analysis.collection<GenJet>("GenJets");
 	slimmedJets->addGenJets(genjets);
       }
       
-      std::vector<Jet *> selectedJets;
-      cout << (int)slimmedJets.size()  << " jets overall" << endl;
+      std::vector<Jet*> selectedJets;
+      std::vector<Jet*> correctedJets;
       for ( int j = 0 ; j < slimmedJets->size() ; ++j )
 	{
 	  if (slimmedJets->at(j).pileupJetIdFullId("loose") && slimmedJets->at(j).idTight() ) selectedJets.push_back(&slimmedJets->at(j));
 	}
-
-      cout << (int)selectedJets.size()  << " selected jets" << endl;
 
       //at least 3/4 jets present
       if ( (int)selectedJets.size() < njetsmin_ ) continue;
@@ -261,16 +256,15 @@ int main(int argc, char * argv[])
 	  else if (btagalgo == "deep_csv") btagdisc = jet->btag("btag_deepb") + jet->btag("btag_deepbb");
 	  else return -1;
 	  
-	  cout << "b tag discriminant before correcting: " << btagdisc << endl;
-
 	  if (isMC_){
 	    float jet_btag_sf = jet->btagSF(bsf_reader);
-	    cout << "b tag sf: " << jet_btag_sf << endl;
-	    btagdisc *= jet_btag_sf
+	    eventweight *= jet_btag_sf;
+	    if (j==0){
+	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
+	      eventweight *= signgenweight;
+	    }
 	  }
 
-	  cout << "b tag discriminant after correcting: " << btagdisc << endl;
-	  	  
 	  if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	  if ( ! signalregion_ )//CR 3 jet categroy: bbnb (3rd must not be b tagged); 4 jet cat: bbnbb
 	    {
@@ -285,7 +279,7 @@ int main(int argc, char * argv[])
 	    }
 	}
       
-      h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M());
+      h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
       
       if ( ! goodEvent ) continue;
       ++nsel[5];
@@ -325,91 +319,95 @@ int main(int argc, char * argv[])
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
 
       //Apply Jet Energy Corrections
-      for (int ir = 0; ir < selectedJets.size(); ir++){
-	cout << "jet " << ir << " pt = " << selectedJets[ir].pt() << endl;
-	float regressionfactor = selectedJets[ir].regCorr();
-	cout << "regression factor: " << regressionfactor << endl;
-	selectedJets[ir].pt() *= regressionfactor;
-	cout <<"jet " << ir <<" pt after regression = " << selectedJets[ir].pt() << endl;
-      //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
+      for (unsigned int ir = 0; ir < selectedJets.size(); ir++){
+	Jet* jet = selectedJets[ir];
+	float regressionfactor = jet->bRegCorr();
+	float jetpt = jet->pt();
+	jetpt *= regressionfactor;
+	//Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
 	if (isMC_){
-	  selectedJets[ir].jerInfo(*jerinfo,0.2);
-	  float correctResolution = selectedJets[ir].jerCorrection();
-	  cout <<"JER correction factor: " << correctResolution << endl;
-	  selectedJets[ir].pt() *= correctResolution;
-	  cout <<"jet " << ir <<" pt after JER = " << selectedJets[ir].pt() << endl;
+	  jet->jerInfo(*jerinfo,0.2);
+	  float correctResolution = jet->jerCorrection();
+	  jetpt *= correctResolution;
 	  //float correctResolutionUp = selectedJets[i].jerCorrection("up");
 	  //float correctResolutionDown = selectedJets[i].jerCorrection("down");
 	}
+	float eta = jet->eta();
+	float phi = jet->phi();
+	float energy = jet->e();
+	Jet corJet = Jet(jetpt,eta,phi,energy);
+	Jet* correctedJet = &corJet;
+	correctedJets.push_back(correctedJet);
       }
      
       // Fill histograms of passed bbnb btagging selection
-      for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
+      for ( int j = 0 ; j < (int)correctedJets.size() ; ++j )
 	{
-	  if ( selectedJets[j]->pt() < 20. ) continue;
+	  if ( correctedJets[j]->pt() < 20. ) continue;
 	  ++njets_csv;
 	}
-      h1["n_csv"] -> Fill(selectedJets.size());
+      h1["n_csv"] -> Fill(correctedJets.size());
       h1["n_ptmin20_csv"] -> Fill(njets_csv);
       for ( int j = 0; j < njetsmin_; ++j )
 	{
-	  Jet * jet = selectedJets[j];
-	  h1[Form("pt_%i_csv",j)]   -> Fill(jet->pt());
-	  h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta());
-	  h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi());
-	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag());
-	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
+	  Jet* Corjet = correctedJets[j];
+	  Jet* jet = selectedJets[j];
+	  h1[Form("pt_%i_csv",j)]   -> Fill(Corjet->pt(),eventweight);
+	  h1[Form("eta_%i_csv",j)]  -> Fill(Corjet->eta(),eventweight);
+	  h1[Form("phi_%i_csv",j)]  -> Fill(Corjet->phi(),eventweight);
+	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag(),eventweight);
+	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"),eventweight);
 	}
-      mbb = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      mbb = (correctedJets[0]->p4()  + correctedJets[1]->p4()).M();
       if ( !signalregion_ || isMC_)//blinding
 	{ 
-	  h1["m12_csv"] -> Fill(mbb);
-	  weight = 1;
+	  h1["m12_csv"] -> Fill(mbb,eventweight);
+	  weight = eventweight;
 	  tree -> Fill();
 	}
 
       if (isMC_){
-	ptH = (selectedJets[0]->p4() + selectedJets[1]->p4()).Pt();
-	h1["pt_HiggsCand"] -> Fill(ptH);
+	ptH = (correctedJets[0]->p4() + correctedJets[1]->p4()).Pt();
+	h1["pt_HiggsCand"] -> Fill(ptH,eventweight);
       }
 
 
       // Check for muons in the jets
       
       /*std::vector<Muon *> selectedMuons;
-      auto slimmedMuons = analysis.collection<Muon>("Muons");
-      for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
+	auto slimmedMuons = analysis.collection<Muon>("Muons");
+	for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
 	{
-	  if ( slimmedMuons->at(m).isMediumMuon() ){
-	    selectedMuons.push_back(&slimmedMuons->at(m));
-	    ++nmuons;
-	  }
+	if ( slimmedMuons->at(m).isMediumMuon() ){
+	selectedMuons.push_back(&slimmedMuons->at(m));
+	++nmuons;
 	}
-      if ( (int)selectedMuons.size() < 1 ) continue;
-      h1["n_muons"] -> Fill(selectedMuons.size());
+	}
+	if ( (int)selectedMuons.size() < 1 ) continue;
+	h1["n_muons"] -> Fill(selectedMuons.size());
       
-      std::vector<Muon *> MuonsinJet;
-      for ( size_t m = 0; m < selectedMuons.size(); ++m )      
+	std::vector<Muon *> MuonsinJet;
+	for ( size_t m = 0; m < selectedMuons.size(); ++m )      
 	{
-	  Muon* muon = selectedMuons[m];
-	  //if ( muon->pt() < muonsptmin_[m] || fabs(muon->eta()) > muonsetamax_[m] ) continue;
-	  float dR_muj0 = selectedJets[0]->deltaR(*muon) ;
-	  float dR_muj1 = selectedJets[1]->deltaR(*muon) ;
+	Muon* muon = selectedMuons[m];
+	//if ( muon->pt() < muonsptmin_[m] || fabs(muon->eta()) > muonsetamax_[m] ) continue;
+	float dR_muj0 = selectedJets[0]->deltaR(*muon) ;
+	float dR_muj1 = selectedJets[1]->deltaR(*muon) ;
 	  
-	  if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
-            {
-	      muonpresent  = true;
-	      h1["pt_mu"]  -> Fill( muon->pt());
-              h1["eta_mu"] -> Fill( muon->eta());
-	      h1["dR_muj"] -> Fill( (dR_muj0 < dR_muj1) ? dR_muj0 : dR_muj1 );//only the two leading jets
-	      if       (dR_muj0 < drmax_)  h1["dR_muj0"] -> Fill( dR_muj0 );
-	      else if  (dR_muj1 < drmax_)  h1["dR_muj1"] -> Fill( dR_muj1 );
+	if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
+	{
+	muonpresent  = true;
+	h1["pt_mu"]  -> Fill( muon->pt());
+	h1["eta_mu"] -> Fill( muon->eta());
+	h1["dR_muj"] -> Fill( (dR_muj0 < dR_muj1) ? dR_muj0 : dR_muj1 );//only the two leading jets
+	if       (dR_muj0 < drmax_)  h1["dR_muj0"] -> Fill( dR_muj0 );
+	else if  (dR_muj1 < drmax_)  h1["dR_muj1"] -> Fill( dR_muj1 );
 
-	      MuonsinJet.push_back(muon);
-	      break;
-	    }
-	  if (!muonpresent) ++nomujet;
-	  }*/ //end: loop over muons
+	MuonsinJet.push_back(muon);
+	break;
+	}
+	if (!muonpresent) ++nomujet;
+	}*/ //end: loop over muons
     }//end: event loop
 
   h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
@@ -470,20 +468,20 @@ int main(int argc, char * argv[])
 	txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
 	h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
       }
-    }
+  }
   /* else if (isMC_){
-    for ( int i = 0; i < 8; ++i )
-      {
-	fracAbs[i] = double(nsel[i])/nsel[0];
-	if ( i>0 )
-	  fracRel[i] = double(nsel[i])/nsel[i-1];
-	else
-	  fracRel[i] = fracAbs[i];
-	printf ("%-23s  %10d  %10.3f  %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] ); 
-	txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
-	h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
-      }
-      }*/
+     for ( int i = 0; i < 8; ++i )
+     {
+     fracAbs[i] = double(nsel[i])/nsel[0];
+     if ( i>0 )
+     fracRel[i] = double(nsel[i])/nsel[i-1];
+     else
+     fracRel[i] = fracAbs[i];
+     printf ("%-23s  %10d  %10.3f  %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] ); 
+     txtoutputfile << cuts[i].c_str() << " " << nsel[i] << " " << fracAbs[i] << " " << fracRel[i] << endl;
+     h1["cutflow"] -> SetBinContent(i+1,fracAbs[i]);
+     }
+     }*/
   else if (invertCutflow_){
     for ( int i = 1; i < 7; ++i )
       {
