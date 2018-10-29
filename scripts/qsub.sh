@@ -28,7 +28,6 @@ cat > $1.zsh <<EOF
 #
 #$ -e $1.err
 $2 -c $3
-
 EOF
 
 chmod u+x $1.zsh

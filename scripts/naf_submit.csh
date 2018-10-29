@@ -5,26 +5,17 @@ if ( $#argv < 4 ) then
    exit
 endif
 
-set macro = $1
-set rootfilelist = $2
-set nsplit = $3
-set config = ""
+set rootfilelist = $1
+set macro = $2
+set config = $3
+set nsplit = $4
 set json = ""
 
-
-if ( $#argv == 4 ) then
-   set config = $4
-endif
-
 if ( $#argv == 5 ) then
-   set config = $4
    set json = $5
 endif
 
-set maindir = "Condor_"$macro
-if ( $config != "" ) then
-   set maindir = "Condor_"$macro"_"`basename $config .cfg`
-endif
+set json = $5
 
 set maindir = "Condor_"$macro"_"`basename $config .cfg`
 
@@ -54,7 +45,8 @@ foreach file ( $files )
    endif
    mkdir -p $exedir
    cd $exedir
-   mv ../../$tmpdir/$file ./$rootfilelist
+   mv ../../$tmpdir/$file ./rootFileList.txt
+   cp -p ../../$config .
    if ( $json != "" ) then
       cp -p ../../$json .
    endif
@@ -66,5 +58,8 @@ end
 rm -fR $tmpdir
 
 exit
+
+
+
 
 #./qsub.sh $exeName $sampleName
