@@ -159,7 +159,7 @@ int main(int argc, char * argv[])
       //int nmuons = 0;
       //int nomujet = 0;
       bool goodEvent = true;
-      //bool muonpresent = false;
+      bool muonpresent = false;
       float eventweight = 1.0;
 
       if ( i > 0 && i%100000==0 ){
@@ -369,10 +369,10 @@ int main(int argc, char * argv[])
 	}
 
       /*cout << "left loop" << endl;
-      for (int j = 0; j < (int)Corjet.size(); ++j){
+	for (int j = 0; j < (int)Corjet.size(); ++j){
 	cout << "For jet " << j+1 << ": " << Corjet[j].Eta()  << "/" << Corjet[j].Phi() << "; pt from new TLV: " << Corjet[j].Pt() << endl;
 	cout << "Mass from TLV: " << Corjet[j].M() << endl;
-      }*/
+	}*/
       mbb = (Corjet[0] + Corjet[1]).M();
       if ( !signalregion_ || isMC_)//blinding
 	{ 
@@ -389,40 +389,34 @@ int main(int argc, char * argv[])
 
       // Check for muons in the jets
       
-      /*std::vector<Muon *> selectedMuons;
-	auto slimmedMuons = analysis.collection<Muon>("Muons");
-	for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
+      std::vector<Muon*> selectedMuons;
+      const char muID = muonsid_.at(0);
+      auto slimmedMuons = analysis.collection<Muon>("Muons");
+      for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
 	{
-	if ( slimmedMuons->at(m).isMediumMuon() ){
-	selectedMuons.push_back(&slimmedMuons->at(m));
-	++nmuons;
+	  if ( (muID == 'M' && slimmedMuons->at(m).isMediumMuon()) || (muID == 'T' && slimmedMuons->at(m).isTightMuon())){
+	    selectedMuons.push_back(&slimmedMuons->at(m));
+	  }
 	}
-	}
-	if ( (int)selectedMuons.size() < 1 ) continue;
-	h1["n_muons"] -> Fill(selectedMuons.size());
       
-	std::vector<Muon *> MuonsinJet;
-	for ( size_t m = 0; m < selectedMuons.size(); ++m )      
+      std::vector<Muon*> MuonsinJet;
+      for ( size_t m = 0; m < selectedMuons.size(); ++m )      
 	{
-	Muon* muon = selectedMuons[m];
-	//if ( muon->pt() < muonsptmin_[m] || fabs(muon->eta()) > muonsetamax_[m] ) continue;
-	float dR_muj0 = selectedJets[0]->deltaR(*muon) ;
-	float dR_muj1 = selectedJets[1]->deltaR(*muon) ;
-	  
-	if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
-	{
-	muonpresent  = true;
-	h1["pt_mu"]  -> Fill( muon->pt());
-	h1["eta_mu"] -> Fill( muon->eta());
-	h1["dR_muj"] -> Fill( (dR_muj0 < dR_muj1) ? dR_muj0 : dR_muj1 );//only the two leading jets
-	if       (dR_muj0 < drmax_)  h1["dR_muj0"] -> Fill( dR_muj0 );
-	else if  (dR_muj1 < drmax_)  h1["dR_muj1"] -> Fill( dR_muj1 );
-
-	MuonsinJet.push_back(muon);
-	break;
-	}
-	if (!muonpresent) ++nomujet;
-	}*/ //end: loop over muons
+	  Muon* muon = selectedMuons[m];
+	  if ( muon->pt() < muonsptmin_[m] || fabs(muon->eta()) > muonsetamax_[m] ){
+	    float dR_muj0 = selectedJets[0]->deltaR(*muon);
+	    float dR_muj1 = selectedJets[1]->deltaR(*muon);
+	    
+	    if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
+	      {
+		muonpresent  = true;
+		MuonsinJet.push_back(muon);
+		break;
+	      }
+	  }
+	} //end: loop over muons
+      if ( muonpresent ) continue;
+      nsel[7]++;
     }//end: event loop
 
   h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
@@ -433,6 +427,7 @@ int main(int argc, char * argv[])
   h1["noofevents_h"] -> SetBinContent(6,nsel[4]); //deta
   h1["noofevents_h"] -> SetBinContent(7,nsel[5]); //btag
   h1["noofevents_h"] -> SetBinContent(8,nsel[6]); //final selection (perhaps trigger; matching)
+  h1["noofevents_h"] -> SetBinContent(9,nsel[7]); //including muon veto
 
   for (auto & ih1 : h1)
     {
@@ -464,13 +459,14 @@ int main(int argc, char * argv[])
   if (signalregion_) cuts[5] = "btagged (bbb/bbbb)";
   cuts[6] = "Matched to online j1;j2";
   if (invertCutflow_) cuts[6] = "Trigger and matching j1;j2";
+  cuts[7] = "Muon veto";
   //if (isMC_ || invertCutflow_) cuts[7] = "Triggered";
 
   printf ("%-23s  %10s  %10s  %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
   txtoutputfile << "Cut flow " << "# events " << "absolute " << "relative" << endl;
   //if (!isMC_){
   if (!invertCutflow_){
-    for ( int i = 0; i < 7; ++i )
+    for ( int i = 0; i < 8; ++i )
       {
 	fracAbs[i] = double(nsel[i])/nsel[0];
 	if ( i>0 ){
@@ -498,7 +494,7 @@ int main(int argc, char * argv[])
      }
      }*/
   else if (invertCutflow_){
-    for ( int i = 1; i < 7; ++i )
+    for ( int i = 1; i < 8; ++i )
       {
 	fracAbs[i] = double(nsel[i])/nsel[1];
 	if ( i>1 )
