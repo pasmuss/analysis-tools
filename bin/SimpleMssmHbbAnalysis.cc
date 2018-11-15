@@ -85,6 +85,8 @@ int main(int argc, char * argv[])
   h1["n_muons"] = new TH1F("n_muons" , "" , 30, 0, 30);
   h1["pt_mu"]   = new TH1F("pt_mu"   , "" , 150, 0, 1500);
   h1["eta_mu"]  = new TH1F("eta_mu"  , "" , 120, -6, 6);
+
+  h1["pt_corrected_comp"] = new TH1F("pt_corrected_comp", "" , 210, 0, 2100);
   
   h1["dR_muj"]  = new TH1F("dR_muj" , "" , 120, 0, 0.6);
   h1["dR_muj0"] = new TH1F("dR_muj0", "" , 120, 0, 0.6);
@@ -105,6 +107,8 @@ int main(int argc, char * argv[])
       h1[Form("phi_%i_csv",i)]    = new TH1F(Form("phi_%i_csv",i)              , "" , 120, -6, 6);
       h1[Form("btag_%i_csv",i)]   = new TH1F(Form("btag_%i_csv",i)             , "" , 600, 0, 1.2);
       h1[Form("deepcsvbtag_%i_csv",i)] = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 600, 0, 1.2);
+
+      h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
     }
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
   h1["m12_csv"]           = new TH1F("m12_csv"           , "" , 150, 0, 3000);
@@ -188,7 +192,7 @@ int main(int argc, char * argv[])
       }
       
       std::vector<Jet*> selectedJets;
-      std::vector<Jet*> correctedJets;
+
       for ( int j = 0 ; j < slimmedJets->size() ; ++j )
 	{
 	  if (slimmedJets->at(j).pileupJetIdFullId("loose") && slimmedJets->at(j).idTight() ) selectedJets.push_back(&slimmedJets->at(j));
@@ -318,47 +322,58 @@ int main(int argc, char * argv[])
       if ( ! goodEvent ) continue;
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
 
-      //Apply Jet Energy Corrections
-      for (unsigned int ir = 0; ir < selectedJets.size(); ir++){
-	Jet* jet = selectedJets[ir];
-	float regressionfactor = jet->bRegCorr();
-	float jetpt = jet->pt();
-	jetpt *= regressionfactor;
-	//Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
-	if (isMC_){
-	  jet->jerInfo(*jerinfo,0.2);
-	  float correctResolution = jet->jerCorrection();
-	  jetpt *= correctResolution;
-	  //float correctResolutionUp = selectedJets[i].jerCorrection("up");
-	  //float correctResolutionDown = selectedJets[i].jerCorrection("down");
-	}
-	float eta = jet->eta();
-	float phi = jet->phi();
-	float energy = jet->e();
-	Jet corJet = Jet(jetpt,eta,phi,energy);
-	Jet* correctedJet = &corJet;
-	correctedJets.push_back(correctedJet);
-      }
-     
       // Fill histograms of passed bbnb btagging selection
-      for ( int j = 0 ; j < (int)correctedJets.size() ; ++j )
+      for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
 	{
-	  if ( correctedJets[j]->pt() < 20. ) continue;
+	  if ( selectedJets[j]->pt() < 20. ) continue;
 	  ++njets_csv;
 	}
-      h1["n_csv"] -> Fill(correctedJets.size());
+
+      h1["n_csv"] -> Fill(selectedJets.size());
       h1["n_ptmin20_csv"] -> Fill(njets_csv);
+      std::vector<TLorentzVector> Corjet;
       for ( int j = 0; j < njetsmin_; ++j )
 	{
-	  Jet* Corjet = correctedJets[j];
 	  Jet* jet = selectedJets[j];
-	  h1[Form("pt_%i_csv",j)]   -> Fill(Corjet->pt(),eventweight);
-	  h1[Form("eta_%i_csv",j)]  -> Fill(Corjet->eta(),eventweight);
-	  h1[Form("phi_%i_csv",j)]  -> Fill(Corjet->phi(),eventweight);
+	  //Apply Jet Energy Corrections
+	  TLorentzVector corJet;
+	  float regressionfactor = jet->bRegCorr();
+	  //cout << "correction factor of jet " << j+1 << ": " << regressionfactor << endl;
+	  float jetpt = jet->pt();
+	  float corpt = jetpt * regressionfactor;
+	  //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
+	  if (isMC_){
+	    jet->jerInfo(*jerinfo,0.2);
+	    float correctResolution = jet->jerCorrection();
+	    corpt *= correctResolution;
+	    //float correctResolutionUp = selectedJets[i].jerCorrection("up");
+	    //float correctResolutionDown = selectedJets[i].jerCorrection("down");
+	    //TODO: DOC
+	    //PREVIOUS ERROR HERE: address is pushed back into vector but object is destroyed after loop, so some random garbage is saved
+	  }
+	  float jetmass = (jet->p4()).M();
+	  float jeteta = jet->eta();
+	  float jetphi = jet->phi();
+	  corJet.SetPtEtaPhiM(corpt,jeteta,jetphi,jetmass);
+	  jet->p4(corJet);
+	  Corjet.push_back(corJet);
+	  //cout << "For jet " << j+1 << ": " << "pt without correction: " << jet->pt() << ", eta/phi (from TLV): " << jet->eta() << "/" << jet->phi() << " (" << corJet.Eta()  << "/" << corJet.Phi() << ")" << "; pt with correction (calc): " << corpt << " and from new TLV: " << corJet.Pt() << endl;
+	  //cout << "Mass from TLV: " << corJet.M() << endl;
+	  h1[Form("pt_corrected_comp_%i",j)] -> Fill(corpt,eventweight);
+	  h1[Form("pt_%i_csv",j)]   -> Fill(corJet.Pt(),eventweight);
+	  //h1[Form("pt_%i_csv",j)]   -> Fill(jet->pt(),eventweight);
+	  h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta(),eventweight);
+	  h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi(),eventweight);
 	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag(),eventweight);
 	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"),eventweight);
 	}
-      mbb = (correctedJets[0]->p4()  + correctedJets[1]->p4()).M();
+
+      /*cout << "left loop" << endl;
+      for (int j = 0; j < (int)Corjet.size(); ++j){
+	cout << "For jet " << j+1 << ": " << Corjet[j].Eta()  << "/" << Corjet[j].Phi() << "; pt from new TLV: " << Corjet[j].Pt() << endl;
+	cout << "Mass from TLV: " << Corjet[j].M() << endl;
+      }*/
+      mbb = (Corjet[0] + Corjet[1]).M();
       if ( !signalregion_ || isMC_)//blinding
 	{ 
 	  h1["m12_csv"] -> Fill(mbb,eventweight);
@@ -367,7 +382,7 @@ int main(int argc, char * argv[])
 	}
 
       if (isMC_){
-	ptH = (correctedJets[0]->p4() + correctedJets[1]->p4()).Pt();
+	ptH = (Corjet[0] + Corjet[1]).Pt();
 	h1["pt_HiggsCand"] -> Fill(ptH,eventweight);
       }
 

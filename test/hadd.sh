@@ -1,37 +1,37 @@
 mkdir rootfiles
 mkdir rootfiles/rereco
-mkdir rootfiles/mcbg
+#mkdir rootfiles/mcbg
 mkdir rootfiles/mcsig
 
 ### MC BG
 
-hadd rootfiles/mcbg/mc-bg-1000-1400-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-120-170-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1400-1800-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-170-300-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1800-2400-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-2400-3200-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-30-50-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-300-470-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-470-600-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-50-80-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-600-800-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-80-120-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-SR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-800-1000-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1000-1400-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-120-170-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1400-1800-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-170-300-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1800-2400-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-2400-3200-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-30-50-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-300-470-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-470-600-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-50-80-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-600-800-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-80-120-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-SR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-800-1000-deep-SR.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-SR-deep-MC-bg/*/*.root`
 
-hadd rootfiles/mcbg/mc-bg-1000-1400-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-120-170-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1400-1800-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-170-300-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1800-2400-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-2400-3200-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-30-50-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-300-470-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-470-600-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-50-80-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-600-800-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-80-120-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-CR-deep-MC-bg/*/*.root`
-hadd rootfiles/mcbg/mc-bg-800-1000-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1000-1400-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-120-170-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1400-1800-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-170-300-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1800-2400-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-2400-3200-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-30-50-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-300-470-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-470-600-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-50-80-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-600-800-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-80-120-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-CR-deep-MC-bg/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-800-1000-deep-CR.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-CR-deep-MC-bg/*/*.root`
 
 ### RERECO
 
@@ -98,33 +98,33 @@ hadd rootfiles/mcsig/mc-sig-2000-NLO-deep-CR.root `find Condor_SimpleMssmHbbAnal
 
 ### MC BG
 
-hadd rootfiles/mcbg/mc-bg-1000-1400-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-120-170-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1400-1800-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-170-300-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1800-2400-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-2400-3200-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-30-50-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-300-470-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-470-600-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-50-80-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-600-800-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-80-120-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-SR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-800-1000-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1000-1400-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-120-170-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1400-1800-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-170-300-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1800-2400-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-2400-3200-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-30-50-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-300-470-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-470-600-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-50-80-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-600-800-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-80-120-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-SR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-800-1000-deep-SR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-SR-deep-MC-bg-3j/*/*.root`
 
-hadd rootfiles/mcbg/mc-bg-1000-1400-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-120-170-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1400-1800-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-170-300-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-1800-2400-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-2400-3200-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-30-50-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-300-470-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-470-600-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-50-80-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-600-800-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-80-120-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-CR-deep-MC-bg-3j/*/*.root`
-hadd rootfiles/mcbg/mc-bg-800-1000-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1000-1400-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1000-1400-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-120-170-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-120-170-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1400-1800-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1400-1800-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-170-300-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-170-300-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-1800-2400-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-1800-2400-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-2400-3200-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-2400-3200-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-30-50-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-30-50-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-300-470-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-300-470-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-470-600-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-470-600-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-50-80-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-50-80-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-600-800-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-600-800-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-80-120-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-80-120-CR-deep-MC-bg-3j/*/*.root`
+#hadd rootfiles/mcbg/mc-bg-800-1000-deep-CR-3j.root `find Condor_SimpleMssmHbbAnalysis_pt-800-1000-CR-deep-MC-bg-3j/*/*.root`
 
 ### RERECO
 

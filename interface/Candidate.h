@@ -83,6 +83,8 @@ namespace analysis {
            void py  (const float &);
            /// sets the z component of the momentum
            void pz  (const float &);
+	   /// sets the pt
+	   void pt  (const float &);
            /// sets the energy
            void e   (const float &);
            /// sets the charge

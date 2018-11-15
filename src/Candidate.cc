@@ -167,4 +167,3 @@ void  Candidate::py(const float & py) { p4_.SetPy(py); }
 void  Candidate::pz(const float & pz) { p4_.SetPy(pz); }
 void  Candidate::e (const float & e ) { p4_.SetE(e);   }
 void  Candidate::q (const float & q)  { q_ = q; }
-
