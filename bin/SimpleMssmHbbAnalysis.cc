@@ -269,17 +269,17 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
-	  if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+	  if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	  if ( ! signalregion_ )//CR 3 jet categroy: bbnb (3rd must not be b tagged); 4 jet cat: bbnbb
 	    {
 	      if ( j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must never be b tagged in CR
 	      if ( njetsmin_ > 3 ){
-		if ( j == 3 && btagdisc < btagwp_ ) goodEvent = false;//4th jet should be b tagged again
+		if ( j == 3 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;//4th jet should be b tagged again
 	      }
 	    }
 	  else//SR: all 3/4 jets b tagged
 	    {
-	      if ( j >= 2 && btagdisc < btagwp_ ) goodEvent = false; 
+	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false; 
 	    }
 	}
       
@@ -511,8 +511,8 @@ int main(int argc, char * argv[])
   hout.Close();
   
   // CSV output
-  printf ("%-23s , %10s , %10s , %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
-  for ( int i = 0; i < 7; ++i )
-    printf ("%-23s , %10d , %10.3f , %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] );
+  //printf ("%-23s , %10s , %10s , %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
+  //for ( int i = 0; i < 7; ++i )
+  //printf ("%-23s , %10d , %10.3f , %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] );
 
 } //end main
