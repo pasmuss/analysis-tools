@@ -23,6 +23,7 @@ std::string inputlist_;
 std::string outputRoot_;
 std::string json_;
 std::string reco_;
+std::string regions_;
 
 //
 bool matchonoff_;
@@ -44,6 +45,9 @@ std::vector<float> torefetamax_[10];
 
 
 // jets
+bool useregression_;
+bool useJER_;
+bool usebtagsf_;
 
 int njetsmin_;
 int njetsmax_;
@@ -71,6 +75,8 @@ std::string jersf_;
 
 
 // muons
+
+bool muonveto_;
 
 int nmuonsmin_;
 std::vector<float> muonsptmin_;
@@ -150,6 +156,7 @@ int macro_config(int argc, char * argv[])
       po::options_description config("Configuration");
       config.add_options()
 	("reco",po::value <std::string> (&reco_)->default_value("rereco"),"prompt or rereco")
+	("Regions",po::value <std::string> (&regions_)->default_value("3j"),"Definition of CR/SR")
 	("ntuplesList",po::value <std::string> (&inputlist_)->default_value("rootFileList.txt"),"File with list of ntuples")
 	("nEventsMax",po::value <int> (&nevtmax_)->default_value(-1), "Maximum number of events")
 	("nLumiSections",po::value <int> (&nlumis_)->default_value(-1), "Number of lumi sections processed")
@@ -160,7 +167,10 @@ int macro_config(int argc, char * argv[])
 	("btagSF",po::value <std::string> (&btagsf_)->default_value("DeepCSV.csv"),"b-tagging scale factor in CSV format")
 	("jerPT",po::value <std::string> (&jerpt_)->default_value("JERPT.txt"),"JER pt resolution in txt format")
 	("jerSF",po::value <std::string> (&jersf_)->default_value("JERSF.txt"),"JER scale factor in txt format")
-	//      
+	//
+	("useJER",po::value <bool> (&useJER_)->default_value(true),"Use smearing (Jet Energy Resolution) for MC")
+	("useRegression",po::value <bool> (&useregression_)->default_value(true),"Apply Jet Energy Regression (for b jets)")
+	("useBtagSF",po::value <bool> (&usebtagsf_)->default_value(true),"Use scale factor for b tagging")
 	("nJetsMin",po::value <int> (&njetsmin_)->default_value(0),"Minimum number of jets")
 	("nJetsMax",po::value <int> (&njetsmax_)->default_value(100),"Maximum number of jets")
 	("nBJetsMin",po::value <int> (&nbjetsmin_)->default_value(0),"Minimum number of btgaged jets")
@@ -176,7 +186,8 @@ int macro_config(int argc, char * argv[])
 	("l1tJetsRefNMin",po::value <int> (&l1tjetsrefnmin_)->default_value(0),"Minimum number of L1T jets for reference trigger")
 	("l1tJetsRefPtMin", po::value<std::vector<float> >(&l1tjetsrefptmin_)->multitoken(),"Mimium pt of the L1T jets for reference trigger")
 	("l1tJetsRefEtaMax", po::value<std::vector<float> >(&l1tjetsrefetamax_)->multitoken(),"Maximum |eta| of the L1T jets for reference trigger")         
-	//      
+	//
+	("MuonVeto",po::value <bool> (&muonveto_)->default_value(true),"Use veto on muons")
 	("nMuonsMin",po::value <int> (&nmuonsmin_)->default_value(0),"Minimum number of muons")
 	("muonsPtMin", po::value<std::vector<float> >(&muonsptmin_)->multitoken(),"Mimium pt of the muons")
 	("muonsPtMax", po::value<std::vector<float> >(&muonsptmax_)->multitoken(),"Maximum pt of the muons")
@@ -281,6 +292,21 @@ int macro_config(int argc, char * argv[])
 	    }
 	  po::notify(vm);
 	  boost::algorithm::to_upper(jetsid_);
+	  if ( !(regions_ == "4j3" || regions_ == "4j4") && !(regions_ == "3j" || regions_ == "3jor") )
+	    {
+	      std::cout << "Config Error *** No valid set of regions defined. Must be 3j, 4j3, 4j4 or 3jor." << std::endl;
+	      return -1;
+	    }
+	  if ( (regions_ == "4j3" || regions_ == "4j4") && njetsmin_ != 4)
+	    {
+	      std::cout << "Config Error *** Minimum Number of jets does not fit requirement of defined regions (with 4jn, njetsmin should be 4). Please check regions and njetsmin." << std::endl;
+	      return -1;
+	    }
+	  if ( (regions_ == "3j" && njetsmin_ != 3) || (regions_ == "3jor" && njetsmin_ != 4) )
+            {
+	      std::cout << "Config Error *** Minimum Number of jets does not fit requirement of defined regions. 3jor requires 4 jets, 3j should only base on 3 jets." << std::endl;
+	      return -1;
+            }
 	  if ( (int)jetsptmin_.size() != njetsmin_ )
 	    {
 	      std::cout << "Config Error *** Jet minimum pt were not defined or the definition does not match the minimum number of jets" <<std::endl;

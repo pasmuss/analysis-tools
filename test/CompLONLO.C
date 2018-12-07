@@ -16,7 +16,7 @@
 
 using namespace std;
 
-int CompLONLO( string var_, string region_, string mass_, string xtitle_, float xlow_, float xhigh_, float ylow_, float yhigh_, float yRlow_, float yRhigh_, int rebinning_)
+int CompLONLO( string var_, string region_, string mass_, string xtitle_, float xlow_, float xhigh_, float ylow_, float yhigh_, float yRlow_, float yRhigh_, int rebinning_, string addition_)
 {
   HbbStylesNew style;
   style.SetStyle();
@@ -36,8 +36,8 @@ int CompLONLO( string var_, string region_, string mass_, string xtitle_, float 
   const int rebinning = rebinning_;
   if ( (var == "m12_csv") || (var == "m12") || (var == "pt_0_csv") || (var == "pt_0") || (var == "pt_1_csv") || (var == "pt_1") || (var == "pt_2_csv") || (var == "pt_2") || (var == "pt_3_csv") || (var == "pt_3") ) int rebinning = rebinning;
 
-  TFile * file_lo = new TFile( ("rootfiles/mcsig/mc-sig-"+mass+ "-deep-"+region+".root").c_str(),"READ");
-  TFile * file_nlo = new TFile( ("rootfiles/mcsig/mc-sig-"+mass+"-NLO-deep-"+region+".root").c_str(),"READ");
+  TFile * file_lo = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+mass+ "-deep-"+region+"-3j.root").c_str(),"READ");
+  TFile * file_nlo = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+mass+"-NLO-deep-"+region+"-3j.root").c_str(),"READ");
 
   TH1F * hist_lo = (TH1F*)file_lo->Get(var.c_str());
   TH1F * hist_nlo = (TH1F*)file_nlo->Get(var.c_str());
@@ -107,7 +107,7 @@ int CompLONLO( string var_, string region_, string mass_, string xtitle_, float 
   rp -> GetLowYaxis() -> SetNdivisions(505);
   rp -> GetUpperPad() -> cd();
  
-  TLegend* leg = new TLegend(0.56,0.65,0.86,0.83);
+  TLegend* leg = new TLegend(0.56,0.70,0.86,0.87);
   style.SetLegendStyle(leg);
   leg -> AddEntry(hist_lo,("LO "+mass+" GeV, "+region).c_str(),"L");
   leg -> AddEntry(hist_nlo,("NLO "+mass+" GeV, "+region).c_str(),"L");
@@ -117,7 +117,7 @@ int CompLONLO( string var_, string region_, string mass_, string xtitle_, float 
   //CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.75);
 
   c1 -> Update();
-  c1 -> SaveAs(("Outputdata_LO_NLO/Comp_" + var + "-LO_NLO-" + region + "_" + mass + ".pdf").c_str());
+  c1 -> SaveAs(("Outputdata_LO_NLO/Comp_" + addition_ + var + "-LO_NLO-" + region + "_" + mass + ".pdf").c_str());
 
   return 0;
 }

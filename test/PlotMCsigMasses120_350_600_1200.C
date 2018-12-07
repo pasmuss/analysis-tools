@@ -21,47 +21,61 @@ void PlotMCsigMasses120_350_600_1200(){
   ///
   /// Files
   ///
-  TFile* file_350 = new TFile("PlotsWithMuonInformation/MCHist/350-SR-deepcsv-mediumMuonlooseJet-MC-noJSON_SR.root","READ");
-  TFile* file_600 = new TFile("PlotsWithMuonInformation/MCHist/600-SR-deepcsv-mediumMuonlooseJet-MC-noJSON_SR.root","READ");
-  TFile* file_1200 = new TFile("PlotsWithMuonInformation/MCHist/1200-SR-deepcsv-mediumMuonlooseJet-MC-noJSON_SR.root","READ");
+  TFile* file_350w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");
+  TFile* file_600w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-600-NLO-deep-SR-3j.root","READ");
+  TFile* file_1200w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-1200-NLO-deep-SR-3j.root","READ");
+
+  TFile* file_350wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_MuVetoNoRegression/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");
+  TFile* file_600wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_MuVetoNoRegression/mcsig/mc-sig-600-NLO-deep-SR-3j.root","READ");
+  TFile* file_1200wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_MuVetoNoRegression/mcsig/mc-sig-1200-NLO-deep-SR-3j.root","READ");
   
   ///
   /// Mass histograms
   ///
-  TH1F* hist_m_350 = (TH1F*)file_350 -> Get("m12_csv");
-  TH1F* hist_m_600 = (TH1F*)file_600 -> Get("m12_csv");
-  TH1F* hist_m_1200 = (TH1F*)file_1200 -> Get("m12_csv");
-  /*TH1F* hist_m_350 = (TH1F*)file_350 -> Get("pt_1_csv");
-  TH1F* hist_m_600 = (TH1F*)file_600 -> Get("pt_1_csv");
-  TH1F* hist_m_1200 = (TH1F*)file_1200 -> Get("pt_1_csv");*/
+  TH1F* hist_m_350w = (TH1F*)file_350w -> Get("m12_csv");
+  TH1F* hist_m_600w = (TH1F*)file_600w -> Get("m12_csv");
+  TH1F* hist_m_1200w = (TH1F*)file_1200w -> Get("m12_csv");
+
+  TH1F* hist_m_350wo = (TH1F*)file_350wo -> Get("m12_csv");
+  TH1F* hist_m_600wo = (TH1F*)file_600wo -> Get("m12_csv");
+  TH1F* hist_m_1200wo = (TH1F*)file_1200wo -> Get("m12_csv");
 
   TCanvas* can = style.MakeCanvas("can","signal masses, after cuts, SR",700,700);
   can -> SetLeftMargin(0.17);
   
-  style.InitHist(hist_m_350,"m_{12} [GeV]","Entries / 20 GeV",kBlue,0);
-  //style.InitHist(hist_m_350,"p_{T}, 2^{nd} jet [GeV]","Entries / 10 GeV",kBlue,0);
-  hist_m_350 -> GetYaxis() -> SetRangeUser(0.1,3000);
-  hist_m_350 -> GetXaxis() -> SetRangeUser(0,2000);
-  hist_m_350 -> GetXaxis() -> SetNdivisions(505);
-  hist_m_350 -> GetYaxis() -> SetTitleOffset(1.5);
-  hist_m_350 -> Draw();
-  style.InitHist(hist_m_600,"m_{12} [GeV]","Entries / 20 GeV",kGreen,0);
-  //style.InitHist(hist_m_600,"p_{T}, 2^{nd} jet [GeV]","Entries / 10 GeV",kGreen,0);
-  hist_m_600 -> Draw("SAME");
-  style.InitHist(hist_m_1200,"m_{12} [GeV]","Entries / 20 GeV",kRed,0);
-  //style.InitHist(hist_m_1200,"p_{T}, 2^{nd} jet [GeV]","Entries / 10 GeV",kRed,0);
-  hist_m_1200 -> Draw("SAME");
+  style.InitHist(hist_m_350w,"m_{12} [GeV]","Entries / 20 GeV",kBlue,0);
+  hist_m_350w -> GetYaxis() -> SetRangeUser(0.1,6500);
+  hist_m_350w -> GetXaxis() -> SetRangeUser(0,1500);
+  hist_m_350w -> GetXaxis() -> SetNdivisions(505);
+  hist_m_350w -> GetYaxis() -> SetTitleOffset(1.5);
+  hist_m_350w -> Draw("HIST");
+  style.InitHist(hist_m_350wo,"m_{12} [GeV]","Entries / 20 GeV",kBlue,0);
+  hist_m_350wo -> SetLineStyle(7);
+  hist_m_350wo -> Draw("HIST SAME");
+  style.InitHist(hist_m_600w,"m_{12} [GeV]","Entries / 20 GeV",kGreen,0);
+  hist_m_600w -> Draw("HIST SAME");
+  style.InitHist(hist_m_600wo,"m_{12} [GeV]","Entries / 20 GeV",kGreen,0);
+  hist_m_600wo -> SetLineStyle(7);
+  hist_m_600wo -> Draw("HIST SAME");
+  style.InitHist(hist_m_1200w,"m_{12} [GeV]","Entries / 20 GeV",kRed,0);
+  hist_m_1200w -> Draw("HIST SAME");
+  style.InitHist(hist_m_1200wo,"m_{12} [GeV]","Entries / 20 GeV",kRed,0);
+  hist_m_1200wo -> SetLineStyle(7);
+  hist_m_1200wo -> Draw("HIST SAME");
 
-  TLegend* leg = new TLegend(0.5,0.6,0.8,0.85);
+  TLegend* leg = new TLegend(0.4,0.65,0.85,0.9);
   style.SetLegendStyle(leg);
-  leg -> AddEntry(hist_m_350,"m_{A/H} = 350 GeV","L");
-  leg -> AddEntry(hist_m_600,"m_{A/H} = 600 GeV","L");
-  leg -> AddEntry(hist_m_1200,"m_{A/H} = 1200 GeV","L");
+  //leg -> SetBorderSize(1);
+  leg -> AddEntry(hist_m_350w,"m_{A/H} = 350 GeV","L");
+  leg -> AddEntry(hist_m_350wo,"m_{A/H} = 350 GeV, no Regression","L");
+  leg -> AddEntry(hist_m_600w,"m_{A/H} = 600 GeV","L");
+  leg -> AddEntry(hist_m_600wo,"m_{A/H} = 600 GeV, no Regression","L");
+  leg -> AddEntry(hist_m_1200w,"m_{A/H} = 1200 GeV","L");
+  leg -> AddEntry(hist_m_1200wo,"m_{A/H} = 1200 GeV, no Regression","L");
   leg -> Draw("SAME");
 
-  CMSPrelim( "Simulation" , "Work in progress", 0.18, 0.77);
+  // CMSPrelim( "Simulation" , "Work in progress", 0.18, 0.77);
 
   can -> Update();
-  can -> SaveAs("Outputdata/MC-sig-masses-350-600-1200.pdf");
-  //can -> SaveAs("Outputdata/MC-sig-pt2-350-600-1200.pdf");
+  can -> SaveAs("Outputdata_LO_NLO/W-wo-Regression_MC-sig-masses-350-600-1200_NLO_allmed-3j.pdf");
 }

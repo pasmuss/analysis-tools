@@ -1,0 +1,5 @@
+Standard Config 4 jets: bbbb/bbnbb (all medium, nb < loose, including Mu Veto, JER, sf, regression)
+
+To reproduce standard config: Use region 3j for 3 jet category and 4j3 for 4 jet category!
+
+E.g. Results from Nov15 include muon veto, regression, JER, JEC, scale factors.
