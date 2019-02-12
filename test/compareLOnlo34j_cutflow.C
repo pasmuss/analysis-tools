@@ -72,17 +72,17 @@ void compareLOnlo34j_cutflow(){
   map<string,TH1F*> lohistsSR;
     
   TCanvas* canSR = style.MakeCanvas("canSR", "SR", 700,700);
-  TCanvas* canSR3j = style.MakeCanvas("canSR3j", "SR, 3 jets", 700,700);
+  TCanvas* canSR3j = style.MakeCanvas("canSR3j", "SR, 3 b tags", 700,700);
   //TCanvas* canCR = style.MakeCanvas("canCR", "CR", 700,700);
 
   for (unsigned int i = 0; i < nlomasspoints.size(); i++){
     nlofloats[i] = stof(nlomasspoints[i].c_str());
 
     //nlofilesCR[nlomasspoints[i]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-CR.root").c_str() ,"READ");
-    nlofilesSR[nlomasspoints[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_NoMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR.root").c_str() ,"READ");
+    nlofilesSR[nlomasspoints[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_allcorrections_nentries_v2/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR.root").c_str() ,"READ");
 
     //nlofilesCR3j[nlomasspoints[i]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-CR-3j.root").c_str() ,"READ");
-    nlofilesSR3j[nlomasspoints[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_NoMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR-3j.root").c_str() ,"READ");
+    nlofilesSR3j[nlomasspoints[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_allcorrections_nentries_v2/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR-3j.root").c_str() ,"READ");
     
     //nlohistsCR[nlomasspoints[i]] = (TH1F*)nlofilesCR[nlomasspoints[i]]->Get("cutflow");
     //float scalenloCR = nlohistsCR[nlomasspoints[i]]->GetBinContent(1);
@@ -117,10 +117,10 @@ void compareLOnlo34j_cutflow(){
     lofloats[j] = stof(lomasspoints[j].c_str());
 
     //lofilesCR[lomasspoints[j]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+lomasspoints[j]+"-deep-CR.root").c_str() ,"READ");
-    lofilesSR[lomasspoints[j]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_NoMuVeto/mcsig/mc-sig-"+lomasspoints[j]+"-deep-SR.root").c_str() ,"READ");
+    lofilesSR[lomasspoints[j]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_allcorrections_nentries_v2/mcsig/mc-sig-"+lomasspoints[j]+"-deep-SR.root").c_str() ,"READ");
    
     //lofilesCR3j[lomasspoints[j]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+lomasspoints[j]+"-deep-CR-3j.root").c_str() ,"READ");
-    lofilesSR3j[lomasspoints[j]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_NoMuVeto/mcsig/mc-sig-"+lomasspoints[j]+"-deep-SR-3j.root").c_str() ,"READ");
+    lofilesSR3j[lomasspoints[j]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_allcorrections_nentries_v2/mcsig/mc-sig-"+lomasspoints[j]+"-deep-SR-3j.root").c_str() ,"READ");
 
     //lohistsCR[lomasspoints[j]] = (TH1F*)lofilesCR[lomasspoints[j]]->Get("cutflow");
     //float scaleloCR = lohistsCR[lomasspoints[j]]->GetBinContent(1);
@@ -206,14 +206,14 @@ void compareLOnlo34j_cutflow(){
   TLegend* legCR = new TLegend(0.271,0.165,0.923,0.349);
   style.SetLegendStyle(legCR);
   legCR -> SetNColumns(2);
-  legCR -> AddEntry(GnloeffCRbc,"NLO, 4 jets, kin. cuts","LP");
-  legCR -> AddEntry(GnloeffCRac,"NLO, 4 jets, all cuts","LP");
-  legCR -> AddEntry(GloeffCRbc,"LO, 4 jets, kin. cuts","LP");
-  legCR -> AddEntry(GloeffCRac,"LO, 4 jets, all cuts","LP");
-  legCR -> AddEntry(GnloeffCRbc3j,"NLO, 3 jets, kin. cuts","LP");
-  legCR -> AddEntry(GnloeffCRac3j,"NLO, 3 jets, all cuts","LP");
-  legCR -> AddEntry(GloeffCRbc3j,"LO, 3 jets, kin. cuts","LP");
-  legCR -> AddEntry(GloeffCRac3j,"LO, 3 jets, all cuts","LP");
+  legCR -> AddEntry(GnloeffCRbc,"NLO, 4 b tags, kin. cuts","LP");
+  legCR -> AddEntry(GnloeffCRac,"NLO, 4 b tags, all cuts","LP");
+  legCR -> AddEntry(GloeffCRbc,"LO, 4 b tags, kin. cuts","LP");
+  legCR -> AddEntry(GloeffCRac,"LO, 4 b tags, all cuts","LP");
+  legCR -> AddEntry(GnloeffCRbc3j,"NLO, 3 b tags, kin. cuts","LP");
+  legCR -> AddEntry(GnloeffCRac3j,"NLO, 3 b tags, all cuts","LP");
+  legCR -> AddEntry(GloeffCRbc3j,"LO, 3 b tags, kin. cuts","LP");
+  legCR -> AddEntry(GloeffCRac3j,"LO, 3 b tags, all cuts","LP");
   legCR -> Draw("SAME");
  
   canCR -> Update();
@@ -251,18 +251,18 @@ void compareLOnlo34j_cutflow(){
   GloeffSRac -> SetLineStyle(7);
   GloeffSRac -> Draw("CP");
 
-  TLegend* legSR = new TLegend(0.271,0.165,0.923,0.349);
+  TLegend* legSR = new TLegend(0.17,0.17,0.92,0.35);
   style.SetLegendStyle(legSR);
   legSR -> SetNColumns(2);
-  legSR -> AddEntry(GnloeffSRbc,"NLO, 4 jets, kin. cuts","LP");
-  legSR -> AddEntry(GnloeffSRac,"NLO, 4 jets, all cuts","LP");
-  legSR -> AddEntry(GloeffSRbc,"LO, 4 jets, kin. cuts","LP");
-  legSR -> AddEntry(GloeffSRac,"LO, 4 jets, all cuts","LP");
+  legSR -> AddEntry(GnloeffSRbc,"NLO, 4 b tags, kin. cuts","LP");
+  legSR -> AddEntry(GnloeffSRac,"NLO, 4 b tags, all cuts","LP");
+  legSR -> AddEntry(GloeffSRbc,"LO, 4 b tags, kin. cuts","LP");
+  legSR -> AddEntry(GloeffSRac,"LO, 4 b tags, all cuts","LP");
   legSR -> Draw("SAME");
  
   canSR -> Update();
 
-  canSR -> SaveAs("Outputdata_LO_NLO/4medNoMuVeto_std_SR_4j_cut-eff_MC_NLO_LO.pdf");
+  canSR -> SaveAs("Outputdata_LO_NLO/4med_allcorrections_nentries_v2_std_SR_4j_cut-eff_MC_NLO_LO.pdf");
 
   canSR3j -> cd();
   canSR3j -> SetLogy();
@@ -296,17 +296,17 @@ void compareLOnlo34j_cutflow(){
   GloeffSRac3j -> SetLineStyle(7);
   GloeffSRac3j -> Draw("CP");
 
-  TLegend* legSR3j = new TLegend(0.271,0.165,0.923,0.349);
+  TLegend* legSR3j = new TLegend(0.17,0.17,0.92,0.35);
   style.SetLegendStyle(legSR3j);
   legSR3j -> SetNColumns(2);
-  legSR3j -> AddEntry(GnloeffSRbc3j,"NLO, 3 jets, kin. cuts","LP");
-  legSR3j -> AddEntry(GnloeffSRac3j,"NLO, 3 jets, all cuts","LP");
-  legSR3j -> AddEntry(GloeffSRbc3j,"LO, 3 jets, kin. cuts","LP");
-  legSR3j -> AddEntry(GloeffSRac3j,"LO, 3 jets, all cuts","LP");
+  legSR3j -> AddEntry(GnloeffSRbc3j,"NLO, 3 b tags, kin. cuts","LP");
+  legSR3j -> AddEntry(GnloeffSRac3j,"NLO, 3 b tags, all cuts","LP");
+  legSR3j -> AddEntry(GloeffSRbc3j,"LO, 3 b tags, kin. cuts","LP");
+  legSR3j -> AddEntry(GloeffSRac3j,"LO, 3 b tags, all cuts","LP");
   legSR3j -> Draw("SAME");
  
   canSR3j -> Update();
  
-  canSR3j -> SaveAs("Outputdata_LO_NLO/4medNoMuVeto_std_SR_3j_cut-eff_MC_NLO_LO.pdf");
+  canSR3j -> SaveAs("Outputdata_LO_NLO/4med_allcorrections_nentries_v2_std_SR_3j_cut-eff_MC_NLO_LO.pdf");
 
 }

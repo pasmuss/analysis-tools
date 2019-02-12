@@ -1,11 +1,10 @@
-test/Configs
-test/Archive*
+*/Config*
+*/Archive*
 test/PlotsWithoutMuons/
-test/exampleD.cfg
-test/exampleE.cfg
-test/exampleF.cfg
 test/*cfg
 *txt
+*png
+*pdf
 *root
 __init__.py
 *.pyc
@@ -29,3 +28,4 @@ test/Outputdata/
 test/OtherConfigs/
 test/Condor_*/
 ._*
+*tmp*

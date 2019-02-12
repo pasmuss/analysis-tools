@@ -1,0 +1,16 @@
+Current cuts:
+
+3 jets
+SR: bbb
+CR: bbnb
+b tag algorithm deepCSV
+b tag wp medium (0.4941)
+non b tag wp loose (0.1522)
+pt 1/2: 100
+pt 3: 40
+DeltaR(ij) > 1
+DeltaEta(12) < 1.5
+abs(eta) < 2.2
+
+no cut on pt12 imbalance
+no upper cut on pt3

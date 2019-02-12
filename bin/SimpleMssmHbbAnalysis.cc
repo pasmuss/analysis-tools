@@ -81,6 +81,7 @@ int main(int argc, char * argv[])
   h1["n_csv"]             = new TH1F("n_csv"           , "" , 30, 0, 30);
   h1["n_ptmin20"]         = new TH1F("n_ptmin20"       , "" , 30, 0, 30);
   h1["n_ptmin20_csv"]     = new TH1F("n_ptmin20_csv"   , "" , 30, 0, 30);
+  h1["nentries"]          = new TH1F("nentries"        , "" ,  2, 0,  2);
 
   h1["jetswomu"] = new TH1F("jetswomu" , "" , 30, 0, 30);
   
@@ -112,6 +113,7 @@ int main(int argc, char * argv[])
 
       h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
     }
+  h1["m12_noCuts"]        = new TH1F("m12_noCuts"        , "" , 150, 0, 3000);
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
   h1["m12_csv"]           = new TH1F("m12_csv"           , "" , 150, 0, 3000);
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
@@ -167,7 +169,7 @@ int main(int argc, char * argv[])
       bool goodEvent = true;
       bool muonpresent = false;
       float eventweight = 1.0;
-
+	  	
       if ( i > 0 && i%100000==0 ){
 	std::cout << i << " events processed!" << std::endl;
 	txtoutputfile << i << " events processed!" << endl;
@@ -195,6 +197,8 @@ int main(int argc, char * argv[])
       if (isMC_){
 	auto genjets = analysis.collection<GenJet>("GenJets");
 	slimmedJets->addGenJets(genjets);
+	float sgweight = analysis.genWeight()/fabs(analysis.genWeight());//perhaps initialize as 1 before this loop? i.e. for each event?
+	h1["nentries"] -> Fill((sgweight+1.)/2.);
       }
       
       std::vector<Jet*> selectedJets;
@@ -208,6 +212,15 @@ int main(int argc, char * argv[])
       if ( (int)selectedJets.size() < njetsmin_ ) continue;
 
       ++nsel[1];
+
+
+      ///
+      /// HERE: ALREADY APPLY JET CORRECTIONS: KINEMATIC SELECTION SHOULD BE BASED ON IT!
+      /// STILL SAVE ORIGINAL VALUES FOR APPLICATION OF SCALE FACTORS
+      /// Jet * jet = selectedJets[j]; jet->pt(); OR selectedJets[0]->eta();
+      /// (TRIGGER EFFICIENCY OR SO)
+      /// check between here and below: jet / correctedJets[i]
+      ///
       
       // Kinematic selection - 3/4 leading jets
       for ( int j = 0; j < njetsmin_; ++j )
@@ -266,13 +279,13 @@ int main(int argc, char * argv[])
 	  if (btagalgo == "csv") btagdisc = jet->btag();
 	  else if (btagalgo == "deep_csv") btagdisc = jet->btag("btag_deepb") + jet->btag("btag_deepbb");
 	  else return -1;
-	  
+
 	  if (isMC_){
 	    if (usebtagsf_){
 	      float jet_btag_sf = jet->btagSF(bsf_reader);
 	      eventweight *= jet_btag_sf;
 	    }
-	    if (j==0){
+	    if (j==0){	      
 	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
 	      eventweight *= signgenweight;
 	    }
@@ -368,6 +381,39 @@ int main(int argc, char * argv[])
       if ( ! goodEvent ) continue;
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
 
+
+      // Check for muons in the jets
+      if (muonveto_){
+	std::vector<Muon*> selectedMuons;
+	const char muID = muonsid_.at(0);
+	auto slimmedMuons = analysis.collection<Muon>("Muons");
+	for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
+	  {
+	    if ( (muID == 'M' && slimmedMuons->at(m).isMediumMuon()) || (muID == 'T' && slimmedMuons->at(m).isTightMuon())){
+	      selectedMuons.push_back(&slimmedMuons->at(m));
+	    }
+	  }
+	
+	std::vector<Muon*> MuonsinJet;
+	for ( size_t m = 0; m < selectedMuons.size(); ++m )      
+	  {
+	    Muon* muon = selectedMuons[m];
+	    if ( muon->pt() < muonsptmin_[m] || fabs(muon->eta()) > muonsetamax_[m] ) continue;
+	    
+	    float dR_muj0 = selectedJets[0]->deltaR(*muon);
+	    float dR_muj1 = selectedJets[1]->deltaR(*muon);
+	    
+	    if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
+	      {
+		muonpresent  = true;
+		MuonsinJet.push_back(muon);
+		break;
+	      }
+	  } //end: loop over muons
+	if ( muonpresent ) continue;
+	nsel[7]++;
+      } //end: muon veto
+      
       // Fill histograms of passed bbnb btagging selection
       for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
 	{
@@ -377,6 +423,9 @@ int main(int argc, char * argv[])
 
       h1["n_csv"] -> Fill(selectedJets.size());
       h1["n_ptmin20_csv"] -> Fill(njets_csv);
+      ///
+      /// from here: copy to above to correct jet earlier (also loop over <njetsmin_)
+      ///
       std::vector<TLorentzVector> Corjet;
       for ( int j = 0; j < njetsmin_; ++j )
 	{
@@ -403,22 +452,22 @@ int main(int argc, char * argv[])
 	  corJet.SetPtEtaPhiM(corpt,jeteta,jetphi,jetmass);
 	  jet->p4(corJet);
 	  Corjet.push_back(corJet);
-	  //cout << "For jet " << j+1 << ": " << "pt without correction: " << jet->pt() << ", eta/phi (from TLV): " << jet->eta() << "/" << jet->phi() << " (" << corJet.Eta()  << "/" << corJet.Phi() << ")" << "; pt with correction (calc): " << corpt << " and from new TLV: " << corJet.Pt() << endl;
-	  //cout << "Mass from TLV: " << corJet.M() << endl;
-	  h1[Form("pt_corrected_comp_%i",j)] -> Fill(corpt,eventweight);
+	  ///
+	  /// until here presumably
+	  /// filling histograms still should be done below inside this very loop
+	  /// for btags (not affected by corrections but not included in corJet:
+	  /// Jet* jet = selectedJets[j]; jet->btag();
+	  /// atfer copying: check for jet or correctedJets in between here and above location
+	  ///
 	  h1[Form("pt_%i_csv",j)]   -> Fill(corJet.Pt(),eventweight);
-	  //h1[Form("pt_%i_csv",j)]   -> Fill(jet->pt(),eventweight);
-	  h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta(),eventweight);
-	  h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi(),eventweight);
+	  h1[Form("eta_%i_csv",j)]  -> Fill(corJet.Eta(),eventweight);
+	  h1[Form("phi_%i_csv",j)]  -> Fill(corJet.Phi(),eventweight);
+	  //h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta(),eventweight);
+	  //h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi(),eventweight);
 	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag(),eventweight);
 	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"),eventweight);
 	}
 
-      /*cout << "left loop" << endl;
-	for (int j = 0; j < (int)Corjet.size(); ++j){
-	cout << "For jet " << j+1 << ": " << Corjet[j].Eta()  << "/" << Corjet[j].Phi() << "; pt from new TLV: " << Corjet[j].Pt() << endl;
-	cout << "Mass from TLV: " << Corjet[j].M() << endl;
-	}*/
       mbb = (Corjet[0] + Corjet[1]).M();
       if ( !signalregion_ || isMC_)//blinding
 	{ 
@@ -430,39 +479,6 @@ int main(int argc, char * argv[])
       if (isMC_){
 	ptH = (Corjet[0] + Corjet[1]).Pt();
 	h1["pt_HiggsCand"] -> Fill(ptH,eventweight);
-      }
-
-
-      // Check for muons in the jets
-      if (muonveto_){
-	std::vector<Muon*> selectedMuons;
-	const char muID = muonsid_.at(0);
-	auto slimmedMuons = analysis.collection<Muon>("Muons");
-	for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
-	  {
-	    if ( (muID == 'M' && slimmedMuons->at(m).isMediumMuon()) || (muID == 'T' && slimmedMuons->at(m).isTightMuon())){
-	      selectedMuons.push_back(&slimmedMuons->at(m));
-	    }
-	  }
-      
-	std::vector<Muon*> MuonsinJet;
-	for ( size_t m = 0; m < selectedMuons.size(); ++m )      
-	  {
-	    Muon* muon = selectedMuons[m];
-	    if ( muon->pt() < muonsptmin_[m] || fabs(muon->eta()) > muonsetamax_[m] ){
-	      float dR_muj0 = selectedJets[0]->deltaR(*muon);
-	      float dR_muj1 = selectedJets[1]->deltaR(*muon);
-	    
-	      if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
-		{
-		  muonpresent  = true;
-		  MuonsinJet.push_back(muon);
-		  break;
-		}
-	    }
-	  } //end: loop over muons
-	if ( muonpresent ) continue;
-	nsel[7]++;
       }
     }//end: event loop
 

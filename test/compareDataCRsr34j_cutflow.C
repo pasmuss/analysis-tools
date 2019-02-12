@@ -27,10 +27,10 @@ void compareDataCRsr34j_cutflow(){
 
   int cutflowsteps = 8;
 
-  TFile* file3jsr = new TFile("Configs_diffBTags/rootfiles_2tig2med_WithMuVeto/rereco/rereco-CDEF-deep-SR-3j.root","READ");
-  TFile* file3jcr = new TFile("Configs_diffBTags/rootfiles_2tig2med_WithMuVeto/rereco/rereco-CDEF-deep-CR-3j.root","READ");
-  TFile* file4jsr = new TFile("Configs_diffBTags/rootfiles_2tig2med_WithMuVeto/rereco/rereco-CDEF-deep-SR.root","READ");
-  TFile* file4jcr = new TFile("Configs_diffBTags/rootfiles_2tig2med_WithMuVeto/rereco/rereco-CDEF-deep-CR.root","READ");
+  TFile* file3jsr = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithCorMuVeto/rereco/rereco-CDEF-deep-SR-3j.root","READ");
+  TFile* file3jcr = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithCorMuVeto/rereco/rereco-CDEF-deep-CR-3j.root","READ");
+  TFile* file4jsr = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithCorMuVeto/rereco/rereco-CDEF-deep-SR.root","READ");
+  TFile* file4jcr = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithCorMuVeto/rereco/rereco-CDEF-deep-CR.root","READ");
 
   TH1F* hist3jsrRel = (TH1F*)file3jsr->Get("cutflow");
   TH1F* hist3jcrRel = (TH1F*)file3jcr->Get("cutflow");
@@ -110,7 +110,7 @@ void compareDataCRsr34j_cutflow(){
   legRel -> Draw("SAME");
 
   canrel -> Update();
-  canrel -> SaveAs("Outputdata_LO_NLO/2tig2med_std_data_cr_sr_3-4-j_efficiency.pdf");
+  canrel -> SaveAs("Outputdata_LO_NLO/4med_WithCorMuVeto_data_cr_sr_3-4-j_efficiency.pdf");
 
   canabs -> cd();
   canabs -> SetLogy();
@@ -147,5 +147,5 @@ void compareDataCRsr34j_cutflow(){
   legAbs -> Draw("SAME");
 
   canabs -> Update();
-  canabs -> SaveAs("Outputdata_LO_NLO/2tig2med_std_data_cr_sr_3-4-j_NoOfEvents.pdf");
+  canabs -> SaveAs("Outputdata_LO_NLO/4med_WithCorMuVeto_data_cr_sr_3-4-j_NoOfEvents.pdf");
 }

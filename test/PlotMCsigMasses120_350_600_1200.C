@@ -21,13 +21,13 @@ void PlotMCsigMasses120_350_600_1200(){
   ///
   /// Files
   ///
-  TFile* file_350w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");
-  TFile* file_600w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-600-NLO-deep-SR-3j.root","READ");
-  TFile* file_1200w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithMuVeto/mcsig/mc-sig-1200-NLO-deep-SR-3j.root","READ");
+  TFile* file_350w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithCorMuVeto/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");
+  TFile* file_600w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithCorMuVeto/mcsig/mc-sig-600-NLO-deep-SR-3j.root","READ");
+  TFile* file_1200w = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_WithCorMuVeto/mcsig/mc-sig-1200-NLO-deep-SR-3j.root","READ");
 
-  TFile* file_350wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_MuVetoNoRegression/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");
-  TFile* file_600wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_MuVetoNoRegression/mcsig/mc-sig-600-NLO-deep-SR-3j.root","READ");
-  TFile* file_1200wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_MuVetoNoRegression/mcsig/mc-sig-1200-NLO-deep-SR-3j.root","READ");
+  TFile* file_350wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_CorMuVetoNoRegression/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");
+  TFile* file_600wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_CorMuVetoNoRegression/mcsig/mc-sig-600-NLO-deep-SR-3j.root","READ");
+  TFile* file_1200wo = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_CorMuVetoNoRegression/mcsig/mc-sig-1200-NLO-deep-SR-3j.root","READ");
   
   ///
   /// Mass histograms
