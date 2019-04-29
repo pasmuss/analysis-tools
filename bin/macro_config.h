@@ -99,7 +99,7 @@ int nmax_;
 std::vector<float> ptmin_;
 std::vector<float> ptmax_;
 std::vector<float> etamax_;
-
+float massdepptcut_;
 
 float drmin_;
 float drmax_;
@@ -212,6 +212,7 @@ int macro_config(int argc, char * argv[])
 	("dEtaMax",po::value <float> (&detamax_)->default_value(10.),"Maximum delta eta between candidates")
 	("dPhiMin",po::value <float> (&dphimin_)->default_value(0.),"Minimum delta phi between candidates")
 	("ptImbalanceMax",po::value <float> (&ptimbalmax_)->default_value(1000.),"Maximum relative imbalance between two candidates")
+	("MassDepPtCut",po::value <float> (&massdepptcut_)->default_value(-9999.),"Using mass dependent pT cut on leading two jets if > 0; value is then used fraction")
 	//      
 	("isMC",po::value <bool> (&isMC_)->default_value(true),"Flag for MC dataset")
 	("invertCutflow",po::value <bool> (&invertCutflow_)->default_value(false),"Flag for inverting Cutflow (placing trigger as last step)")

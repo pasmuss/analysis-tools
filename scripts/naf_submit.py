@@ -187,7 +187,7 @@ if ntuples:
       os.chdir(exedir)
       print "Submitting ",jobid,"..."
       os.system(condorcmd)
-      sleep(0.2)
+      sleep(0.02)
       # back to original directory
       os.chdir(cwd)
 

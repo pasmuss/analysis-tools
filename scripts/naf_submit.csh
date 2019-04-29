@@ -51,7 +51,7 @@ foreach file ( $files )
       cp -p ../../$json .
    endif
    condor_submit.csh "job_"$counter $macro `basename $config`
-   sleep 0.2
+   sleep 0.01
    cd -
 end
 

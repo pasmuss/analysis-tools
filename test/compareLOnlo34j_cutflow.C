@@ -22,14 +22,14 @@ void compareLOnlo34j_cutflow(){
   style.SetStyle();
   gStyle->SetOptStat(0);
 
-  vector<string> nlomasspoints = {"200","250","350","400","450","500","600","700","800","900","1000","1200","1400","1600","1800","2000"};
-  vector<string> lomasspoints  = {            "350",                  "600",                         "1200"};
+  vector<string> nlomasspoints = {"200","250","350","400","450","500","600","700","800","900","1000","1200","1400","1600"/*,"1800","2000"*/};
+  //vector<string> lomasspoints  = {            "350",                  "600",                         "1200"};
 
   int nlopoints = nlomasspoints.size();
-  int lopoints = lomasspoints.size();
+  //int lopoints = lomasspoints.size();
 
   float nlofloats[nlopoints];
-  float lofloats[lopoints];
+  //float lofloats[lopoints];
 
   //float nloeffCRbc[nlopoints];
   //float nloeffCRac[nlopoints];
@@ -43,35 +43,35 @@ void compareLOnlo34j_cutflow(){
 
   //float loeffCRbc[lopoints];
   //float loeffCRac[lopoints];
-  float loeffSRbc[lopoints];
-  float loeffSRac[lopoints];
+  //float loeffSRbc[lopoints];
+  //float loeffSRac[lopoints];
 
   //float loeffCRbc3j[lopoints];
   //float loeffCRac3j[lopoints];
-  float loeffSRbc3j[lopoints];
-  float loeffSRac3j[lopoints];
+  //float loeffSRbc3j[lopoints];
+  //float loeffSRac3j[lopoints];
 
   //map<string,TFile*> nlofilesCR3j;
   //map<string,TFile*> lofilesCR3j;
   map<string,TFile*> nlofilesSR3j;
-  map<string,TFile*> lofilesSR3j;
+  //map<string,TFile*> lofilesSR3j;
 
   //map<string,TH1F*> nlohistsCR3j;
   map<string,TH1F*> nlohistsSR3j;
   //map<string,TH1F*> lohistsCR3j;
-  map<string,TH1F*> lohistsSR3j;
+  //map<string,TH1F*> lohistsSR3j;
   
   //map<string,TFile*> nlofilesCR;
   //map<string,TFile*> lofilesCR;
   map<string,TFile*> nlofilesSR;
-  map<string,TFile*> lofilesSR;
+  //map<string,TFile*> lofilesSR;
 
   //map<string,TH1F*> nlohistsCR;
   map<string,TH1F*> nlohistsSR;
   //map<string,TH1F*> lohistsCR;
-  map<string,TH1F*> lohistsSR;
+  //map<string,TH1F*> lohistsSR;
     
-  TCanvas* canSR = style.MakeCanvas("canSR", "SR", 700,700);
+  TCanvas* canSR = style.MakeCanvas("canSR", "SR, 4 b jets", 700,700);
   TCanvas* canSR3j = style.MakeCanvas("canSR3j", "SR, 3 b tags", 700,700);
   //TCanvas* canCR = style.MakeCanvas("canCR", "CR", 700,700);
 
@@ -79,41 +79,41 @@ void compareLOnlo34j_cutflow(){
     nlofloats[i] = stof(nlomasspoints[i].c_str());
 
     //nlofilesCR[nlomasspoints[i]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-CR.root").c_str() ,"READ");
-    nlofilesSR[nlomasspoints[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_allcorrections_nentries_v2/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR.root").c_str() ,"READ");
+    nlofilesSR[nlomasspoints[i]] = new TFile( ("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dcsv_new-noofevtsweighted/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR.root").c_str() ,"READ");
 
     //nlofilesCR3j[nlomasspoints[i]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-CR-3j.root").c_str() ,"READ");
-    nlofilesSR3j[nlomasspoints[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_allcorrections_nentries_v2/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR-3j.root").c_str() ,"READ");
+    nlofilesSR3j[nlomasspoints[i]] = new TFile( ("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dcsv_new-noofevtsweighted/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR-3j.root").c_str() ,"READ");
     
-    //nlohistsCR[nlomasspoints[i]] = (TH1F*)nlofilesCR[nlomasspoints[i]]->Get("cutflow");
+    //[nlomasspoints[i]] = (TH1F*)nlofilesCR[nlomasspoints[i]]->Get("cutflow");
     //float scalenloCR = nlohistsCR[nlomasspoints[i]]->GetBinContent(1);
     //nlohistsCR[nlomasspoints[i]] -> Scale(1/scalenloCR);
-    nlohistsSR[nlomasspoints[i]] = (TH1F*)nlofilesSR[nlomasspoints[i]]->Get("cutflow");
-    float scalenloSR = nlohistsSR[nlomasspoints[i]]->GetBinContent(1);
+    nlohistsSR[nlomasspoints[i]] = (TH1F*)nlofilesSR[nlomasspoints[i]]->Get("noofevents_w_nlo");
+    float scalenloSR = nlohistsSR[nlomasspoints[i]]->GetBinContent(2);
     nlohistsSR[nlomasspoints[i]] -> Scale(1/scalenloSR);
 
     //nlohistsCR3j[nlomasspoints[i]] = (TH1F*)nlofilesCR3j[nlomasspoints[i]]->Get("cutflow");
     //float scalenloCR3j = nlohistsCR3j[nlomasspoints[i]]->GetBinContent(1);
     //nlohistsCR3j[nlomasspoints[i]] -> Scale(1/scalenloCR3j);
-    nlohistsSR3j[nlomasspoints[i]] = (TH1F*)nlofilesSR3j[nlomasspoints[i]]->Get("cutflow");
-    float scalenloSR3j = nlohistsSR3j[nlomasspoints[i]]->GetBinContent(1);
+    nlohistsSR3j[nlomasspoints[i]] = (TH1F*)nlofilesSR3j[nlomasspoints[i]]->Get("noofevents_w_nlo");
+    float scalenloSR3j = nlohistsSR3j[nlomasspoints[i]]->GetBinContent(2);
     nlohistsSR3j[nlomasspoints[i]] -> Scale(1/scalenloSR3j);
 
     //nloeffCRbc[i] = nlohistsCR[nlomasspoints[i]]->GetBinContent(5);
     //nloeffCRac[i] = nlohistsCR[nlomasspoints[i]]->GetBinContent(7);
 
-    nloeffSRbc[i] = nlohistsSR[nlomasspoints[i]] -> GetBinContent(5);
-    nloeffSRac[i] = nlohistsSR[nlomasspoints[i]] -> GetBinContent(7);
+    nloeffSRbc[i] = nlohistsSR[nlomasspoints[i]] -> GetBinContent(6);
+    nloeffSRac[i] = nlohistsSR[nlomasspoints[i]] -> GetBinContent(9);
 
     //nloeffCRbc3j[i] = nlohistsCR3j[nlomasspoints[i]] -> GetBinContent(5);
     //nloeffCRac3j[i] = nlohistsCR3j[nlomasspoints[i]] -> GetBinContent(7);
 
-    nloeffSRbc3j[i] = nlohistsSR3j[nlomasspoints[i]] -> GetBinContent(5);
-    nloeffSRac3j[i] = nlohistsSR3j[nlomasspoints[i]] -> GetBinContent(7);
+    nloeffSRbc3j[i] = nlohistsSR3j[nlomasspoints[i]] -> GetBinContent(6);
+    nloeffSRac3j[i] = nlohistsSR3j[nlomasspoints[i]] -> GetBinContent(9);
 
     cout << "Entries of vectors for " << nlomasspoints[i] << " GeV mass point (NLO): " << nloeffSRbc[i] << " " << nloeffSRac[i] << " " << nloeffSRbc3j[i] << " " << nloeffSRac3j[i] << endl;
   }
-
-  for (unsigned int j = 0; j < lomasspoints.size(); j++){
+  
+  /*for (unsigned int j = 0; j < lomasspoints.size(); j++){
     lofloats[j] = stof(lomasspoints[j].c_str());
 
     //lofilesCR[lomasspoints[j]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+lomasspoints[j]+"-deep-CR.root").c_str() ,"READ");
@@ -149,7 +149,7 @@ void compareLOnlo34j_cutflow(){
     loeffSRac3j[j] = lohistsSR3j[lomasspoints[j]] -> GetBinContent(7);    
 
     cout << "Entries of vectors for " << lomasspoints[j] << " GeV mass point (LO): " << loeffSRbc[j] << " " << loeffSRac[j] << " " << loeffSRbc3j[j] << " " << loeffSRac3j[j] << endl;
-  }
+  }*/
   /*
   canCR -> cd();
   canCR -> SetLogy();
@@ -240,7 +240,7 @@ void compareLOnlo34j_cutflow(){
   GnloeffSRac -> SetLineStyle(1);
   GnloeffSRac -> Draw("CP");
 
-  TGraph* GloeffSRbc = new TGraph(lopoints,lofloats,loeffSRbc);
+  /*TGraph* GloeffSRbc = new TGraph(lopoints,lofloats,loeffSRbc);
   GloeffSRbc -> SetLineColor(kBlue);
   GloeffSRbc -> SetMarkerStyle(26);
   GloeffSRbc -> SetLineStyle(7);
@@ -249,20 +249,20 @@ void compareLOnlo34j_cutflow(){
   GloeffSRac -> SetLineColor(kRed);
   GloeffSRac -> SetMarkerStyle(26);
   GloeffSRac -> SetLineStyle(7);
-  GloeffSRac -> Draw("CP");
+  GloeffSRac -> Draw("CP");*/
 
   TLegend* legSR = new TLegend(0.17,0.17,0.92,0.35);
   style.SetLegendStyle(legSR);
   legSR -> SetNColumns(2);
   legSR -> AddEntry(GnloeffSRbc,"NLO, 4 b tags, kin. cuts","LP");
   legSR -> AddEntry(GnloeffSRac,"NLO, 4 b tags, all cuts","LP");
-  legSR -> AddEntry(GloeffSRbc,"LO, 4 b tags, kin. cuts","LP");
-  legSR -> AddEntry(GloeffSRac,"LO, 4 b tags, all cuts","LP");
+  //legSR -> AddEntry(GloeffSRbc,"LO, 4 b tags, kin. cuts","LP");
+  //legSR -> AddEntry(GloeffSRac,"LO, 4 b tags, all cuts","LP");
   legSR -> Draw("SAME");
  
   canSR -> Update();
 
-  canSR -> SaveAs("Outputdata_LO_NLO/4med_allcorrections_nentries_v2_std_SR_4j_cut-eff_MC_NLO_LO.pdf");
+  canSR -> SaveAs("Outputdata/btag-algo-comp_dcsv_mmm-m_SR_cut-eff_MC_NLO_incl_neg_weights_from_start-4j.pdf");
 
   canSR3j -> cd();
   canSR3j -> SetLogy();
@@ -285,7 +285,7 @@ void compareLOnlo34j_cutflow(){
   GnloeffSRac3j -> SetLineStyle(1);
   GnloeffSRac3j -> Draw("CP");
 
-  TGraph* GloeffSRbc3j = new TGraph(lopoints,lofloats,loeffSRbc3j);
+  /*TGraph* GloeffSRbc3j = new TGraph(lopoints,lofloats,loeffSRbc3j);
   GloeffSRbc3j -> SetLineColor(kBlue);
   GloeffSRbc3j -> SetMarkerStyle(26);
   GloeffSRbc3j -> SetLineStyle(7);
@@ -294,19 +294,19 @@ void compareLOnlo34j_cutflow(){
   GloeffSRac3j -> SetLineColor(kRed);
   GloeffSRac3j -> SetMarkerStyle(26);
   GloeffSRac3j -> SetLineStyle(7);
-  GloeffSRac3j -> Draw("CP");
+  GloeffSRac3j -> Draw("CP");*/
 
   TLegend* legSR3j = new TLegend(0.17,0.17,0.92,0.35);
   style.SetLegendStyle(legSR3j);
   legSR3j -> SetNColumns(2);
   legSR3j -> AddEntry(GnloeffSRbc3j,"NLO, 3 b tags, kin. cuts","LP");
   legSR3j -> AddEntry(GnloeffSRac3j,"NLO, 3 b tags, all cuts","LP");
-  legSR3j -> AddEntry(GloeffSRbc3j,"LO, 3 b tags, kin. cuts","LP");
-  legSR3j -> AddEntry(GloeffSRac3j,"LO, 3 b tags, all cuts","LP");
+  //legSR3j -> AddEntry(GloeffSRbc3j,"LO, 3 b tags, kin. cuts","LP");
+  //legSR3j -> AddEntry(GloeffSRac3j,"LO, 3 b tags, all cuts","LP");
   legSR3j -> Draw("SAME");
  
   canSR3j -> Update();
  
-  canSR3j -> SaveAs("Outputdata_LO_NLO/4med_allcorrections_nentries_v2_std_SR_3j_cut-eff_MC_NLO_LO.pdf");
+  canSR3j -> SaveAs("Outputdata/btag-algo-comp_dcsv_mmm-m_SR_cut-eff_MC_NLO_incl_neg_weights_from_start-3j.pdf");
 
 }

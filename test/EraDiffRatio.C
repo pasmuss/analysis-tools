@@ -16,7 +16,7 @@
 
 using namespace std;
 
-int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string region_ , string xtitle_, float xlow_ ,float xhigh_ , float ylow_ ,float yhigh_ , float yRlow_ ,float yRhigh_/* , double sfe1_, double sfe2_  */)
+int EraDiffRatio( string era1_ , string era2_ , string var_ , /*string region_ , */string xtitle_ , float xlow_ , float xhigh_ , float ylow_ , float yhigh_ , float yRlow_ , float yRhigh_ )
 {
 
   HbbStylesNew style;
@@ -25,9 +25,8 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
 
   //setTDRStyle();
 
-  std::string reco = reco_;
   std::string var = var_;
-  std::string region = region_;
+  //std::string region = region_;
   std::string xtitle = xtitle_;
   
   const float xlow  = xlow_;
@@ -39,16 +38,19 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
 
   float lumi = 36.0; // all 2017 C to F
 
-  if ( (era1_ == "C" && era2_ == "D") || (era1_ == "D" && era2_ == "C") ) lumi = 13.8;
+  /*if ( (era1_ == "C" && era2_ == "D") || (era1_ == "D" && era2_ == "C") ) lumi = 13.8;
   if ( (era1_ == "C" && era2_ == "E") || (era1_ == "E" && era2_ == "C") ) lumi = 18.4;
   if ( (era1_ == "C" && era2_ == "F") || (era1_ == "F" && era2_ == "C") ) lumi = 23.1;
   if ( (era1_ == "D" && era2_ == "E") || (era1_ == "E" && era2_ == "D") ) lumi = 13.1;
   if ( (era1_ == "D" && era2_ == "F") || (era1_ == "F" && era2_ == "D") ) lumi = 17.7;
-  if ( (era1_ == "E" && era2_ == "F") || (era1_ == "F" && era2_ == "E") ) lumi = 22.4;
+  if ( (era1_ == "E" && era2_ == "F") || (era1_ == "F" && era2_ == "E") ) lumi = 22.4;*/
  
 
-  TFile * f1 = new TFile( ("ResultsJul13-mediumwp-4jets/rootfiles/"+reco+"/"+reco+"-"+era1_+"-deep-"+region+".root").c_str(),"READ");//era 1
-  TFile * f2 = new TFile( ("ResultsJul13-mediumwp-4jets/rootfiles/"+reco+"/"+reco+"-"+era2_+"-deep-"+region+".root").c_str(),"READ");//era 2
+  /*  TFile * f1 = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_ntuples_v4/rereco/rereco-CDEF-deep-"+region+".root").c_str(),"READ");//era 1
+      TFile * f2 = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_new-nentires/rereco/rereco-CDEF-deep-"+region+".root").c_str(),"READ");//era 2*/
+
+  TFile * f1 = new TFile( "Configs_diffBTags_allmedium/rootfiles_4med_ntuples_v4/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");//era 1
+  TFile * f2 = new TFile( "Configs_diffBTags_allmedium/rootfiles_4med_new-nentires/mcsig/mc-sig-350-NLO-deep-SR-3j.root","READ");//era 2
 
   TH1F * hist_era1 = (TH1F*)f1->Get(var.c_str());
   TH1F * hist_era2 = (TH1F*)f2->Get(var.c_str());
@@ -140,35 +142,35 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   rp -> GetUpperPad() -> cd();
   
   //TLegend* leg = new TLegend(0.57,0.6,0.87,0.9);
-  TLegend* leg = new TLegend(0.406,0.575,0.706,0.876);//b tag
+  TLegend* leg = new TLegend(0.68,0.65,0.98,0.84);//b tag
   style.SetLegendStyle(leg);
   if ( (var_ == "pt_0_csv") || (var_ == "pt_0") ) {
-    leg -> AddEntry(hist_era1,("p_{T}, 1^{st} jet, Era "+era1_).c_str(),"L");
-    leg -> AddEntry(hist_era2,("p_{T}, 1^{st} jet, Era "+era2_).c_str(),"L");
+    leg -> AddEntry(hist_era1,("p_{T}, 1^{st} jet, "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("p_{T}, 1^{st} jet, "+era2_).c_str(),"L");
   }
   else if ( (var_ == "pt_1_csv") || (var_ == "pt_1") ) {
-    leg -> AddEntry(hist_era1,("p_{T}, 2^{nd} jet, Era "+era1_).c_str(),"L");
-    leg -> AddEntry(hist_era2,("p_{T}, 2^{nd} jet, Era "+era2_).c_str(),"L");
+    leg -> AddEntry(hist_era1,("p_{T}, 2^{nd} jet, "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("p_{T}, 2^{nd} jet, "+era2_).c_str(),"L");
   }
   else if ( (var_ == "pt_2_csv") || (var_ == "pt_2") ) {
-    leg -> AddEntry(hist_era1,("p_{T}, 3^{rd} jet, Era "+era1_).c_str(),"L");
-    leg -> AddEntry(hist_era2,("p_{T}, 3^{rd} jet, Era "+era2_).c_str(),"L");
+    leg -> AddEntry(hist_era1,("p_{T}, 3^{rd} jet, "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("p_{T}, 3^{rd} jet, "+era2_).c_str(),"L");
   }
   else if ( (var_ == "pt_3_csv") || (var_ == "pt_3") ) {
-    leg -> AddEntry(hist_era1,("p_{T}, 4^{th} jet, Era "+era1_).c_str(),"L");
-    leg -> AddEntry(hist_era2,("p_{T}, 4^{th} jet, Era "+era2_).c_str(),"L");
+    leg -> AddEntry(hist_era1,("p_{T}, 4^{th} jet, "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("p_{T}, 4^{th} jet, "+era2_).c_str(),"L");
   }
   else if ( (var_ == "m12_csv") || (var_ == "m12") ) {
-    leg -> AddEntry(hist_era1,("m_{12}, Era "+era1_).c_str(),"L");
-    leg -> AddEntry(hist_era2,("m_{12}, Era "+era2_).c_str(),"L");
+    leg -> AddEntry(hist_era1,("m_{12}, "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("m_{12}, "+era2_).c_str(),"L");
   }
   else if ( (var_ == "deepcsvbtag_0_csv") || (var_ == "deepcsvbtag_0") ) {
-    leg -> AddEntry(hist_era1,("b tag disc., 1^{st} jet, Era "+era1_).c_str(),"L");
-    leg -> AddEntry(hist_era2,("b tag disc., 1^{st} jet, Era "+era2_).c_str(),"L");
+    leg -> AddEntry(hist_era1,("b tag disc., 1^{st} jet, "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("b tag disc., 1^{st} jet, "+era2_).c_str(),"L");
   }
   else if ( (var_ == "deepcsvbtag_1_csv") || (var_ == "deepcsvbtag_1") ) {
-    leg -> AddEntry(hist_era1,("b tag disc., 2^{nd} jet, Era "+era1_).c_str(),"L");
-    leg -> AddEntry(hist_era2,("b tag disc., 2^{nd} jet, Era "+era2_).c_str(),"L");
+    leg -> AddEntry(hist_era1,("b tag disc., 2^{nd} jet, "+era1_).c_str(),"L");
+    leg -> AddEntry(hist_era2,("b tag disc., 2^{nd} jet, "+era2_).c_str(),"L");
   }
   else{
   leg -> AddEntry(hist_era1,(var_+", Era "+era1_).c_str(),"L");
@@ -176,10 +178,11 @@ int EraDiffRatio( string era1_, string era2_, string reco_, string var_, string 
   }
   leg -> Draw("SAME");
   
-  CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.75);
-
+  //CMSPrelim( Form("%.1f fb^{-1} (13 TeV)", lumi ) , "Work in progress", 0.15, 0.75);
+  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.15, 0.75);
+  
   c1 -> Update();
-  c1 -> SaveAs(("Outputdata_4medium/Comp_"+ var_+ "-" + era1_ + "-vs-" + era2_ + "-" + reco_ + "-" + region_ + ".pdf").c_str());
+  c1 -> SaveAs(("Outputdata/Comp_"+ var_+ "-" + era1_ + "-vs-" + era2_ + "-mcsigNLO350"/* + region_ */+ "-3j.pdf").c_str());
 
   //pad1 -> SetLogy();
   //c1 -> SaveAs(("PLOTS/CompReco"+ era_ + "Log.png").c_str());

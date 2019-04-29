@@ -47,9 +47,13 @@ int main(int argc, char * argv[])
     return -1;
   }
 
-  auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Summer16_25nsV1_MC_SF_AK4PFchs.txt");
-  auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "medium");
-     
+  auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
+  
+  auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V1_B_F.csv", "medium");
+  //auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V1_B_F.csv", "loose");
+  //auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "medium");
+  //auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "loose");
+   
   for ( auto & obj : triggerObjects_ )
     {
       analysis.addTree<TriggerObject> (obj,Form("MssmHbb/Events/slimmedPatTrigger/%s",obj.c_str()));
@@ -77,6 +81,7 @@ int main(int argc, char * argv[])
    
   std::map<std::string, TH1F*> h1;
   h1["noofevents_h"]      = new TH1F("noofevents_h"    , "" , 10, 0, 10);
+  h1["noofevents_w_nlo"]  = new TH1F("noofevents_w_nlo", "" , 10, 0, 10);
   h1["n"]                 = new TH1F("n"               , "" , 30, 0, 30);
   h1["n_csv"]             = new TH1F("n_csv"           , "" , 30, 0, 30);
   h1["n_ptmin20"]         = new TH1F("n_ptmin20"       , "" , 30, 0, 30);
@@ -104,12 +109,14 @@ int main(int argc, char * argv[])
       h1[Form("phi_%i",i)]         = new TH1F(Form("phi_%i",i)         , "" , 120, -6, 6);
       h1[Form("btag_%i",i)]        = new TH1F(Form("btag_%i",i)        , "" , 600, 0, 1.2);
       h1[Form("deepcsvbtag_%i",i)] = new TH1F(Form("deepcsvbtag_%i",i) , "" , 600, 0, 1.2);
+      h1[Form("deepflavourbtag_%i",i)] = new TH1F(Form("deepflavourbtag_%i",i) , "" , 600, 0, 1.2);
       
       h1[Form("pt_%i_csv",i)]     = new TH1F(Form("pt_%i_csv",i)               , "" , 210, 0, 2100);
       h1[Form("eta_%i_csv",i)]    = new TH1F(Form("eta_%i_csv",i)              , "" , 120, -6, 6);
       h1[Form("phi_%i_csv",i)]    = new TH1F(Form("phi_%i_csv",i)              , "" , 120, -6, 6);
       h1[Form("btag_%i_csv",i)]   = new TH1F(Form("btag_%i_csv",i)             , "" , 600, 0, 1.2);
       h1[Form("deepcsvbtag_%i_csv",i)] = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 600, 0, 1.2);
+      h1[Form("deepflavourbtag_%i_csv",i)] = new TH1F(Form("deepflavourbtag_%i_csv",i) , "" , 600, 0, 1.2);
 
       h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
     }
@@ -134,6 +141,7 @@ int main(int argc, char * argv[])
   cout << "region: " << sr_s << endl;
   cout << "reco: " << reco << endl;
   cout << "output file: " << outputRoot_.c_str() << endl;
+  cout << "ntuples file: " << inputlist_.c_str() << endl;
   txtoutputfile << "This analysis has " << analysis.size() << " events" << endl;
   txtoutputfile << nevtmax_ << " events have been selected." << endl;
   txtoutputfile << "Selected category: "<< regions << endl;
@@ -142,6 +150,7 @@ int main(int argc, char * argv[])
   txtoutputfile << "region: " << sr_s << endl;
   txtoutputfile << "reco: " << reco << endl;
   txtoutputfile << "output file: " << outputRoot_.c_str() << endl;
+  txtoutputfile << "ntuples file: " << inputlist_.c_str() << endl;
   
   // Cut flow
   // 0: triggered events (no. events for MC)
@@ -153,12 +162,13 @@ int main(int argc, char * argv[])
   // 6: matching
   // 7: only MC: triggered events
   int nsel[10] = { };
+  int nweigh[10] = { };
   int nmatch[10] = { };
 
   int noofeventsstart = 0;
 
   if ( nevtmax_ < 0 ) nevtmax_ = analysis.size();
-
+  
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
       noofeventsstart ++;
@@ -190,15 +200,25 @@ int main(int argc, char * argv[])
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
 
-      if (!invertCutflow_) ++nsel[0]; //also for MC: equals no. of events then
-      
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
+      float sgweight = 0;
       if (isMC_){
 	auto genjets = analysis.collection<GenJet>("GenJets");
 	slimmedJets->addGenJets(genjets);
-	float sgweight = analysis.genWeight()/fabs(analysis.genWeight());//perhaps initialize as 1 before this loop? i.e. for each event?
+	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
 	h1["nentries"] -> Fill((sgweight+1.)/2.);
+      }
+
+      if (isMC_ && sgweight == 0){
+	cout << "Neither positive nor negative weight detected for MC. This can not be right." << endl;
+	return -1;
+      }
+
+      if (!invertCutflow_){
+	++nsel[0]; //also for MC: equals no. of events then
+	if(isMC_ && sgweight > 0) ++nweigh[0];//this equals the initial number of events
+	else if(isMC_ && sgweight < 0) --nweigh[0];//for nlo, i.e. including the negative weights
       }
       
       std::vector<Jet*> selectedJets;
@@ -212,7 +232,8 @@ int main(int argc, char * argv[])
       if ( (int)selectedJets.size() < njetsmin_ ) continue;
 
       ++nsel[1];
-
+      if(isMC_ && sgweight > 0) ++nweigh[1];
+      else if(isMC_ && sgweight < 0) --nweigh[1];
 
       ///
       /// HERE: ALREADY APPLY JET CORRECTIONS: KINEMATIC SELECTION SHOULD BE BASED ON IT!
@@ -235,6 +256,8 @@ int main(int argc, char * argv[])
       
       if ( ! goodEvent ) continue;
       ++nsel[2];
+      if(isMC_ && sgweight > 0) ++nweigh[2];
+      else if(isMC_ && sgweight < 0) --nweigh[2];
       
       for ( int j1 = 0; j1 < njetsmin_-1; ++j1 )
 	{
@@ -248,9 +271,13 @@ int main(int argc, char * argv[])
       
       if ( ! goodEvent ) continue;
       ++nsel[3];
+      if(isMC_ && sgweight > 0) ++nweigh[3];
+      else if(isMC_ && sgweight < 0) --nweigh[3];
       
       if ( fabs(selectedJets[0]->eta() - selectedJets[1]->eta()) > detamax_ ) continue;
       ++nsel[4];
+      if(isMC_ && sgweight > 0) ++nweigh[4];
+      else if(isMC_ && sgweight < 0) --nweigh[4];
       
       
       // Fill histograms of kinematic passed events
@@ -273,11 +300,13 @@ int main(int argc, char * argv[])
 	  h1[Form("phi_%i",j)]  -> Fill(jet->phi());
 	  h1[Form("btag_%i",j)] -> Fill(jet->btag());
 	  h1[Form("deepcsvbtag_%i",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
+	  h1[Form("deepflavourbtag_%i",j)] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
 	  
 	  float btagdisc;
 
 	  if (btagalgo == "csv") btagdisc = jet->btag();
 	  else if (btagalgo == "deep_csv") btagdisc = jet->btag("btag_deepb") + jet->btag("btag_deepbb");
+	  else if (btagalgo == "deepflavour") btagdisc = jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb");
 	  else return -1;
 
 	  if (isMC_){
@@ -340,12 +369,25 @@ int main(int argc, char * argv[])
 	      if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
             }
 	  }
+	  else if (regions == "4jor"){
+	    if (!signalregion_){//CR 4jor: bbbnb || bbnbb (3rd or 4th jet may be reversed)
+	      if (j == 2) storedisc = btagdisc;
+              if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
+              if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
+	      if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
+	    }
+	    else{//SR 4jor:bbbb
+	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;	      
+	    }
+	  }
 	}//end of loop over jets for b tagging
       
       h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
       
       if ( ! goodEvent ) continue;
       ++nsel[5];
+      if(isMC_ && sgweight > 0) ++nweigh[5];
+      else if(isMC_ && sgweight < 0) --nweigh[5];
       
       
       // Is matched?
@@ -380,7 +422,8 @@ int main(int argc, char * argv[])
       
       if ( ! goodEvent ) continue;
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
-
+      if(isMC_ && sgweight > 0) ++nweigh[6];
+      else if(isMC_ && sgweight < 0) --nweigh[6];
 
       // Check for muons in the jets
       if (muonveto_){
@@ -412,6 +455,8 @@ int main(int argc, char * argv[])
 	  } //end: loop over muons
 	if ( muonpresent ) continue;
 	nsel[7]++;
+	if(isMC_ && sgweight > 0) ++nweigh[7];
+	else if(isMC_ && sgweight < 0) --nweigh[7];
       } //end: muon veto
       
       // Fill histograms of passed bbnb btagging selection
@@ -469,6 +514,17 @@ int main(int argc, char * argv[])
 	}
 
       mbb = (Corjet[0] + Corjet[1]).M();
+
+      if (massdepptcut_ > 0){
+	float fraccut = massdepptcut_;
+	if ( (Corjet[0].Pt() < fraccut*mbb) || (Corjet[1].Pt() < fraccut*mbb) ) goodEvent = false;
+      }
+
+      if (!goodEvent) continue;
+      nsel[8]++;
+      if(isMC_ && sgweight > 0) ++nweigh[8];
+      else if(isMC_ && sgweight < 0) --nweigh[8];
+
       if ( !signalregion_ || isMC_)//blinding
 	{ 
 	  h1["m12_csv"] -> Fill(mbb,eventweight);
@@ -491,6 +547,20 @@ int main(int argc, char * argv[])
   h1["noofevents_h"] -> SetBinContent(7,nsel[5]); //btag
   h1["noofevents_h"] -> SetBinContent(8,nsel[6]); //final selection (perhaps trigger; matching)
   if(muonveto_) h1["noofevents_h"] -> SetBinContent(9,nsel[7]); //including muon veto
+  if(massdepptcut_ > 0) h1["noofevents_h"] -> SetBinContent(10,nsel[8]); //mass dependent pt cut
+
+  if(isMC_){//weighted number of events (important only for NLO) after each step of the cutflow
+    h1["noofevents_w_nlo"] -> SetBinContent(1,noofeventsstart); //total number of events
+    h1["noofevents_w_nlo"] -> SetBinContent(2,nweigh[0]); //triggered/weighted
+    h1["noofevents_w_nlo"] -> SetBinContent(3,nweigh[1]); //3/4 jets (tight)
+    h1["noofevents_w_nlo"] -> SetBinContent(4,nweigh[2]); //kin
+    h1["noofevents_w_nlo"] -> SetBinContent(5,nweigh[3]); //dR
+    h1["noofevents_w_nlo"] -> SetBinContent(6,nweigh[4]); //deta
+    h1["noofevents_w_nlo"] -> SetBinContent(7,nweigh[5]); //btag
+    h1["noofevents_w_nlo"] -> SetBinContent(8,nweigh[6]); //final selection (perhaps trigger; matching)
+    if(muonveto_) h1["noofevents_w_nlo"] -> SetBinContent(9,nweigh[7]); //including muon veto
+    if(massdepptcut_ > 0) h1["noofevents_w_nlo"] -> SetBinContent(10,nweigh[8]); //mass dependent pt cut
+  }
 
   for (auto & ih1 : h1)
     {
@@ -518,11 +588,13 @@ int main(int argc, char * argv[])
   cuts[2] = "Triple/quadruple jet kinematics";
   cuts[3] = "Delta R(i;j)";
   cuts[4] = "Delta eta(j1;j2)";
-  cuts[5] = "btagged (bbnb/bbnbnb)";
+  cuts[5] = "btagged (bbnb/bbnbb)";
   if (signalregion_) cuts[5] = "btagged (bbb/bbbb)";
   cuts[6] = "Matched to online j1;j2";
   if (invertCutflow_) cuts[6] = "Trigger and matching j1;j2";
   if(muonveto_) cuts[7] = "Muon veto";
+  if(massdepptcut_ > 0) cuts[8] = "Mass dependent pT cut j1;j2";
+  if(massdepptcut_ < 0) cuts[8] = "No mass dep. pT cut applied.";
   //if (isMC_ || invertCutflow_) cuts[7] = "Triggered";
 
   printf ("%-23s  %10s  %10s  %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 
@@ -530,7 +602,7 @@ int main(int argc, char * argv[])
   //if (!isMC_){
   if (!invertCutflow_){
     if(muonveto_) {
-      for ( int i = 0; i < 8; ++i )
+      for ( int i = 0; i < 9; ++i )
 	{
 	  fracAbs[i] = double(nsel[i])/nsel[0];
 	  if ( i>0 ){
@@ -545,7 +617,7 @@ int main(int argc, char * argv[])
 	}
     }
     else{
-      for ( int i = 0; i < 7; ++i )
+      for ( int i = 0; i < 8; ++i )
         {
           fracAbs[i] = double(nsel[i])/nsel[0];
           if ( i>0 ){
