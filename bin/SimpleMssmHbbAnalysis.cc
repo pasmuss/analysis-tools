@@ -668,3 +668,8 @@ int main(int argc, char * argv[])
   //printf ("%-23s , %10d , %10.3f , %10.3f \n", cuts[i].c_str(), nsel[i], fracAbs[i], fracRel[i] );
 
 } //end main
+
+void correctJetpt ( Jet& jet , const float& cor )
+{
+  jet.pt( jet.pt() * cor );
+}
