@@ -180,10 +180,10 @@ int main(int argc, char * argv[])
       bool muonpresent = false;
       float eventweight = 1.0;
 	  	
-      if ( i > 0 && i%100000==0 ){
+      //if ( i > 0 && i%100000==0 ){
 	std::cout << i << " events processed!" << std::endl;
 	txtoutputfile << i << " events processed!" << endl;
-      }
+	//}
       int run = analysis.run();
       int run_crit = 304508;
      
@@ -474,20 +474,27 @@ int main(int argc, char * argv[])
       std::vector<TLorentzVector> Corjet;
       for ( int j = 0; j < njetsmin_; ++j )
 	{
+	  cout << "investigating jet " << j+1 << endl;
 	  Jet* jet = selectedJets[j];
+	  cout << "pt of jet number " << j+1 << " is " << jet->pt() << endl;
 	  //Apply Jet Energy Corrections
 	  TLorentzVector corJet;
 	  float regressionfactor = 1.0;
+	  cout << "reg factor before checking: " << regressionfactor << endl;
 	  if (useregression_){
 	    regressionfactor = jet->bRegCorr();
+	    cout << "reg factor after checking: " << regressionfactor << endl;
 	  }
 	  float jetpt = jet->pt();
 	  float corpt = jetpt * regressionfactor;
+	  cout << "and pt: " << corpt << endl;
 	  //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
 	  if (isMC_ && useJER_){
 	    jet->jerInfo(*jerinfo,0.2);
 	    float correctResolution = jet->jerCorrection();
+	    cout << "resolution factor: " << correctResolution << endl;
 	    corpt *= correctResolution;
+	    cout << "pt after resolution: " << corpt << endl;
 	    //float correctResolutionUp = selectedJets[i].jerCorrection("up");
 	    //float correctResolutionDown = selectedJets[i].jerCorrection("down");
 	  }
