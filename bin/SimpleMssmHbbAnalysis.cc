@@ -183,10 +183,10 @@ int main(int argc, char * argv[])
       bool muonpresent = false;
       float eventweight = 1.0;
 	  	
-      //if ( i > 0 && i%100000==0 ){
-      std::cout << i << " events processed!" << std::endl;
-      txtoutputfile << i << " events processed!" << endl;
-      //}
+      if ( i > 0 && i%100000==0 ){
+	std::cout << i << " events processed!" << std::endl;
+	txtoutputfile << i << " events processed!" << endl;
+      }
       int run = analysis.run();
       int run_crit = 304508;
      
@@ -239,12 +239,29 @@ int main(int argc, char * argv[])
       else if(isMC_ && sgweight < 0) --nweigh[1];
 
       ///
-      /// HERE: ALREADY APPLY JET CORRECTIONS: KINEMATIC SELECTION SHOULD BE BASED ON IT!
       /// STILL SAVE ORIGINAL VALUES FOR APPLICATION OF SCALE FACTORS
       /// Jet * jet = selectedJets[j]; jet->pt(); OR selectedJets[0]->eta();
-      /// (TRIGGER EFFICIENCY OR SO)
-      /// check between here and below: jet / correctedJets[i]
+      /// IF DESIRED AT SOME POINT
       ///
+
+      for ( int j = 0; j < njetsmin_; ++j )
+	{
+	  Jet* jet = selectedJets[j];
+	  //Apply Jet Energy Corrections
+	  float regressionfactor = 1.0;
+	  if (useregression_){
+	    regressionfactor = jet->bRegCorr();
+	    correctJetpt(*jet,regressionfactor);
+	  }
+	  //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
+	  if (isMC_ && useJER_){
+	    jet->jerInfo(*jerinfo,0.2);
+	    float correctResolution = jet->jerCorrection();
+	    correctJetpt(*jet,correctResolution);
+	    //float correctResolutionUp = selectedJets[i].jerCorrection("up");
+	    //float correctResolutionDown = selectedJets[i].jerCorrection("down");
+	  }
+	}
       
       // Kinematic selection - 3/4 leading jets
       for ( int j = 0; j < njetsmin_; ++j )
@@ -474,59 +491,18 @@ int main(int argc, char * argv[])
       ///
       /// from here: copy to above to correct jet earlier (also loop over <njetsmin_)
       ///
-      //std::vector<TLorentzVector> Corjet;
       for ( int j = 0; j < njetsmin_; ++j )
 	{
-	  cout << "investigating jet " << j+1 << endl;
 	  Jet* jet = selectedJets[j];
-	  cout << "pt of jet number " << j+1 << " is " << jet->pt() << endl;
-	  //Apply Jet Energy Corrections
-	  //TLorentzVector corJet;
-	  float regressionfactor = 1.0;
-	  cout << "reg factor before checking: " << regressionfactor << endl;
-	  if (useregression_){
-	    regressionfactor = jet->bRegCorr();
-	    cout << "reg factor after checking: " << regressionfactor << endl;
-	    correctJetpt(*jet,regressionfactor);
-	    cout << "and pt: " << jet->pt() << endl;
-	  }
-	  //float jetpt = jet->pt();
-	  //float corpt = jetpt * regressionfactor;
-	  //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
-	  if (isMC_ && useJER_){
-	    jet->jerInfo(*jerinfo,0.2);
-	    float correctResolution = jet->jerCorrection();
-	    cout << "resolution factor: " << correctResolution << endl;
-	    correctJetpt(*jet,correctResolution);
-	    cout << "pt after resolution: " << jet->pt() << endl;
-	    //corpt *= correctResolution;
-	    //float correctResolutionUp = selectedJets[i].jerCorrection("up");
-	    //float correctResolutionDown = selectedJets[i].jerCorrection("down");
-	  }
-	  //float jetmass = (jet->p4()).M();
-	  //float jeteta = jet->eta();
-	  //float jetphi = jet->phi();
-	  //corJet.SetPtEtaPhiM(corpt,jeteta,jetphi,jetmass);
-	  //jet->p4(corJet);
-	  //Corjet.push_back(corJet);
-	  ///
-	  /// until here presumably
-	  /// filling histograms still should be done below inside this very loop
-	  /// for btags (not affected by corrections but not included in corJet:
-	  /// Jet* jet = selectedJets[j]; jet->btag();
-	  /// atfer copying: check for jet or correctedJets in between here and above location
-	  ///
 	  h1[Form("pt_%i_csv",j)]   -> Fill(jet->pt(),eventweight);
 	  h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta(),eventweight);
 	  h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi(),eventweight);
-	  //h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta(),eventweight);
-	  //h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi(),eventweight);
 	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag(),eventweight);
 	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"),eventweight);
+	  h1[Form("deepflavourbtag_%i_csv",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
 	}
 
       mbb = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
-      cout << "mbb: " << mbb << endl;
 
       if (massdepptcut_ > 0){
 	float fraccut = massdepptcut_;
