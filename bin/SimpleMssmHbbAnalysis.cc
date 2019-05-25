@@ -9,6 +9,7 @@
 #include "TFileCollection.h"
 #include "TChain.h"
 #include "TH1.h" 
+#include "TRandom3.h"
 #include "TLorentzVector.h"
 
 #include "Analysis/Tools/interface/Analysis.h"
@@ -20,6 +21,9 @@ using namespace analysis::tools;
 
 //Function declarations
 void correctJetpt ( Jet& , const float& );
+void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window );
+
+int nsubsamples = 5;//CHECK PRESCALE!!
 
 // =============================================================================================   
 int main(int argc, char * argv[])
@@ -73,6 +77,8 @@ int main(int argc, char * argv[])
 	  return -1;
 	}
     }
+
+  float prescaleEra = 7.0; //CHECK PRESCALE VALUE!!!
    
   std::string sr_s = "SR";
   if ( ! signalregion_ ) sr_s = "CR";
@@ -129,11 +135,35 @@ int main(int argc, char * argv[])
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
    
   double mbb;
+  double mbb_sel;
   double ptH;
   double weight;
+  double mbbw[nsubsamples];
+
   TTree *tree = new TTree("MssmHbb_13TeV","");
   tree->Branch("mbb",&mbb,"mbb/D");
   tree->Branch("weight",&weight,"weight/D");
+  tree->Branch("nsubsamples",&nsubsamples,"nsubsamples/I");
+  
+  TTree *tree0 = new TTree("MssmHbb_13TeV_0","");
+  tree0->Branch("mbb",&mbb,"mbb/D");
+  tree0->Branch("weight",&weight,"weight/D");
+
+  TTree *tree1 = new TTree("MssmHbb_13TeV_1","");
+  tree1->Branch("mbb",&mbb,"mbb/D");
+  tree1->Branch("weight",&weight,"weight/D");
+
+  TTree *tree2 = new TTree("MssmHbb_13TeV_2","");
+  tree2->Branch("mbb",&mbb,"mbb/D");
+  tree2->Branch("weight",&weight,"weight/D");
+
+  TTree *tree3 = new TTree("MssmHbb_13TeV_3","");
+  tree3->Branch("mbb",&mbb,"mbb/D");
+  tree3->Branch("weight",&weight,"weight/D");
+
+  TTree *tree4 = new TTree("MssmHbb_13TeV_4","");
+  tree4->Branch("mbb",&mbb,"mbb/D");
+  tree4->Branch("weight",&weight,"weight/D");
    
   // Analysis of events
   cout << "This analysis has " << analysis.size() << " events" << endl;
@@ -170,6 +200,10 @@ int main(int argc, char * argv[])
 
   int noofeventsstart = 0;
 
+  //seed reading and random generator for prescaling
+  int seed = analysis.seed("seed.txt");
+  TRandom3 *R = new TRandom3( seed );
+
   if ( nevtmax_ < 0 ) nevtmax_ = analysis.size();
   
   for ( int i = 0 ; i < nevtmax_ ; ++i )
@@ -182,11 +216,13 @@ int main(int argc, char * argv[])
       bool goodEvent = true;
       bool muonpresent = false;
       float eventweight = 1.0;
-	  	
-      //if ( i > 0 && i%100000==0 ){
+
+      int window = 0;
+      
+      if ( i > 0 && i%100000==0 ){
 	std::cout << i << " events processed!" << std::endl;
 	txtoutputfile << i << " events processed!" << endl;
-	//}
+      }
       int run = analysis.run();
       int run_crit = 304508;
      
@@ -488,9 +524,7 @@ int main(int argc, char * argv[])
 
       h1["n_csv"] -> Fill(selectedJets.size());
       h1["n_ptmin20_csv"] -> Fill(njets_csv);
-      ///
-      /// from here: copy to above to correct jet earlier (also loop over <njetsmin_)
-      ///
+
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
@@ -502,7 +536,7 @@ int main(int argc, char * argv[])
 	  h1[Form("deepflavourbtag_%i_csv",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
 	}
 
-      mbb = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      mbb_sel = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
 
       if (massdepptcut_ > 0){
 	float fraccut = massdepptcut_;
@@ -511,14 +545,34 @@ int main(int argc, char * argv[])
 
       if (!goodEvent) continue;
       nsel[8]++;
+
       if(isMC_ && sgweight > 0) ++nweigh[8];
       else if(isMC_ && sgweight < 0) --nweigh[8];
 
+      if ( ! isMC_ && ! signalregion_ )  applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  );
+
+      //Initialise tree with different windows
+      for ( int i=0; i< nsubsamples; i++)
+        {
+          if (i != window) mbbw[i] = -1; // set other mass windows to -1 ( fixed nentries in Tree )
+          else mbbw[window] = mbb_sel;
+        }
+
+
       if ( !signalregion_ || isMC_)//blinding
 	{ 
-	  h1["m12_csv"] -> Fill(mbb,eventweight);
+	  h1["m12_csv"] -> Fill(mbb_sel,eventweight); //unprescaled
+	  mbb = mbb_sel;
 	  weight = eventweight;
 	  tree -> Fill();
+
+	  if     ( window ==0 ) tree0->Fill();
+	  else if( window ==1 ) tree1->Fill();
+	  else if( window ==2 ) tree2->Fill();
+	  else if( window ==3 ) tree3->Fill();
+	  else if( window ==4 ) tree4->Fill();
+
+	  if ( !isMC_ && ! signalregion_) h1[Form("m12_sel_%i",window)] -> Fill(mbbw[window], eventweight);
 	}
 
       if (isMC_){
@@ -663,4 +717,22 @@ void correctJetpt ( Jet& jet , const float& cor )
   TLorentzVector CorJet;
   CorJet.SetPtEtaPhiM(jet.pt()*cor , jet.eta(), jet.phi(), (jet.p4()).M());
   jet.p4(CorJet);
+}
+
+
+void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window  )
+{
+  //Get correct Prescale for each Era
+  //  for ( size_t i = 0 ; i < eraRanges.size() ; i++ )
+  //    if (run >= eraRanges[i].first && run <= eraRanges[i].second ) prescaleEra = 7.0;
+  //Split bkg in nsubsamples equally likely distributions
+  for ( int w=0 ; w < nsubsamples; w++ )
+    {
+      if ( w == nsubsamples -1 && random > (w+1)/prescaleEra ) continue; // if last window and Random Value outside maximal window range skip
+      if ( w/prescaleEra < random  &&  random < (w+1)/prescaleEra )
+	{
+	  window = w;
+	  break;
+	}
+    }
 }

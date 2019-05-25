@@ -60,6 +60,9 @@ namespace analysis {
             void tag(const std::string &);
             std::string tag();
 
+	    //seed for random generator (used for prescaling)
+	    int seed(const std::string &);
+
             // Event
             int  numberEvents();
             int  size();

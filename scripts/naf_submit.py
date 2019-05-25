@@ -122,7 +122,7 @@ if config:
       if configJson:
          json = configJson[1]
       
-# checking if require files exist
+# checking if required files exist
 if ntuples:
    if not os.path.isfile(ntuples):      
       print "Ntuples list file does not exist"
@@ -185,6 +185,9 @@ if ntuples:
          condorcmd = "condor_submit.csh" + " " + jobid + " " + args.exe
       # make the submissions
       os.chdir(exedir)
+      jobf = open('./seed.txt', 'w+')
+      print >> jobf, int(jobnum)+1
+      jobf.close()
       print "Submitting ",jobid,"..."
       os.system(condorcmd)
       sleep(0.02)
@@ -197,6 +200,9 @@ else:
    if os.path.isfile(args.exe):
       copyfile(args.exe, exedir+"/"+os.path.basename(args.exe))
    os.chdir(exedir)
+   jobf = open('./seed.txt', 'w+')
+   print >> jobf, 1
+   jobf.close()
    condorcmd = "condor_submit.csh job_0000" + " " + os.path.basename(args.exe)
    os.system(condorcmd)
    os.chdir(cwd)

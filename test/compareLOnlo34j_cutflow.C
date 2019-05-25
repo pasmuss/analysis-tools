@@ -22,7 +22,7 @@ void compareLOnlo34j_cutflow(){
   style.SetStyle();
   gStyle->SetOptStat(0);
 
-  vector<string> nlomasspoints = {"200","250","350","400","450","500","600","700","800","900","1000","1200","1400","1600"/*,"1800","2000"*/};
+  vector<string> nlomasspoints = {"200","250","300","350","400","450","500","600","700","800","900","1000","1200","1400","1600"/*,"1800","2000"*/};
   //vector<string> lomasspoints  = {            "350",                  "600",                         "1200"};
 
   int nlopoints = nlomasspoints.size();
@@ -79,10 +79,10 @@ void compareLOnlo34j_cutflow(){
     nlofloats[i] = stof(nlomasspoints[i].c_str());
 
     //nlofilesCR[nlomasspoints[i]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-CR.root").c_str() ,"READ");
-    nlofilesSR[nlomasspoints[i]] = new TFile( ("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dcsv_new-noofevtsweighted/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR.root").c_str() ,"READ");
+    nlofilesSR[nlomasspoints[i]] = new TFile( ("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR.root").c_str() ,"READ");
 
     //nlofilesCR3j[nlomasspoints[i]] = new TFile( ("rootfiles_4med_WithMuVeto/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-CR-3j.root").c_str() ,"READ");
-    nlofilesSR3j[nlomasspoints[i]] = new TFile( ("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dcsv_new-noofevtsweighted/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR-3j.root").c_str() ,"READ");
+    nlofilesSR3j[nlomasspoints[i]] = new TFile( ("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcsig/mc-sig-"+nlomasspoints[i]+"-NLO-deep-SR-3j.root").c_str() ,"READ");
     
     //[nlomasspoints[i]] = (TH1F*)nlofilesCR[nlomasspoints[i]]->Get("cutflow");
     //float scalenloCR = nlohistsCR[nlomasspoints[i]]->GetBinContent(1);
@@ -262,7 +262,7 @@ void compareLOnlo34j_cutflow(){
  
   canSR -> Update();
 
-  canSR -> SaveAs("Outputdata/btag-algo-comp_dcsv_mmm-m_SR_cut-eff_MC_NLO_incl_neg_weights_from_start-4j.pdf");
+  canSR -> SaveAs("Outputdata/btag-algo-comp_dfl_mmm-m_SR_cut-eff_MC_NLO_incl300GeV_pTcorToBeg-4j.pdf");
 
   canSR3j -> cd();
   canSR3j -> SetLogy();
@@ -307,6 +307,6 @@ void compareLOnlo34j_cutflow(){
  
   canSR3j -> Update();
  
-  canSR3j -> SaveAs("Outputdata/btag-algo-comp_dcsv_mmm-m_SR_cut-eff_MC_NLO_incl_neg_weights_from_start-3j.pdf");
+  canSR3j -> SaveAs("Outputdata/btag-algo-comp_dfl_mmm-m_SR_cut-eff_MC_NLO_incl300GeV_pTcorToBeg-3j.pdf");
 
 }

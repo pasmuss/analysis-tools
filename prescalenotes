@@ -1,0 +1,61 @@
+When to apply prescale?
+     set the float (value of prescale, one for all eras) after adding the jet collections, so long before the event loop
+     nsubsamples (int, = number of windows) and era ranges directly after function declaration
+     mbbw[subsamples] before the tree (result for mbb per window)
+     then one total tree and one for each window, starting from 0
+     for the trees: a map <string,Tree>
+     directly before the event loop: define a seed (should be the same in order to be able to reproduce results)
+     	      and a TRandom3 based on that seed
+     in the event loop: int window = 0
+     After all cuts: apply prescale:
+			   if ( ! isMC_ && ! signalregion_ )  applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  ); //sets window to some value between 0 and nsubsamples-1
+                     for ( int i=0; i< nsubsamples; i++)
+       		     {
+			if (i != window) mbbw[i] = -1; // set other mass windows to -1 ( fixed nentries in Tree )
+          		else mbbw[window] = mbb; //calculated m12
+	             } 
+
+		      if ( !signalregion_ || isMC_ )
+		      	     {
+        		     h1["m12_mujsel"]  -> Fill(mbb_mujsel, evt_weight);  // unprescaled
+			     //set weight/mbb (the quantities stored in the tree) correctly
+		             weight = evt_weight;
+		             mbb = mbb_mujsel; // tree with unprescaled
+                             tree -> Fill();
+			     //fill correct tree; basically only mbb is wanted for combine and fitting 
+        		     if     ( window ==0 ) tree0->Fill();
+			     else if( window ==1 ) tree1->Fill();
+        		     else if( window ==2 ) tree2->Fill();
+         		     else if( window ==3 ) tree3->Fill();
+         		     else if( window ==4 ) tree4->Fill();
+        		     else if( window ==5 ) tree5->Fill();
+         		     else if( window ==6 ) tree6->Fill();
+         		     if ( !isMC_ && ! signalregion_) h1[Form("m12_mujsel_%i",window)] -> Fill(mbbw[window], evt_weight); //not defined for MC, blinded for data
+      			     }
+
+    After event loop: write all trees!
+    
+
+void applyPrescale ( const double& random, float& prescaleEra, const int nsubsamples, int& window  ) //no run value needed, same stuff done for all eras
+{
+	/////
+	/////
+	/////
+  //Get correct Prescale for each Era
+  //  for ( size_t i = 0 ; i < eraRanges.size() ; i++ )
+  //    if (run >= eraRanges[i].first && run <= eraRanges[i].second ) prescaleEra = 7.0;
+  	/////
+	/////
+	/////
+  //Split bkg in nsubsamples equally likely distributions
+  for ( int w=0 ; w < nsubsamples; w++ )//iterate over all windows, i.e. up until the prescale
+      {
+        if ( w == nsubsamples -1 && random > (w+1)/prescaleEra ) continue; // if last window and Rand outside maximal window range skip
+        if ( w/prescaleEra < random  &&  random < (w+1)/prescaleEra ) //divide random (0<r<1) into equally large windows, e.g. 5 --> if w (0 to 4) /5 < r < w+1/5 --> that's the window to go to
+	     		     	     	 	  		      	       	      	      	   	   	 	       	     e.g. r = 0.35, will go to window 1 (second window, 1/5 < r < 2/5)
+          {
+            window = w;
+            break;
+          }
+      }
+}

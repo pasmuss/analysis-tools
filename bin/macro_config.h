@@ -25,6 +25,9 @@ std::string json_;
 std::string reco_;
 std::string regions_;
 
+int seed_;
+std::string seedfile_;
+
 //
 bool matchonoff_;
 float matchonoffdrmax_;
@@ -163,7 +166,9 @@ int macro_config(int argc, char * argv[])
 	("runMin",po::value <int> (&runmin_)->default_value(-1), "Minimum run number")
 	("runMax",po::value <int> (&runmax_)->default_value(-1), "Minimum run number")
 	("output",po::value <std::string> (&outputRoot_)->default_value("histograms.root"),"Output root file")
-	("json",po::value <std::string> (&json_)->default_value("no_json.txt"),"JSON file for data")
+	("json",po::value <std::string> (&json_)->default_value("no_json.txt"), "JSON file for data")
+	("seedFile",po::value <std::string> (&seedfile_)->default_value("seed.txt"), "txt file with seed for prescaling")
+	("seed",po::value <int> (&seed_)->default_value(1), "Seed value for random number generator")
 	("btagSF",po::value <std::string> (&btagsf_)->default_value("DeepCSV.csv"),"b-tagging scale factor in CSV format")
 	("jerPT",po::value <std::string> (&jerpt_)->default_value("JERPT.txt"),"JER pt resolution in txt format")
 	("jerSF",po::value <std::string> (&jersf_)->default_value("JERSF.txt"),"JER scale factor in txt format")
