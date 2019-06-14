@@ -20,15 +20,15 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
 
   cout << " " << endl;
   cout << "Input to be provided:" << endl;
-  cout << "(str)variable ('pt_n', 'eta_n' or 'm12' with n=(0,1,2,3))," << endl;
-  cout << "(int)rebinning factor," << endl;
-  cout << "(str)region ('CR'/'SR')," << endl;
-  cout << "(double)x-axis-beginning," << endl;
-  cout << "(double)x-axis-end," << endl;
-  cout << "(double)y-axis-beginning," << endl;
-  cout << "(double)y-axis-end," << endl;
-  cout << "(bool)logy?," << endl;
-  cout << "(bool)3jets?" << endl;
+  cout << "(str)variable ('pt_n', 'eta_n' or 'm12' with n=(0,1,2,3)) [set to " << var_ <<"]," << endl;
+  cout << "(int)rebinning factor [" << rebin_ << "]," << endl;
+  cout << "(str)region ('CR'/'SR') [" << region_ << "]," << endl;
+  cout << "(double)x-axis-beginning ["<< xlow_ << "]," << endl;
+  cout << "(double)x-axis-end [" << xhigh_ << "]," << endl;
+  cout << "(double)y-axis-beginning [" << ylow_ << "]," << endl;
+  cout << "(double)y-axis-end [" << yhigh_ << "]," << endl;
+  cout << "(bool)logy? [" << logy_ << "]," << endl;
+  cout << "(bool)3jets? [" << threejets_ << "]" << endl;
 
   string xtitleEnr, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
   long binning = 0.0;
@@ -110,7 +110,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleEnr = "m_{12} [GeV], bEnriched";
     xtitleGeF = "m_{12} [GeV], bGenFilter";
     xtitleGes = "m_{12} [GeV]";
-    ytitle = ("Events/" + to_string(binning) + " GeV [a.u.]").c_str();
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
   }
   else{
     cout << "No known variable selected. Please select 'pt_n', 'eta_n' or 'm12' with n=(0,1,2,3). For the quantities after cuts, please add '_csv' to the string." << endl; 
@@ -143,6 +143,9 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   vector<string> pthatbins = {"200to300","300to500","500to700","700to1000","1000to1500", "1500to2000", "2000toInf"};
   vector<double> sfvaluesEnr = {291.08  ,  168.74  ,   26.64  ,   11.70   ,    6.26    ,     2.19    ,    0.08    };
   vector<double> sfvaluesGeF = {645.81  ,  245.44  ,   19.57  ,   19.40   ,    5.41    ,     3.27    ,    0.75    };//for bGenFilter
+  
+  vector<int> colors = {kRed,kBlue,kGreen,kMagenta,kCyan,kBlack,kViolet};
+  //  map<string, string> colormap;
 
   map<string, double> scalefactorsEnr;
   map<string, TFile*> filesEnr;
@@ -155,6 +158,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   for (unsigned int i = 0; i < pthatbins.size(); i++){
     scalefactorsEnr[pthatbins[i]] = sfvaluesEnr[i];
     scalefactorsGeF[pthatbins[i]] = sfvaluesGeF[i];
+    //    colormap[pthatbins[i]] = colors[i];
     filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
     filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
     if (threejets_){
@@ -162,7 +166,28 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
       filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
     }
     histogramsEnr[pthatbins[i]] = (TH1F*)filesEnr[pthatbins[i]] -> Get(var_.c_str());
+    style.InitHist(histogramsEnr[pthatbins[i]],xtitleEnr.c_str(),ytitle.c_str(),colors[i],0);
+    histogramsEnr[pthatbins[i]] -> SetMarkerSize(1);
+    histogramsEnr[pthatbins[i]] -> Scale(scalefactorsEnr[pthatbins[i]]);
+    histogramsEnr[pthatbins[i]] -> Rebin(rebin_);
+    histogramsEnr[pthatbins[i]] -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
+    histogramsEnr[pthatbins[i]] -> GetXaxis() -> SetTitle(xtitleEnr.c_str());
+    histogramsEnr[pthatbins[i]] -> GetYaxis() -> SetRangeUser(ylow_, yhigh_);
+    histogramsEnr[pthatbins[i]] -> GetYaxis() -> SetTitle(ytitle.c_str());
+    histogramsEnr[pthatbins[i]] -> GetYaxis() -> SetTitleOffset(1.2);
+    histogramsEnr[pthatbins[i]] -> GetYaxis() -> SetNdivisions(505);
+    histogramsEnr[pthatbins[i]] -> GetXaxis() -> SetNdivisions(505);
     histogramsGeF[pthatbins[i]] = (TH1F*)filesGeF[pthatbins[i]] -> Get(var_.c_str());
+    style.InitHist(histogramsGeF[pthatbins[i]],xtitleGeF.c_str(),ytitle.c_str(),colors[i],0);
+    histogramsGeF[pthatbins[i]] -> SetMarkerSize(1);
+    histogramsGeF[pthatbins[i]] -> Scale(scalefactorsGeF[pthatbins[i]]);
+    histogramsGeF[pthatbins[i]] -> Rebin(rebin_);
+    histogramsGeF[pthatbins[i]] -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
+    histogramsGeF[pthatbins[i]] -> GetXaxis() -> SetTitle(xtitleGeF.c_str());
+    histogramsGeF[pthatbins[i]] -> GetYaxis() -> SetRangeUser(ylow_, yhigh_);
+    histogramsGeF[pthatbins[i]] -> GetYaxis() -> SetTitle(ytitle.c_str());
+    histogramsGeF[pthatbins[i]] -> GetYaxis() -> SetTitleOffset(1.2);
+    histogramsGeF[pthatbins[i]] -> GetYaxis() -> SetNdivisions(505);
   }
 
   double nbinsx = histogramsEnr[pthatbins[0]] -> GetNbinsX();
@@ -172,9 +197,13 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   TCanvas* EnrCan = style.MakeCanvas("EnrCan", "", 700,700);
   TCanvas* GeFCan = style.MakeCanvas("GeFCan", "", 700,700);
   TCanvas* GesCan = style.MakeCanvas("GesCan", "", 700,700);
+  TCanvas* EnrSingleCan = style.MakeCanvas("EnrSingleCan", "", 700,700);
+  TCanvas* GeFSingleCan = style.MakeCanvas("GeFSingleCan", "", 700,700);
   if (logy_){
     EnrCan -> SetLogy();
+    EnrSingleCan -> SetLogy();
     GeFCan -> SetLogy();
+    GeFSingleCan -> SetLogy();
     GesCan -> SetLogy();
   }
   TH1F* hist_output_enr = new TH1F("hist_output_enr", "", nbinsx, xreflow, xrefhigh);
@@ -207,6 +236,9 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   style.SetLegendStyle(legEnr);
   legEnr -> AddEntry(hist_output_enr,varname.c_str(),"LP");
 
+  TLegend* legEnrSi = new TLegend(0.58,0.6,0.98,0.9);
+  style.SetLegendStyle(legEnrSi);
+
   hist_output_gef -> Rebin(rebin_);
   hist_output_gef -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
   hist_output_gef -> GetXaxis() -> SetTitle(xtitleGeF.c_str());
@@ -218,6 +250,9 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   TLegend* legGef = new TLegend(0.58,0.6,0.98,0.9);
   style.SetLegendStyle(legGef);
   legGef -> AddEntry(hist_output_gef,varname.c_str(),"LP");
+
+  TLegend* legGefSi = new TLegend(0.58,0.6,0.98,0.9);
+  style.SetLegendStyle(legGefSi);
 
   hist_output_ges -> Rebin(rebin_);
   hist_output_ges -> Add(hist_output_enr);
@@ -236,34 +271,71 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   EnrCan -> cd();
   hist_output_enr -> Draw();
   legEnr -> Draw("SAME");
-  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.18, 0.76);
+  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
   EnrCan -> Update();
+
+  EnrSingleCan -> cd();
+  for (unsigned int i = 0; i < pthatbins.size(); i++){
+    legEnrSi -> AddEntry(histogramsEnr[pthatbins[i]],(pthatbins[i]).c_str(),"LP");
+    if (i == 0){
+      histogramsEnr[pthatbins[i]] -> Draw("hist");
+    }
+    else{
+      histogramsEnr[pthatbins[i]] -> Draw("SAME hist");
+    }
+  }
+  legEnrSi -> Draw("SAME");
+  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
+  EnrSingleCan -> Update();
 
   GeFCan -> cd();
   hist_output_gef -> Draw();
   legGef -> Draw("SAME");
-  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.18, 0.76);
+  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
   GeFCan -> Update();
+
+  GeFSingleCan -> cd();
+  for (unsigned int i = 0; i < pthatbins.size(); i++){
+    legGefSi ->AddEntry(histogramsGeF[pthatbins[i]],(pthatbins[i]).c_str(),"LP");
+    if (i == 0){
+      histogramsGeF[pthatbins[i]] -> Draw();
+    }
+    else{
+      histogramsGeF[pthatbins[i]] -> Draw("SAME");
+    }
+  }
+  legGefSi -> Draw("SAME");
+  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
+  GeFSingleCan -> Update();
+
 
   GesCan -> cd();
   hist_output_ges -> Draw();
   legGes -> Draw("SAME");
-  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.18, 0.76);
+  CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
   GesCan -> Update();
 
   if (threejets_){
     EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
     EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
     GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
     GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
     GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
     GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
   }
   else{
     EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
     EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
     GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
     GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
     GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
     GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
   }
