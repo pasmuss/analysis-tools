@@ -382,7 +382,6 @@ namespace analysis {
       inline std::string Analysis::fileFullName()     { return std::string(t_event_ -> GetFile() -> GetName()) ;    }
       
 //      inline std::string Analysis::getGenParticleCollection() { return genParticleCollection_; }
-
    }
 }
 

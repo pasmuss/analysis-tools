@@ -23,7 +23,7 @@ using namespace analysis::tools;
 void correctJetpt ( Jet& , const float& );
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window );
 
-int nsubsamples = 5;//CHECK PRESCALE!!
+//int nsubsamples = 1; // define here or in main? does it make a difference?
 
 // =============================================================================================   
 int main(int argc, char * argv[])
@@ -39,6 +39,9 @@ int main(int argc, char * argv[])
   string reco = reco_;
 
   string regions = regions_;
+
+  float border_other_wp = BorderOtherWP_;//to enable setting
+  float other_wp = OtherWP_;//another btag wp above a certain pt
 
   if (reco == "prompt"){
     analysis.addTree<Jet> ("Jets","MssmHbb/Events/slimmedJetsPuppi");
@@ -77,9 +80,24 @@ int main(int argc, char * argv[])
 	  return -1;
 	}
     }
-
-  float prescaleEra = 7.0; //CHECK PRESCALE VALUE!!!
-   
+  
+  float prescaleEra = 1.0;
+  int nsubsamples = 1;
+  if (njetsmin_ == 3){
+    nsubsamples = 7;//CHECK PRESCALE!!
+    //prescaleEra = 6.80; //CHECK PRESCALE VALUE!!!
+    prescaleEra = 7.0; //CHECK PRESCALE VALUE!!!
+  }
+  else if (njetsmin_ == 4){
+    nsubsamples = 4;//CHECK PRESCALE!!
+    //prescaleEra = 4.25; //CHECK PRESCALE VALUE!!!
+    prescaleEra = 4.0; //CHECK PRESCALE VALUE!!!
+  }
+  else{
+    cout << "Neither 3 nor 4 jets required. What are you trying to do?" << endl;
+    return -1;
+  }
+  
   std::string sr_s = "SR";
   if ( ! signalregion_ ) sr_s = "CR";
   boost::algorithm::replace_last(outputRoot_, ".root", "_"+sr_s+".root"); 
@@ -109,6 +127,10 @@ int main(int argc, char * argv[])
   h1["dR_muj0"] = new TH1F("dR_muj0", "" , 120, 0, 0.6);
   h1["dR_muj1"] = new TH1F("dR_muj1", "" , 120, 0, 0.6);
 
+  h1["pt_softjet"] = new TH1F("pt_softjet", "", 210,0,2100);
+  h1["dR_jsoftjet"] = new TH1F("dR_jsoftjet", "", 120, 0, 0.6);
+  h1["rank_softjet"] = new TH1F("rank_softjet", "", 20, 0, 20);
+
   h1["cutflow"]              = new TH1F("cutflow"  , "", 10, 0, 10);
    
   for ( int i = 0 ; i < njetsmin_ ; ++i )
@@ -133,7 +155,10 @@ int main(int argc, char * argv[])
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
   h1["m12_csv"]           = new TH1F("m12_csv"           , "" , 150, 0, 3000);
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
-   
+
+  for ( int i = 0 ; i < nsubsamples ; ++i )
+    h1[Form("m12_sel_%i",i)]  = new TH1F(Form("m12_sel_%i",i) , "" , 150, 0, 3000);
+
   double mbb;
   double mbb_sel;
   double ptH;
@@ -144,7 +169,7 @@ int main(int argc, char * argv[])
   tree->Branch("mbb",&mbb,"mbb/D");
   tree->Branch("weight",&weight,"weight/D");
   tree->Branch("nsubsamples",&nsubsamples,"nsubsamples/I");
-  
+
   TTree *tree0 = new TTree("MssmHbb_13TeV_0","");
   tree0->Branch("mbb",&mbb,"mbb/D");
   tree0->Branch("weight",&weight,"weight/D");
@@ -164,6 +189,14 @@ int main(int argc, char * argv[])
   TTree *tree4 = new TTree("MssmHbb_13TeV_4","");
   tree4->Branch("mbb",&mbb,"mbb/D");
   tree4->Branch("weight",&weight,"weight/D");
+
+  TTree *tree5 = new TTree("MssmHbb_13TeV_5","");
+  tree5->Branch("mbb",&mbb,"mbb/D");
+  tree5->Branch("weight",&weight,"weight/D");
+
+  TTree *tree6 = new TTree("MssmHbb_13TeV_6","");
+  tree6->Branch("mbb",&mbb,"mbb/D");
+  tree6->Branch("weight",&weight,"weight/D");
    
   // Analysis of events
   cout << "This analysis has " << analysis.size() << " events" << endl;
@@ -171,6 +204,14 @@ int main(int argc, char * argv[])
   cout << "Selected category: " << regions << endl;
   cout << "Selected number of jets: " << njetsmin_ << endl;
   cout << "btag algorithm: " << btagalgo << endl;
+  if (border_other_wp > 0 && other_wp > 0){
+    cout << "Above pT of " << border_other_wp << " GeV (j1,j2) using btag discriminant > " << other_wp << endl;
+    txtoutputfile << "Above pT of " << border_other_wp << " GeV (j1,j2) using btag discriminant > " << other_wp << endl;
+  }
+  if (massdepptcut_ > 0){
+    cout << "pT of j1,j2 has to be above " << massdepptcut_ << "*m12." << endl;
+    txtoutputfile << "pT of j1,j2 has to be above " << massdepptcut_ << "*m12." << endl;
+  }
   cout << "region: " << sr_s << endl;
   cout << "reco: " << reco << endl;
   cout << "output file: " << outputRoot_.c_str() << endl;
@@ -219,7 +260,7 @@ int main(int argc, char * argv[])
 
       int window = 0;
       
-      if ( i > 0 && i%100000==0 ){
+      if ( i > 0 && i%10000==0 ){
 	std::cout << i << " events processed!" << std::endl;
 	txtoutputfile << i << " events processed!" << endl;
       }
@@ -377,19 +418,6 @@ int main(int argc, char * argv[])
 	  }
 
 	  if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
-	  /*
-	  if ( ! signalregion_ )//CR 3 jet categroy: bbnb (3rd must not be b tagged); 4 jet cat: bbnbb
-	    {
-	      if ( j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must never be b tagged in CR
-	      if ( njetsmin_ > 3 ){
-		if ( j == 3 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;//4th jet should be b tagged again
-	      }
-	    }
-	  else//SR: all 3/4 jets b tagged
-	    {
-	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false; 
-	    }
-	  */
 	  if (regions == "3j"){
 	    if (! signalregion_){//CR 3j: bbnb
 	      if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
@@ -397,7 +425,7 @@ int main(int argc, char * argv[])
 	    else{//SR 3j: bbb
 	      if (j == 2 && btagdisc < jetsbtagmin_[j]) goodEvent = false;
 	    }
-	  }
+	  }//3j
 	  else if (regions == "4j3"){
 	    if (! signalregion_){//CR 4j3: bbnbb
 	      if ( (j == 2 && btagdisc > nonbtagwp_) || (j == 3 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
@@ -405,7 +433,7 @@ int main(int argc, char * argv[])
 	    else{//SR 4j3 bbbb
 	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
 	    }
-	  }
+	  }//4j3
 	  else if (regions == "4j4"){
             if (! signalregion_){//CR 4j4: bbbnb
 	      if ( (j == 3 && btagdisc > nonbtagwp_) || (j == 2 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
@@ -413,7 +441,7 @@ int main(int argc, char * argv[])
             else{//SR 4j4: bbbb
 	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
             }
-	  }
+	  }//4j4
 	  else if (regions == "3jor"){
             if (! signalregion_){//CR 3jor: bbnbnb
 	      if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
@@ -424,7 +452,7 @@ int main(int argc, char * argv[])
 	      if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
 	      if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
             }
-	  }
+	  }//3jor
 	  else if (regions == "4jor"){
 	    if (!signalregion_){//CR 4jor: bbbnb || bbnbb (3rd or 4th jet may be reversed)
 	      if (j == 2) storedisc = btagdisc;
@@ -435,7 +463,22 @@ int main(int argc, char * argv[])
 	    else{//SR 4jor:bbbb
 	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;	      
 	    }
-	  }
+	  }//4jor
+	  else if (regions == "4jnn"){
+	    if (! signalregion_){//CR 4jnn: bbnbnb
+	      if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
+	    }//CR 4jnn
+	    else{//SR 4jnn: bbbb
+	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
+	    }//SR 4jnn
+	  }//4jnn
+	  
+	  if ( border_other_wp > 0 && other_wp > 0 ){//set a different wp for leading two jets (e.g. tight instead of medium)
+	    if (j < 2){//leading two jets
+	      if ( (jet->pt() > border_other_wp) && (btagdisc < other_wp) ) goodEvent = false;
+	    }
+	  }//other btag wp for leading two jets
+	  
 	}//end of loop over jets for b tagging
       
       h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
@@ -444,7 +487,32 @@ int main(int argc, char * argv[])
       ++nsel[5];
       if(isMC_ && sgweight > 0) ++nweigh[5];
       else if(isMC_ && sgweight < 0) --nweigh[5];
-      
+
+      //FSR recovery
+      for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
+	{
+	  Jet & softjet = *selectedJets[s];
+	  //Cut on DeltaR softjet - b jet
+	  float dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2])});
+	  if (njetsmin_ == 4) dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2]),softjet.deltaR(*selectedJets[3])});
+	  if ( softjet.pt() < 20.0 ) continue;
+	  if ( dRminsoft_bj > 0.8 )  continue;
+	  //              if ( softjet.qgLikelihood() > 0.5 ) continue;
+	  //              if (softjet.btag("btag_deepb")+softjet.btag("btag_deepbb") > 0.1522 )  continue;
+	  for ( int j = 0; j < njetsmin_; ++j ) //dijet loop
+	    {
+	      Jet & bjet = *selectedJets[j];
+	      if ( dRminsoft_bj != softjet.deltaR(bjet) ) continue;
+	      bjet.p4( bjet.p4() + softjet.p4() );
+	      //Remove bjet and add corrected bjet
+	      //No need to remove soft jet: Iterator will proceed. So if soft jet erased plus iterator proceeds: one soft jet skipped
+	      selectedJets.erase(selectedJets.begin()+j);
+	      selectedJets.insert(selectedJets.begin()+j, &bjet );
+	      h1["pt_softjet"] -> Fill(softjet.pt());
+	      h1["dR_jsoftjet"] -> Fill(softjet.deltaR(bjet));
+	      h1["rank_softjet"] -> Fill(s);
+	    }
+	}
       
       // Is matched?
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
@@ -538,6 +606,8 @@ int main(int argc, char * argv[])
 
       mbb_sel = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
 
+      if (m12min_ > 0 && mbb_sel < m12min_) goodEvent = false;
+
       if (massdepptcut_ > 0){
 	float fraccut = massdepptcut_;
 	if ( (selectedJets[0]->pt() < fraccut*mbb) || (selectedJets[1]->pt() < fraccut*mbb) ) goodEvent = false;
@@ -549,14 +619,16 @@ int main(int argc, char * argv[])
       if(isMC_ && sgweight > 0) ++nweigh[8];
       else if(isMC_ && sgweight < 0) --nweigh[8];
 
-      if ( ! isMC_ && ! signalregion_ )  applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  );
+      if ( ! isMC_ && ! signalregion_ ){
+	applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  );
+      }
 
       //Initialise tree with different windows
       for ( int i=0; i< nsubsamples; i++)
         {
           if (i != window) mbbw[i] = -1; // set other mass windows to -1 ( fixed nentries in Tree )
-          else mbbw[window] = mbb_sel;
-        }
+          else mbbw[i] = mbb_sel;
+	}
 
 
       if ( !signalregion_ || isMC_)//blinding
@@ -566,11 +638,13 @@ int main(int argc, char * argv[])
 	  weight = eventweight;
 	  tree -> Fill();
 
-	  if     ( window ==0 ) tree0->Fill();
-	  else if( window ==1 ) tree1->Fill();
-	  else if( window ==2 ) tree2->Fill();
-	  else if( window ==3 ) tree3->Fill();
-	  else if( window ==4 ) tree4->Fill();
+	  if     ( window == 0 ) tree0 -> Fill();
+	  else if( window == 1 ) tree1 -> Fill();
+	  else if( window == 2 ) tree2 -> Fill();
+	  else if( window == 3 ) tree3 -> Fill();
+	  else if( window == 4 ) tree4 -> Fill();
+	  else if( window == 5 ) tree5 -> Fill();
+	  else if( window == 6 ) tree6 -> Fill();
 
 	  if ( !isMC_ && ! signalregion_) h1[Form("m12_sel_%i",window)] -> Fill(mbbw[window], eventweight);
 	}
@@ -590,7 +664,7 @@ int main(int argc, char * argv[])
   h1["noofevents_h"] -> SetBinContent(7,nsel[5]); //btag
   h1["noofevents_h"] -> SetBinContent(8,nsel[6]); //final selection (perhaps trigger; matching)
   if(muonveto_) h1["noofevents_h"] -> SetBinContent(9,nsel[7]); //including muon veto
-  if(massdepptcut_ > 0) h1["noofevents_h"] -> SetBinContent(10,nsel[8]); //mass dependent pt cut
+  if(massdepptcut_ > 0 || (border_other_wp > 0 && other_wp > 0)) h1["noofevents_h"] -> SetBinContent(10,nsel[8]); //mass dependent pt cut and/or other btag wp for leading two jets
 
   if(isMC_){//weighted number of events (important only for NLO) after each step of the cutflow
     h1["noofevents_w_nlo"] -> SetBinContent(1,noofeventsstart); //total number of events
@@ -602,7 +676,7 @@ int main(int argc, char * argv[])
     h1["noofevents_w_nlo"] -> SetBinContent(7,nweigh[5]); //btag
     h1["noofevents_w_nlo"] -> SetBinContent(8,nweigh[6]); //final selection (perhaps trigger; matching)
     if(muonveto_) h1["noofevents_w_nlo"] -> SetBinContent(9,nweigh[7]); //including muon veto
-    if(massdepptcut_ > 0) h1["noofevents_w_nlo"] -> SetBinContent(10,nweigh[8]); //mass dependent pt cut
+    if(massdepptcut_ > 0 || (border_other_wp > 0 && other_wp > 0) ) h1["noofevents_w_nlo"] -> SetBinContent(10,nweigh[8]); //mass dependent pt cut and/or other btag wp for leading two jets
   }
 
   for (auto & ih1 : h1)
@@ -636,8 +710,8 @@ int main(int argc, char * argv[])
   cuts[6] = "Matched to online j1;j2";
   if (invertCutflow_) cuts[6] = "Trigger and matching j1;j2";
   if(muonveto_) cuts[7] = "Muon veto";
-  if(massdepptcut_ > 0) cuts[8] = "Mass dependent pT cut j1;j2";
-  if(massdepptcut_ < 0) cuts[8] = "No mass dep. pT cut applied.";
+  if(massdepptcut_ > 0 || (border_other_wp > 0 && other_wp > 0)) cuts[8] = "Mass dep. pT cut / other wp for j1;j2";
+  if(massdepptcut_ < 0 && !(border_other_wp > 0 && other_wp > 0)) cuts[8] = "No mass dep. pT cut applied and no other btag wps used.";
   //if (isMC_ || invertCutflow_) cuts[7] = "Triggered";
 
   printf ("%-23s  %10s  %10s  %10s \n", std::string("Cut flow").c_str(), std::string("# events").c_str(), std::string("absolute").c_str(), std::string("relative").c_str() ); 

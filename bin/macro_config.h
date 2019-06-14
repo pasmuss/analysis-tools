@@ -108,6 +108,7 @@ float drmin_;
 float drmax_;
 float detamax_;
 float dphimin_;
+float m12min_;
 
 float ptimbalmax_;
 
@@ -118,6 +119,8 @@ float btagwpmedium_;
 float btagwptight_;
 float btagwp_;
 float nonbtagwp_;
+float BorderOtherWP_;
+float OtherWP_;
 
 
 std::string hltPath_;
@@ -218,6 +221,7 @@ int macro_config(int argc, char * argv[])
 	("dPhiMin",po::value <float> (&dphimin_)->default_value(0.),"Minimum delta phi between candidates")
 	("ptImbalanceMax",po::value <float> (&ptimbalmax_)->default_value(1000.),"Maximum relative imbalance between two candidates")
 	("MassDepPtCut",po::value <float> (&massdepptcut_)->default_value(-9999.),"Using mass dependent pT cut on leading two jets if > 0; value is then used fraction")
+	("m12Min",po::value <float> (&m12min_)->default_value(-9999.),"Minimum value of m12 (mass of leading two jets)")
 	//      
 	("isMC",po::value <bool> (&isMC_)->default_value(true),"Flag for MC dataset")
 	("invertCutflow",po::value <bool> (&invertCutflow_)->default_value(false),"Flag for inverting Cutflow (placing trigger as last step)")
@@ -239,12 +243,15 @@ int macro_config(int argc, char * argv[])
 	//      
 	("btagAlgorithm",po::value <std::string> (&btagalgo_)->default_value("deepcsv"),"BTag algorithm")
 	("btagWorkingPoint",po::value <std::string> (&btagworkingpoint_)->default_value("tight"),"BTag working point")
-	("btagWPLoose",po::value <float> (&btagwploose_)->default_value(0.1522),"BTag working point LOOSE")
-	("btagWPMedium",po::value <float> (&btagwpmedium_)->default_value(0.4941),"BTag working point MEDIUM")
-	("btagWPTight",po::value <float> (&btagwptight_)->default_value(0.8001),"BTag working point TIGHT")
+	("btagWPLoose",po::value <float> (&btagwploose_)->default_value(0.0521),"BTag working point LOOSE")
+	("btagWPMedium",po::value <float> (&btagwpmedium_)->default_value(0.3033),"BTag working point MEDIUM")
+	("btagWPTight",po::value <float> (&btagwptight_)->default_value(0.7489),"BTag working point TIGHT")
 	//         
-	("btagWP",po::value <float> (&btagwp_)->default_value(0.4941),"Btag working point")
-	("nonbtagWP",po::value <float> (&nonbtagwp_)->default_value(0.1522),"non-Btag working point")         
+	("btagWP",po::value <float> (&btagwp_)->default_value(0.3031),"Btag working point")
+	("nonbtagWP",po::value <float> (&nonbtagwp_)->default_value(0.0521),"non-Btag working point")
+	//
+	("BorderOtherWP",po::value <float> (&BorderOtherWP_)->default_value(-9999.),"Threshold for setting a different btag wp")
+	("OtherWP",po::value <float> (&OtherWP_)->default_value(-9999.),"Other WP to be set")
 	//
 	("matchOnlineOffline",po::value <bool> (&matchonoff_)->default_value(true),"Flag for doing matching online offline objects")
 	("matchOnlineOfflineDeltaRMax",po::value <float> (&matchonoffdrmax_)->default_value(0.4),"DeltaR max for matching online-offline")
@@ -298,12 +305,12 @@ int macro_config(int argc, char * argv[])
 	    }
 	  po::notify(vm);
 	  boost::algorithm::to_upper(jetsid_);
-	  if ( !(regions_ == "4j3" || regions_ == "4j4") && !(regions_ == "3j" || regions_ == "3jor") )
+	  if ( !(regions_ == "4j3" || regions_ == "4j4") && !(regions_ == "3j" || regions_ == "3jor") && regions_!="4jnn")
 	    {
-	      std::cout << "Config Error *** No valid set of regions defined. Must be 3j, 4j3, 4j4 or 3jor." << std::endl;
+	      std::cout << "Config Error *** No valid set of regions defined. Must be 3j, 4j3, 4j4, 4jnn or 3jor." << std::endl;
 	      return -1;
 	    }
-	  if ( (regions_ == "4j3" || regions_ == "4j4") && njetsmin_ != 4)
+	  if ( ((regions_ == "4j3" || regions_ == "4j4") || regions_ == "4jnn") && njetsmin_ != 4)
 	    {
 	      std::cout << "Config Error *** Minimum Number of jets does not fit requirement of defined regions (with 4jn, njetsmin should be 4). Please check regions and njetsmin." << std::endl;
 	      return -1;
