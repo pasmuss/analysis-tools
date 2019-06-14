@@ -65,7 +65,7 @@ void HbbStylesNew::SetStyle()
   HbbStyle->SetPadBorderMode  (0);
   HbbStyle->SetPadBottomMargin(0.1);
   HbbStyle->SetPadTopMargin   (0.05);
-  HbbStyle->SetPadLeftMargin  (0.1);
+  HbbStyle->SetPadLeftMargin  (0.2);
   HbbStyle->SetPadRightMargin (0.05);
   HbbStyle->SetPadGridX       (0);
   HbbStyle->SetPadGridY       (0);
@@ -226,24 +226,25 @@ void CMSPrelim(const char* dataset, const char* status, double lowX, double lowY
   cmsprel->SetBorderSize(   0 );
   cmsprel->SetFillStyle(    0 );
   cmsprel->SetTextAlign(   12 );
-  cmsprel->SetTextSize ( 0.05 );
+  cmsprel->SetTextSize ( 0.04 );
   cmsprel->SetTextColor(    1 );
   cmsprel->SetTextFont (   62 );
   cmsprel->AddText("CMS");
   cmsprel->Draw();
 
   //TPaveText* lumi     = new TPaveText(lowX+0.44, lowY+0.15, lowX+0.85, lowY+0.26, "NDC");
-  TPaveText* lumi = new TPaveText(lowX+0.35, lowY+0.14, lowX+0.7, lowY+0.25, "NDC"); // for Simulation
+  //TPaveText* lumi = new TPaveText(lowX+0.35, lowY+0.14, lowX+0.7, lowY+0.25, "NDC"); // for Simulation
+  TPaveText* lumi     = new TPaveText(lowX+0.475, lowY+0.06, lowX+0.9, lowY+0.16, "NDC");
   lumi->SetBorderSize(   0 );
   lumi->SetFillStyle(    0 );
   lumi->SetTextAlign(   12 );
-  lumi->SetTextSize ( 0.05 );
+  lumi->SetTextSize ( 0.04 );
   lumi->SetTextColor(    1 );
   lumi->SetTextFont (   62 );
   lumi->AddText(dataset);
   lumi->Draw();
 
-  TPaveText* wip     = new TPaveText(lowX-0.005, lowY+0.05, lowX+0.4, lowY+0.06, "NDC");
+  TPaveText* wip     = new TPaveText(lowX+0.09, lowY+0.056, lowX+0.4, lowY+0.156, "NDC");
   wip->SetBorderSize(   0 );
   wip->SetFillStyle(    0 );
   wip->SetTextAlign(   12 );

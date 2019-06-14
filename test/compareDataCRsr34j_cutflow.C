@@ -27,10 +27,10 @@ void compareDataCRsr34j_cutflow(){
 
   int cutflowsteps = 8;
 
-  TFile* file3jsr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/CutOptimization/Configs_diffBTags_ttm-m/rootfiles/rereco/rereco-CDEF-deep-SR-3j.root","READ");
-  TFile* file3jcr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/CutOptimization/Configs_diffBTags_ttm-m/rootfiles/rereco/rereco-CDEF-deep-CR-3j.root","READ");
-  TFile* file4jsr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/CutOptimization/Configs_diffBTags_ttm-m/rootfiles/rereco/rereco-CDEF-deep-SR.root","READ");
-  TFile* file4jcr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/CutOptimization/Configs_diffBTags_ttm-m/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
+  TFile* file3jsr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dfl_incl_prescale/rereco/rereco-CDEF-deep-SR-3j.root","READ");
+  TFile* file3jcr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dfl_incl_prescale/rereco/rereco-CDEF-deep-CR-3j.root","READ");
+  TFile* file4jsr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dfl_incl_prescale/rereco/rereco-CDEF-deep-SR.root","READ");
+  TFile* file4jcr = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_dfl_incl_prescale/rereco/rereco-CDEF-deep-CR.root","READ");
 
   TH1F* hist3jsrRel = (TH1F*)file3jsr->Get("cutflow");
   TH1F* hist3jcrRel = (TH1F*)file3jcr->Get("cutflow");
@@ -103,14 +103,14 @@ void compareDataCRsr34j_cutflow(){
 
   TLegend* legRel = new TLegend(0.2,0.3,0.7,0.7);
   style.SetLegendStyle(legRel);
-  legRel -> AddEntry(gr4jsrRel,"4 jets, SR","LP");
-  legRel -> AddEntry(gr4jcrRel,"4 jets, CR","LP");
-  legRel -> AddEntry(gr3jsrRel,"3 jets, SR","LP");
-  legRel -> AddEntry(gr3jcrRel,"3 jets, CR","LP");
+  legRel -> AddEntry(gr4jsrRel,"4 jets (bbnbb), SR","LP");
+  legRel -> AddEntry(gr4jcrRel,"4 jets (bbnbb), CR","LP");
+  legRel -> AddEntry(gr3jsrRel,"3 jets (bbnbb), SR","LP");
+  legRel -> AddEntry(gr3jcrRel,"3 jets (bbnbb), CR","LP");
   legRel -> Draw("SAME");
 
   canrel -> Update();
-  canrel -> SaveAs("Outputdata/btag-algo-comp_dcsv-ttm-m_data_cr_sr_3-4-j_efficiency.pdf");
+  canrel -> SaveAs("Outputdata/comp_bbnbb_dfl_data_cr_sr_3-4-j_efficiency.pdf");
 
   canabs -> cd();
   canabs -> SetLogy();
@@ -140,12 +140,12 @@ void compareDataCRsr34j_cutflow(){
 
   TLegend* legAbs = new TLegend(0.2,0.3,0.7,0.7);
   style.SetLegendStyle(legAbs);
-  legAbs -> AddEntry(gr4jsrAbs,"4 jets, SR","LP");
-  legAbs -> AddEntry(gr4jcrAbs,"4 jets, CR","LP");
-  legAbs -> AddEntry(gr3jsrAbs,"3 jets, SR","LP");
-  legAbs -> AddEntry(gr3jcrAbs,"3 jets, CR","LP");
+  legAbs -> AddEntry(gr4jsrAbs,"4 jets (bbnbb), SR","LP");
+  legAbs -> AddEntry(gr4jcrAbs,"4 jets (bbnbb), CR","LP");
+  legAbs -> AddEntry(gr3jsrAbs,"3 jets (bbnbb), SR","LP");
+  legAbs -> AddEntry(gr3jcrAbs,"3 jets (bbnbb), CR","LP");
   legAbs -> Draw("SAME");
 
   canabs -> Update();
-  canabs -> SaveAs("Outputdata/btag-algo-comp_dcsv-ttm-m_data_cr_sr_3-4-j_NoOfEvents.pdf");
+  canabs -> SaveAs("Outputdata/comp_bbnbb_dfl_data_cr_sr_3-4-j_NoOfEvents.pdf");
 }
