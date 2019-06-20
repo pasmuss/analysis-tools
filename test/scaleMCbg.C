@@ -142,7 +142,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
 
   vector<string> pthatbins = {"200to300","300to500","500to700","700to1000","1000to1500", "1500to2000", "2000toInf"};
   vector<double> sfvaluesEnr = {291.08  ,  168.74  ,   26.64  ,   11.70   ,    6.26    ,     2.19    ,    0.08    };
-  vector<double> sfvaluesGeF = {645.81  ,  245.44  ,   19.57  ,   19.40   ,    5.41    ,     3.27    ,    0.75    };//for bGenFilter
+  vector<double> sfvaluesGeF = {467.62  ,  182.85  ,   14.57  ,   14.36   ,    3.94    ,     2.19    ,    0.49    };//for bGenFilter
   
   vector<int> colors = {kRed,kBlue,kGreen,kMagenta,kCyan,kBlack,kViolet};
   //  map<string, string> colormap;
@@ -159,11 +159,11 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     scalefactorsEnr[pthatbins[i]] = sfvaluesEnr[i];
     scalefactorsGeF[pthatbins[i]] = sfvaluesGeF[i];
     //    colormap[pthatbins[i]] = colors[i];
-    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
-    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
+    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
+    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
     if (threejets_){
-      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
-      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_new-QCD-MC_pTcorrectionsToBeginning/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
+      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
+      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
     }
     histogramsEnr[pthatbins[i]] = (TH1F*)filesEnr[pthatbins[i]] -> Get(var_.c_str());
     style.InitHist(histogramsEnr[pthatbins[i]],xtitleEnr.c_str(),ytitle.c_str(),colors[i],0);
@@ -217,11 +217,11 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   hist_output_ges -> SetMarkerSize(1);
 
   for (auto const &hist1 : histogramsEnr){
-    hist_output_enr -> Add(histogramsEnr[hist1.first] , scalefactorsEnr[hist1.first]);
+    hist_output_enr -> Add(histogramsEnr[hist1.first]/* , scalefactorsEnr[hist1.first]*/);
   }
 
   for (auto const &hist2 : histogramsGeF){
-    hist_output_gef -> Add(histogramsGeF[hist2.first] , scalefactorsGeF[hist2.first]);
+    hist_output_gef -> Add(histogramsGeF[hist2.first]/* , scalefactorsGeF[hist2.first]*/);
   }
 
   hist_output_enr -> Rebin(rebin_);
@@ -316,28 +316,28 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   GesCan -> Update();
 
   if (threejets_){
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
   }
   else{
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
   }
   return 0;
 }

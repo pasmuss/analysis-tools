@@ -140,7 +140,7 @@ TCanvas* HbbStylesNew::MakeCanvas(const char* name, const char *title, int dX, i
   canvas->SetBorderMode     (0);
   canvas->SetBorderSize     (10);
   // Set margins to reasonable defaults
-  canvas->SetLeftMargin     (0.14);
+  canvas->SetLeftMargin     (0.13);
   canvas->SetRightMargin    (0.05);
   canvas->SetTopMargin      (0.08);
   canvas->SetBottomMargin   (0.15);
