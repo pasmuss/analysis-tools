@@ -25,6 +25,8 @@ std::string json_;
 std::string reco_;
 std::string regions_;
 
+int prescale_;
+
 int seed_;
 std::string seedfile_;
 
@@ -78,7 +80,6 @@ std::string jersf_;
 
 
 // muons
-
 bool muonveto_;
 
 int nmuonsmin_;
@@ -122,6 +123,9 @@ float nonbtagwp_;
 float BorderOtherWP_;
 float OtherWP_;
 
+//for selection of jets which go into HT calculation
+float etaHT_;
+float ptHT_;
 
 std::string hltPath_;
 std::string l1Seed_;
@@ -176,6 +180,7 @@ int macro_config(int argc, char * argv[])
 	("jerPT",po::value <std::string> (&jerpt_)->default_value("JERPT.txt"),"JER pt resolution in txt format")
 	("jerSF",po::value <std::string> (&jersf_)->default_value("JERSF.txt"),"JER scale factor in txt format")
 	//
+	("Prescale",po::value <int> (&prescale_)->default_value(7),"Number of windows to scale CR (randomly distribute) to statistics in SR")
 	("useJER",po::value <bool> (&useJER_)->default_value(true),"Use smearing (Jet Energy Resolution) for MC")
 	("useRegression",po::value <bool> (&useregression_)->default_value(true),"Apply Jet Energy Regression (for b jets)")
 	("useBtagSF",po::value <bool> (&usebtagsf_)->default_value(true),"Use scale factor for b tagging")
@@ -222,6 +227,8 @@ int macro_config(int argc, char * argv[])
 	("ptImbalanceMax",po::value <float> (&ptimbalmax_)->default_value(1000.),"Maximum relative imbalance between two candidates")
 	("MassDepPtCut",po::value <float> (&massdepptcut_)->default_value(-9999.),"Using mass dependent pT cut on leading two jets if > 0; value is then used fraction")
 	("m12Min",po::value <float> (&m12min_)->default_value(-9999.),"Minimum value of m12 (mass of leading two jets)")
+	("ptHT",po::value <float> (&ptHT_)->default_value(30.),"Minimum pT of a jet to be added to HT calculation")
+	("etaHT",po::value <float> (&etaHT_)->default_value(2.4),"Maximum value for abs(eta) of a jet to be added to HT calculation")
 	//      
 	("isMC",po::value <bool> (&isMC_)->default_value(true),"Flag for MC dataset")
 	("invertCutflow",po::value <bool> (&invertCutflow_)->default_value(false),"Flag for inverting Cutflow (placing trigger as last step)")

@@ -22,6 +22,7 @@ using namespace analysis::tools;
 //Function declarations
 void correctJetpt ( Jet& , const float& );
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window );
+void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT );
 
 //int nsubsamples = 1; // define here or in main? does it make a difference?
 
@@ -39,6 +40,9 @@ int main(int argc, char * argv[])
   string reco = reco_;
 
   string regions = regions_;
+
+  float ptHT = ptHT_;
+  float etaHT = etaHT_;
 
   float border_other_wp = BorderOtherWP_;//to enable setting
   float other_wp = OtherWP_;//another btag wp above a certain pt
@@ -81,22 +85,8 @@ int main(int argc, char * argv[])
 	}
     }
   
-  float prescaleEra = 1.0;
-  int nsubsamples = 1;
-  if (njetsmin_ == 3){
-    nsubsamples = 7;//CHECK PRESCALE!!
-    //prescaleEra = 6.80; //CHECK PRESCALE VALUE!!!
-    prescaleEra = 7.0; //CHECK PRESCALE VALUE!!!
-  }
-  else if (njetsmin_ == 4){
-    nsubsamples = 4;//CHECK PRESCALE!!
-    //prescaleEra = 4.25; //CHECK PRESCALE VALUE!!!
-    prescaleEra = 4.0; //CHECK PRESCALE VALUE!!!
-  }
-  else{
-    cout << "Neither 3 nor 4 jets required. What are you trying to do?" << endl;
-    return -1;
-  }
+  float prescaleEra = (float)prescale_;
+  int nsubsamples = prescale_;
   
   std::string sr_s = "SR";
   if ( ! signalregion_ ) sr_s = "CR";
@@ -114,6 +104,11 @@ int main(int argc, char * argv[])
   h1["n_ptmin20"]         = new TH1F("n_ptmin20"       , "" , 30, 0, 30);
   h1["n_ptmin20_csv"]     = new TH1F("n_ptmin20_csv"   , "" , 30, 0, 30);
   h1["nentries"]          = new TH1F("nentries"        , "" ,  2, 0,  2);
+
+  h1["HT_bef_cuts"]       = new TH1F("HT_bef_cuts"              , "" , 1080, 0, 10800);
+  h1["HT_after_kin_bef_bTag"] = new TH1F("HT_after_kin_bef_bTag", "" , 1080, 0, 10800);
+  h1["HT_after_bTag"]     = new TH1F("HT_after_bTag"            , "" , 1080, 0, 10800);
+  h1["HT_after_all_cuts"] = new TH1F("HT_after_all_cuts"        , "" , 1080, 0, 10800);
 
   h1["jetswomu"] = new TH1F("jetswomu" , "" , 30, 0, 30);
   
@@ -135,6 +130,7 @@ int main(int argc, char * argv[])
    
   for ( int i = 0 ; i < njetsmin_ ; ++i )
     {
+      //after kinematic cuts, before b tagging
       h1[Form("pt_%i",i)]          = new TH1F(Form("pt_%i",i)          , "" , 210, 0, 2100);
       h1[Form("eta_%i",i)]         = new TH1F(Form("eta_%i",i)         , "" , 120, -6, 6);
       h1[Form("phi_%i",i)]         = new TH1F(Form("phi_%i",i)         , "" , 120, -6, 6);
@@ -142,12 +138,19 @@ int main(int argc, char * argv[])
       h1[Form("deepcsvbtag_%i",i)] = new TH1F(Form("deepcsvbtag_%i",i) , "" , 600, 0, 1.2);
       h1[Form("deepflavourbtag_%i",i)] = new TH1F(Form("deepflavourbtag_%i",i) , "" , 600, 0, 1.2);
       
+      //after b tagging
       h1[Form("pt_%i_csv",i)]     = new TH1F(Form("pt_%i_csv",i)               , "" , 210, 0, 2100);
       h1[Form("eta_%i_csv",i)]    = new TH1F(Form("eta_%i_csv",i)              , "" , 120, -6, 6);
       h1[Form("phi_%i_csv",i)]    = new TH1F(Form("phi_%i_csv",i)              , "" , 120, -6, 6);
       h1[Form("btag_%i_csv",i)]   = new TH1F(Form("btag_%i_csv",i)             , "" , 600, 0, 1.2);
       h1[Form("deepcsvbtag_%i_csv",i)] = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 600, 0, 1.2);
       h1[Form("deepflavourbtag_%i_csv",i)] = new TH1F(Form("deepflavourbtag_%i_csv",i) , "" , 600, 0, 1.2);
+
+      //after all cuts (including m12)
+      h1[Form("pt_%i_aac",i)]              = new TH1F(Form("pt_%i_aac",i)              , "" , 210,  0, 2100);
+      h1[Form("eta_%i_aac",i)]             = new TH1F(Form("eta_%i_aac",i)             , "" , 120, -6,    6);
+      h1[Form("deepflavourbtag_%i_aac",i)] = new TH1F(Form("deepflavourbtag_%i_aac",i) , "" , 600,  0,  1.2);
+  
 
       h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
     }
@@ -308,6 +311,10 @@ int main(int argc, char * argv[])
 	  if (slimmedJets->at(j).pileupJetIdFullId("loose") && slimmedJets->at(j).idTight() ) selectedJets.push_back(&slimmedJets->at(j));
 	}
 
+      double HT_before_any_cut = 0;
+      calculateEventHT ( selectedJets, ptHT, etaHT, HT_before_any_cut );
+      h1["HT_bef_cuts"] -> Fill(HT_before_any_cut);
+
       //at least 3/4 jets present
       if ( (int)selectedJets.size() < njetsmin_ ) continue;
 
@@ -387,6 +394,10 @@ int main(int argc, char * argv[])
       h1["n"] -> Fill(selectedJets.size());
       h1["n_ptmin20"] -> Fill(njets);
 
+      double HT_AftKinCuts_BefBtag = 0;
+      calculateEventHT ( selectedJets, ptHT, etaHT, HT_AftKinCuts_BefBtag );
+      h1["HT_after_kin_bef_bTag"] -> Fill(HT_AftKinCuts_BefBtag);
+
       //b tagging
       float storedisc = -1;
       for ( int j = 0; j < njetsmin_; ++j )
@@ -414,6 +425,8 @@ int main(int argc, char * argv[])
 	    if (j==0){	      
 	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
 	      eventweight *= signgenweight;
+	      //float gweight = analysis.genWeight();
+	      //eventweight *= gweight;
 	    }
 	  }
 
@@ -488,6 +501,10 @@ int main(int argc, char * argv[])
       if(isMC_ && sgweight > 0) ++nweigh[5];
       else if(isMC_ && sgweight < 0) --nweigh[5];
 
+      double HT_after_bTag = 0;
+      calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
+      h1["HT_after_bTag"] -> Fill(HT_after_bTag);
+
       //FSR recovery
       for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
 	{
@@ -497,8 +514,6 @@ int main(int argc, char * argv[])
 	  if (njetsmin_ == 4) dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2]),softjet.deltaR(*selectedJets[3])});
 	  if ( softjet.pt() < 20.0 ) continue;
 	  if ( dRminsoft_bj > 0.8 )  continue;
-	  //              if ( softjet.qgLikelihood() > 0.5 ) continue;
-	  //              if (softjet.btag("btag_deepb")+softjet.btag("btag_deepbb") > 0.1522 )  continue;
 	  for ( int j = 0; j < njetsmin_; ++j ) //dijet loop
 	    {
 	      Jet & bjet = *selectedJets[j];
@@ -618,6 +633,18 @@ int main(int argc, char * argv[])
 
       if(isMC_ && sgweight > 0) ++nweigh[8];
       else if(isMC_ && sgweight < 0) --nweigh[8];
+
+      double HT_after_all_cuts = 0;
+      calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_all_cuts );
+      h1["HT_after_all_cuts"] -> Fill(HT_after_all_cuts);
+
+      for ( int j = 0; j < njetsmin_; ++j )//get histograms for most important quantities after all cuts (including m12 cut)
+        {
+          Jet* jet = selectedJets[j];
+          h1[Form("pt_%i_aac",j)]   -> Fill(jet->pt(),eventweight);
+          h1[Form("eta_%i_aac",j)]  -> Fill(jet->eta(),eventweight);
+          h1[Form("deepflavourbtag_%i_aac",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
+        }
 
       if ( ! isMC_ && ! signalregion_ ){
 	applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  );
@@ -791,6 +818,15 @@ void correctJetpt ( Jet& jet , const float& cor )
   TLorentzVector CorJet;
   CorJet.SetPtEtaPhiM(jet.pt()*cor , jet.eta(), jet.phi(), (jet.p4()).M());
   jet.p4(CorJet);
+}
+
+void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT ){
+  for(unsigned int j = 0; j < jets.size(); j++){
+    Jet* jet = jets[j];
+    if (jet->pt() < pt) break;
+    if (fabs(jet->eta()) > eta) continue;
+    targetHT += jet->pt();
+  }
 }
 
 
