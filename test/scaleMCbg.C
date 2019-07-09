@@ -20,7 +20,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
 
   cout << " " << endl;
   cout << "Input to be provided:" << endl;
-  cout << "(str)variable ('pt_n', 'eta_n' or 'm12' with n=(0,1,2,3)) [set to " << var_ <<"]," << endl;
+  cout << "(str)variable ('pt_n', 'eta_n', 'HT' or 'm12' with n=(0,1,2,3) and '_aac' for quantity after all cuts) [set to " << var_ <<"]," << endl;
   cout << "(int)rebinning factor [" << rebin_ << "]," << endl;
   cout << "(str)region ('CR'/'SR') [" << region_ << "]," << endl;
   cout << "(double)x-axis-beginning ["<< xlow_ << "]," << endl;
@@ -112,8 +112,16 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "m_{12} [GeV]";
     ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
   }
+  else if ((var_ == "HT" || var_ == "HT_aac") || var_ == "HT_bef_cuts"){
+    cout << "HT selected" << endl;
+    binning = rebin_*10.0;
+    xtitleEnr = "H_{T} [GeV], bEnriched";
+    xtitleGeF = "H_{T} [GeV], bGenFilter";
+    xtitleGes = "H_{T} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
   else{
-    cout << "No known variable selected. Please select 'pt_n', 'eta_n' or 'm12' with n=(0,1,2,3). For the quantities after cuts, please add '_csv' to the string." << endl; 
+    cout << "No known variable selected. Please select 'pt_n', 'eta_n', 'HT' or 'm12' with n=(0,1,2,3). For the quantities after cuts, please add '_aac' to the string." << endl; 
     return -1;
   }
   cout << "Variable check successful. Bin width: " << binning << endl;
@@ -137,6 +145,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   else if ( var_ == "phi_0" || var_ == "phi_0_csv") varname = "#phi, 1^{st} jet";
   else if ( var_ == "phi_1" || var_ == "phi_1_csv") varname = "#phi, 2^{nd} jet";
   else if ( var_ == "phi_2" || var_ == "phi_2_csv") varname = "#phi, 3^{rd} jet";
+  else if ( (var_ == "HT" || var_ == "HT_aac") || var_ == "HT_bef_cuts") varname = "H_{T}";
   else if ( var_ == "m12" || var_ == "m12_csv") varname = "m_{12}";
   else varname = var_;
 
@@ -159,15 +168,15 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     scalefactorsEnr[pthatbins[i]] = sfvaluesEnr[i];
     scalefactorsGeF[pthatbins[i]] = sfvaluesGeF[i];
     //    colormap[pthatbins[i]] = colors[i];
-    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
-    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
+    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
+    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
     if (threejets_){
-      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
-      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dfl_MCbg_EnrWOext_ExactWeights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
+      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
+      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
     }
     histogramsEnr[pthatbins[i]] = (TH1F*)filesEnr[pthatbins[i]] -> Get(var_.c_str());
     style.InitHist(histogramsEnr[pthatbins[i]],xtitleEnr.c_str(),ytitle.c_str(),colors[i],0);
-    histogramsEnr[pthatbins[i]] -> SetMarkerSize(1);
+    histogramsEnr[pthatbins[i]] -> SetMarkerSize(1.0);
     histogramsEnr[pthatbins[i]] -> Scale(scalefactorsEnr[pthatbins[i]]);
     histogramsEnr[pthatbins[i]] -> Rebin(rebin_);
     histogramsEnr[pthatbins[i]] -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
@@ -179,7 +188,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     histogramsEnr[pthatbins[i]] -> GetXaxis() -> SetNdivisions(505);
     histogramsGeF[pthatbins[i]] = (TH1F*)filesGeF[pthatbins[i]] -> Get(var_.c_str());
     style.InitHist(histogramsGeF[pthatbins[i]],xtitleGeF.c_str(),ytitle.c_str(),colors[i],0);
-    histogramsGeF[pthatbins[i]] -> SetMarkerSize(1);
+    histogramsGeF[pthatbins[i]] -> SetMarkerSize(1.0);
     histogramsGeF[pthatbins[i]] -> Scale(scalefactorsGeF[pthatbins[i]]);
     histogramsGeF[pthatbins[i]] -> Rebin(rebin_);
     histogramsGeF[pthatbins[i]] -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
@@ -188,6 +197,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     histogramsGeF[pthatbins[i]] -> GetYaxis() -> SetTitle(ytitle.c_str());
     histogramsGeF[pthatbins[i]] -> GetYaxis() -> SetTitleOffset(1.2);
     histogramsGeF[pthatbins[i]] -> GetYaxis() -> SetNdivisions(505);
+    histogramsGeF[pthatbins[i]] -> GetXaxis() -> SetNdivisions(505);
   }
 
   double nbinsx = histogramsEnr[pthatbins[0]] -> GetNbinsX();
@@ -224,7 +234,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     hist_output_gef -> Add(histogramsGeF[hist2.first]/* , scalefactorsGeF[hist2.first]*/);
   }
 
-  hist_output_enr -> Rebin(rebin_);
+  //hist_output_enr -> Rebin(rebin_);
   hist_output_enr -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
   hist_output_enr -> GetXaxis() -> SetTitle(xtitleEnr.c_str());
   hist_output_enr -> GetYaxis() -> SetRangeUser(ylow_, yhigh_);
@@ -239,7 +249,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   TLegend* legEnrSi = new TLegend(0.58,0.6,0.98,0.9);
   style.SetLegendStyle(legEnrSi);
 
-  hist_output_gef -> Rebin(rebin_);
+  //hist_output_gef -> Rebin(rebin_);
   hist_output_gef -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
   hist_output_gef -> GetXaxis() -> SetTitle(xtitleGeF.c_str());
   hist_output_gef -> GetYaxis() -> SetRangeUser(ylow_, yhigh_);
@@ -254,7 +264,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   TLegend* legGefSi = new TLegend(0.58,0.6,0.98,0.9);
   style.SetLegendStyle(legGefSi);
 
-  hist_output_ges -> Rebin(rebin_);
+  //hist_output_ges -> Rebin(rebin_);
   hist_output_ges -> Add(hist_output_enr);
   hist_output_ges -> Add(hist_output_gef);
   hist_output_ges -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
@@ -278,10 +288,10 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   for (unsigned int i = 0; i < pthatbins.size(); i++){
     legEnrSi -> AddEntry(histogramsEnr[pthatbins[i]],(pthatbins[i]).c_str(),"LP");
     if (i == 0){
-      histogramsEnr[pthatbins[i]] -> Draw("hist");
+      histogramsEnr[pthatbins[i]] -> Draw();
     }
     else{
-      histogramsEnr[pthatbins[i]] -> Draw("SAME hist");
+      histogramsEnr[pthatbins[i]] -> Draw("SAME");
     }
   }
   legEnrSi -> Draw("SAME");
@@ -316,28 +326,28 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   GesCan -> Update();
 
   if (threejets_){
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
   }
   else{
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-EnrWOext-GeFexactWeights-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
   }
   return 0;
 }

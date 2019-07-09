@@ -64,9 +64,7 @@ int main(int argc, char * argv[])
   auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
   
   auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V1_B_F.csv", "medium");
-  //auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V1_B_F.csv", "loose");
   //auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "medium");
-  //auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "loose");
    
   for ( auto & obj : triggerObjects_ )
     {
@@ -97,36 +95,37 @@ int main(int argc, char * argv[])
   txtoutputfile.open("output.txt",ios::app);
    
   std::map<std::string, TH1F*> h1;
-  h1["noofevents_h"]      = new TH1F("noofevents_h"    , "" , 10, 0, 10);
-  h1["noofevents_w_nlo"]  = new TH1F("noofevents_w_nlo", "" , 10, 0, 10);
-  h1["n"]                 = new TH1F("n"               , "" , 30, 0, 30);
-  h1["n_csv"]             = new TH1F("n_csv"           , "" , 30, 0, 30);
-  h1["n_ptmin20"]         = new TH1F("n_ptmin20"       , "" , 30, 0, 30);
-  h1["n_ptmin20_csv"]     = new TH1F("n_ptmin20_csv"   , "" , 30, 0, 30);
-  h1["nentries"]          = new TH1F("nentries"        , "" ,  2, 0,  2);
+  h1["noofevents_h"]      = new TH1F("noofevents_h"     , "" ,   10,  0,    10);
+  h1["noofevents_w_nlo"]  = new TH1F("noofevents_w_nlo" , "" ,   10,  0,    10);
+  h1["n"]                 = new TH1F("n"                , "" ,   30,  0,    30);
+  h1["n_csv"]             = new TH1F("n_csv"            , "" ,   30,  0,    30);
+  h1["n_ptmin20"]         = new TH1F("n_ptmin20"        , "" ,   30,  0,    30);
+  h1["n_ptmin20_csv"]     = new TH1F("n_ptmin20_csv"    , "" ,   30,  0,    30);
+  h1["nentries"]          = new TH1F("nentries"         , "" ,    2,  0,     2);
 
-  h1["HT_bef_cuts"]       = new TH1F("HT_bef_cuts"              , "" , 1080, 0, 10800);
-  h1["HT_after_kin_bef_bTag"] = new TH1F("HT_after_kin_bef_bTag", "" , 1080, 0, 10800);
-  h1["HT_after_bTag"]     = new TH1F("HT_after_bTag"            , "" , 1080, 0, 10800);
-  h1["HT_after_all_cuts"] = new TH1F("HT_after_all_cuts"        , "" , 1080, 0, 10800);
+  h1["HT_bef_cuts"]       = new TH1F("HT_bef_cuts"      , "" , 1080,  0, 10800);
+  h1["HT"]                = new TH1F("HT"               , "" , 1080,  0, 10800);
+  h1["HT_after_bTag"]     = new TH1F("HT_after_bTag"    , "" , 1080,  0, 10800);
+  h1["HT_csv"]            = new TH1F("HT_csv"           , "" , 1080,  0, 10800);
+  h1["HT_aac"]            = new TH1F("HT_aac"           , "" , 1080,  0, 10800);
 
-  h1["jetswomu"] = new TH1F("jetswomu" , "" , 30, 0, 30);
+  h1["jetswomu"]          = new TH1F("jetswomu"         , "" ,   30,  0,    30);
   
-  h1["n_muons"] = new TH1F("n_muons" , "" , 30, 0, 30);
-  h1["pt_mu"]   = new TH1F("pt_mu"   , "" , 150, 0, 1500);
-  h1["eta_mu"]  = new TH1F("eta_mu"  , "" , 120, -6, 6);
+  h1["n_muons"]           = new TH1F("n_muons"          , "" ,   30,  0,    30);
+  h1["pt_mu"]             = new TH1F("pt_mu"            , "" ,  150,  0,  1500);
+  h1["eta_mu"]            = new TH1F("eta_mu"           , "" ,  120, -6,     6);
 
-  h1["pt_corrected_comp"] = new TH1F("pt_corrected_comp", "" , 210, 0, 2100);
+  h1["pt_corrected_comp"] = new TH1F("pt_corrected_comp", "" ,  210,  0,  2100);
   
-  h1["dR_muj"]  = new TH1F("dR_muj" , "" , 120, 0, 0.6);
-  h1["dR_muj0"] = new TH1F("dR_muj0", "" , 120, 0, 0.6);
-  h1["dR_muj1"] = new TH1F("dR_muj1", "" , 120, 0, 0.6);
+  h1["dR_muj"]            = new TH1F("dR_muj"           , "" ,  120,  0,     0.6);
+  h1["dR_muj0"]           = new TH1F("dR_muj0"          , "" ,  120,  0,     0.6);
+  h1["dR_muj1"]           = new TH1F("dR_muj1"          , "" ,  120,  0,     0.6);
 
-  h1["pt_softjet"] = new TH1F("pt_softjet", "", 210,0,2100);
-  h1["dR_jsoftjet"] = new TH1F("dR_jsoftjet", "", 120, 0, 0.6);
-  h1["rank_softjet"] = new TH1F("rank_softjet", "", 20, 0, 20);
+  h1["pt_softjet"]        = new TH1F("pt_softjet"       , "",   210,  0,  2100);
+  h1["dR_jsoftjet"]       = new TH1F("dR_jsoftjet"      , "",   120,  0,     0.6);
+  h1["rank_softjet"]      = new TH1F("rank_softjet"     , "",    20,  0,    20);
 
-  h1["cutflow"]              = new TH1F("cutflow"  , "", 10, 0, 10);
+  h1["cutflow"]           = new TH1F("cutflow"          , "",    10,  0,    10);
    
   for ( int i = 0 ; i < njetsmin_ ; ++i )
     {
@@ -156,7 +155,7 @@ int main(int argc, char * argv[])
     }
   h1["m12_noCuts"]        = new TH1F("m12_noCuts"        , "" , 150, 0, 3000);
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
-  h1["m12_csv"]           = new TH1F("m12_csv"           , "" , 150, 0, 3000);
+  h1["m12_aac"]           = new TH1F("m12_aac"           , "" , 150, 0, 3000);
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
 
   for ( int i = 0 ; i < nsubsamples ; ++i )
@@ -291,6 +290,10 @@ int main(int argc, char * argv[])
 	slimmedJets->addGenJets(genjets);
 	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
 	h1["nentries"] -> Fill((sgweight+1.)/2.);
+	std::vector<Jet*> slimmedGenJets;//get a vector of GenJets
+	for (unsigned int a = 0; a < genjets->size(); a++){
+	  slimmedGenJets.push_back(&genjets->at(a));
+	}
       }
 
       if (isMC_ && sgweight == 0){
@@ -396,7 +399,7 @@ int main(int argc, char * argv[])
 
       double HT_AftKinCuts_BefBtag = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_AftKinCuts_BefBtag );
-      h1["HT_after_kin_bef_bTag"] -> Fill(HT_AftKinCuts_BefBtag);
+      h1["HT"] -> Fill(HT_AftKinCuts_BefBtag);
 
       //b tagging
       float storedisc = -1;
@@ -409,6 +412,8 @@ int main(int argc, char * argv[])
 	  h1[Form("btag_%i",j)] -> Fill(jet->btag());
 	  h1[Form("deepcsvbtag_%i",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
 	  h1[Form("deepflavourbtag_%i",j)] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
+
+	  h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
 	  
 	  float btagdisc;
 
@@ -425,8 +430,6 @@ int main(int argc, char * argv[])
 	    if (j==0){	      
 	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
 	      eventweight *= signgenweight;
-	      //float gweight = analysis.genWeight();
-	      //eventweight *= gweight;
 	    }
 	  }
 
@@ -493,8 +496,6 @@ int main(int argc, char * argv[])
 	  }//other btag wp for leading two jets
 	  
 	}//end of loop over jets for b tagging
-      
-      h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
       
       if ( ! goodEvent ) continue;
       ++nsel[5];
@@ -608,6 +609,11 @@ int main(int argc, char * argv[])
       h1["n_csv"] -> Fill(selectedJets.size());
       h1["n_ptmin20_csv"] -> Fill(njets_csv);
 
+      double HT_csv = 0;
+      calculateEventHT ( selectedJets, ptHT, etaHT, HT_csv );
+      h1["HT_csv"] -> Fill(HT_csv);
+
+
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
@@ -634,9 +640,9 @@ int main(int argc, char * argv[])
       if(isMC_ && sgweight > 0) ++nweigh[8];
       else if(isMC_ && sgweight < 0) --nweigh[8];
 
-      double HT_after_all_cuts = 0;
-      calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_all_cuts );
-      h1["HT_after_all_cuts"] -> Fill(HT_after_all_cuts);
+      double HT_aac = 0;
+      calculateEventHT ( selectedJets, ptHT, etaHT, HT_aac );
+      h1["HT_aac"] -> Fill(HT_aac);
 
       for ( int j = 0; j < njetsmin_; ++j )//get histograms for most important quantities after all cuts (including m12 cut)
         {
@@ -660,7 +666,7 @@ int main(int argc, char * argv[])
 
       if ( !signalregion_ || isMC_)//blinding
 	{ 
-	  h1["m12_csv"] -> Fill(mbb_sel,eventweight); //unprescaled
+	  h1["m12_aac"] -> Fill(mbb_sel,eventweight); //unprescaled
 	  mbb = mbb_sel;
 	  weight = eventweight;
 	  tree -> Fill();
