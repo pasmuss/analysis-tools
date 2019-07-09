@@ -69,9 +69,6 @@ namespace analysis {
             /// seed for random number generator read from a txt file given as a parameter
             int seed(const std::string &);
 
-	    //seed for random generator (used for prescaling)
-	    int seed(const std::string &);
-
             // Event
             int  numberEvents();
             int  size();

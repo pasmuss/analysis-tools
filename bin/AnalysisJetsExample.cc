@@ -29,13 +29,14 @@ int main(int argc, char * argv[])
    Analysis analysis(inputlist_);
    
    // btag
-   float btagmin = btagMin(btagwp_);
+   //float btagmin = btagMin(btagwp_);
    // b-tag scale factors
    // inputs from the config file test/analysis_bjetsv2.cfg
    // btagalgo_ = "deepcsv";
    // btagsf_   = "../data/DeepCSV_94XSF_V3_B_F.csv";
    // btagwp_   = "tight";
-   auto bsf_reader = analysis.btagCalibration(btagalgo_, btagsf_, btagwp_);
+   //auto bsf_reader = analysis.btagCalibration(btagalgo_, btagsf_, btagwp_);
+   auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V1_B_F.csv", "medium");
    
    // jer
    // Jet energy resolution scale factors and pt resolution

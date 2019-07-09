@@ -30,9 +30,6 @@ int prescale_;
 int seed_;
 std::string seedfile_;
 
-int seed_;
-std::string seedfile_;
-
 //
 bool matchonoff_;
 float matchonoffdrmax_;

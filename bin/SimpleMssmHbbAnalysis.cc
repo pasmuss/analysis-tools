@@ -290,10 +290,10 @@ int main(int argc, char * argv[])
 	slimmedJets->addGenJets(genjets);
 	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
 	h1["nentries"] -> Fill((sgweight+1.)/2.);
-	std::vector<Jet*> slimmedGenJets;//get a vector of GenJets
-	for (unsigned int a = 0; a < genjets->size(); a++){
+	/*std::vector<Jet*> slimmedGenJets;//get a vector of GenJets
+	for (int a = 0; a < genjets->size(); a++){
 	  slimmedGenJets.push_back(&genjets->at(a));
-	}
+	  }*/
       }
 
       if (isMC_ && sgweight == 0){
@@ -409,7 +409,7 @@ int main(int argc, char * argv[])
 	  h1[Form("pt_%i",j)]   -> Fill(jet->pt());
 	  h1[Form("eta_%i",j)]  -> Fill(jet->eta());
 	  h1[Form("phi_%i",j)]  -> Fill(jet->phi());
-	  h1[Form("btag_%i",j)] -> Fill(jet->btag());
+	  h1[Form("btag_%i",j)] -> Fill(jet->btag("btag_csvivf"));
 	  h1[Form("deepcsvbtag_%i",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
 	  h1[Form("deepflavourbtag_%i",j)] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
 
@@ -417,7 +417,7 @@ int main(int argc, char * argv[])
 	  
 	  float btagdisc;
 
-	  if (btagalgo == "csv") btagdisc = jet->btag();
+	  if (btagalgo == "csv") btagdisc = jet->btag("btag_csvivf");
 	  else if (btagalgo == "deep_csv") btagdisc = jet->btag("btag_deepb") + jet->btag("btag_deepbb");
 	  else if (btagalgo == "deepflavour") btagdisc = jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb");
 	  else return -1;
@@ -620,7 +620,7 @@ int main(int argc, char * argv[])
 	  h1[Form("pt_%i_csv",j)]   -> Fill(jet->pt(),eventweight);
 	  h1[Form("eta_%i_csv",j)]  -> Fill(jet->eta(),eventweight);
 	  h1[Form("phi_%i_csv",j)]  -> Fill(jet->phi(),eventweight);
-	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag(),eventweight);
+	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag("btag_csvivf"),eventweight);
 	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"),eventweight);
 	  h1[Form("deepflavourbtag_%i_csv",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
 	}
