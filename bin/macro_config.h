@@ -30,6 +30,9 @@ int prescale_;
 int seed_;
 std::string seedfile_;
 
+int seed_;
+std::string seedfile_;
+
 //
 bool matchonoff_;
 float matchonoffdrmax_;
@@ -152,6 +155,10 @@ std::string triggerCol_;
 std::string genParticleCol_;
 std::string genjetsCol_;
 std::string triggerObjDir_;
+
+//Prescale across eras
+std::vector<float> prescaleEra_;
+
 
 int macro_config(int argc, char * argv[])
 {
@@ -347,8 +354,6 @@ int macro_config(int argc, char * argv[])
 	      std::cout << "Config Error *** Jet minimum btag has been defined and does not match the minimum number of btagged jets" <<std::endl;
 	      return -1;
 	    }
-
-         
 	  if ( (int)muonsptmin_.size() != nmuonsmin_ )
 	    {
 	      std::cout << "Config Error *** Muon minimum pt were not defined or the definition does not match the minimum number of muons" <<std::endl;

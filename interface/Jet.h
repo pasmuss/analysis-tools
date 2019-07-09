@@ -68,7 +68,7 @@ namespace analysis {
             /// returns if jet is Puppi
             bool  isPuppi()                     const;
             /// returns the btag value of btag_csvivf
-            float btag()                        const;
+//            float btag()                        const;
             /// returns the btag value of algorithm
             float btag(const std::string & )    const;
             /// returns the flavour with the Hadron definition (=0 for data)
@@ -148,7 +148,7 @@ namespace analysis {
             Jet * fsrJet();
             
             /// pointer to the muon
-            Muon * muon();
+            std::shared_ptr<Muon> muon() const;
             
             /// Pointer to GenJet
             std::shared_ptr<GenJet> generatedJet() const;
@@ -184,6 +184,7 @@ namespace analysis {
             
             void jerInfo(const JetResolutionInfo &, const std::string &);
             void jerInfo(const JetResolutionInfo &, const float & drmin=0.2);
+            void applyJER(const JetResolutionInfo &, const float & drmin=0.2);
             
             /// add parton that gave rise to jet
             void addParton(const std::shared_ptr<GenParticle> &);
@@ -227,6 +228,8 @@ namespace analysis {
             void bRegCorr(const float &);
             void bRegRes(const float &);
             
+            void applyBjetRegression();
+            
             /// Rho
             void rho(const double &);
             
@@ -244,7 +247,9 @@ namespace analysis {
             void rmFSR();
             
             /// associate a muon to the jet
-            void addMuon(Muon*);
+            void addMuon(std::shared_ptr<Muon>);
+            /// associate a muon to the jet from a collection of muons 
+            void addMuon(std::vector< std::shared_ptr<Muon> > muons, const float & dr = 0.4);
             /// remove muon association to the jet
             void rmMuon();
             
@@ -328,7 +333,7 @@ namespace analysis {
             
             
             /// muon in jet
-            Muon * muon_;
+            std::shared_ptr<Muon> muon_;
             
             
          private:

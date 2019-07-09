@@ -172,7 +172,7 @@ void Analysis::treeInit_(const std::string & unique_name, const std::string & pa
 // =============== Method for Trigger Results=================
 // ===========================================================
 
-void Analysis::triggerResults(const std::string & path)
+bool Analysis::triggerResults(const std::string & path)
 {
    t_triggerResults_  = new TChain(path.c_str());
    int ok = t_triggerResults_ -> AddFileInfoList(fileList_);
@@ -180,7 +180,7 @@ void Analysis::triggerResults(const std::string & path)
    if ( ok == 0 )
    {
       std::cout << "tree does not exist" << std::endl;
-      return;
+      return false;
    }
    TObjArray * triggerBranches = t_triggerResults_ -> GetListOfBranches();
    for ( int i = 0 ; i < triggerBranches->GetEntries() ; ++i )
@@ -197,6 +197,7 @@ void Analysis::triggerResults(const std::string & path)
          t_triggerResults_ -> SetBranchAddress(branch.c_str(), &triggerResults_[branch]);
       }
    }
+   return true;
 }
 
 bool Analysis::triggerResult(const std::string & trig)
@@ -228,14 +229,15 @@ std::map<std::string,int> Analysis::triggerPrescale(const std::vector<std::strin
 // ===========================================================
 // ===========================================================
 // ------------ methods called for metadata  ------------
-void Analysis::crossSections(const std::string & path)
+int Analysis::crossSections(const std::string & path)
 {
+   if ( path == "" ) return -2;
    t_xsection_  = new TChain(path.c_str());
    int ok = t_xsection_ -> AddFileInfoList(fileList_);
    if ( ok == 0 )
    {
       std::cout << "tree does not exist" << std::endl;
-      return;
+      return -1;
    }
    TObjArray * xsecBranches = t_xsection_->GetListOfBranches();
    for ( int i = 0 ; i < xsecBranches->GetEntries() ; ++i )
@@ -246,6 +248,7 @@ void Analysis::crossSections(const std::string & path)
       t_xsection_ -> SetBranchAddress(branch.c_str(), &xsections_[branch]);
    }
    t_xsection_ -> GetEntry(0);
+   return 0;
 }
 
 double Analysis::crossSection()
@@ -503,6 +506,20 @@ std::shared_ptr<JetResolutionInfo> Analysis::jetResolutionInfo(const std::string
    jerinfo_ = std::make_shared<JetResolutionInfo>(JetResolutionInfo{res,sf});
    return jerinfo_;
 }
+      
+std::shared_ptr<PileupWeight> Analysis::pileupWeights(const std::string & f_pu)
+{
+   puweights_ = std::make_shared<PileupWeight>(PileupWeight(f_pu));
+   return puweights_;
+}
+
+      
+std::shared_ptr<MuonIdWeight> Analysis::muonIDWeights(const std::string & f_muID )
+{
+   muonIDweights_ = std::make_shared<MuonIdWeight>(MuonIdWeight(f_muID));
+   return muonIDweights_;
+}
+
       
 std::shared_ptr<BTagCalibrationReader> Analysis::btagCalibration(const std::string & tagger,
                                 const std::string & filename,

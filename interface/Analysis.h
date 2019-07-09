@@ -41,6 +41,12 @@
 #include "Analysis/Tools/interface/PhysicsObjectTree.h"
 #include "Analysis/Tools/interface/Collection.h"
 #include "Analysis/Tools/interface/BTagCalibrationStandalone.h"
+#include "Analysis/Tools/interface/PileupWeight.h"
+#include "Analysis/Tools/interface/MuonIdWeight.h"
+
+
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 
 //
 // class declaration
@@ -59,6 +65,9 @@ namespace analysis {
             // Info
             void tag(const std::string &);
             std::string tag();
+            
+            /// seed for random number generator read from a txt file given as a parameter
+            int seed(const std::string &);
 
 	    //seed for random generator (used for prescaling)
 	    int seed(const std::string &);
@@ -112,7 +121,7 @@ namespace analysis {
             std::string defaultCollection();
             
             // Cross sections
-            void   crossSections(const std::string & path);
+            int    crossSections(const std::string & path);
             double crossSection();
             double crossSection(const std::string & title);
             void   listCrossSections();
@@ -122,7 +131,7 @@ namespace analysis {
             double luminosity(const std::string & title);
 
             // Trigger results
-            void triggerResults(const std::string & path);
+            bool triggerResults(const std::string & path);
             bool triggerResult(const std::string & trig);
             int triggerPrescale(const std::string & trig);
             std::map<std::string,int> triggerPrescale(const std::vector<std::string> & trigs);
@@ -163,6 +172,8 @@ namespace analysis {
             
             float scaleLuminosity(const float & lumi);  // in pb-1
 
+            std::shared_ptr<PileupWeight> pileupWeights(const std::string & );
+            std::shared_ptr<MuonIdWeight> muonIDWeights(const std::string & );
 
             // ----------member data ---------------------------
          protected:
@@ -184,6 +195,12 @@ namespace analysis {
             std::shared_ptr<BTagCalibrationReader> btagcalibread_;
             
             std::shared_ptr<JetResolutionInfo> jerinfo_;
+            
+            // pileup weight
+            std::shared_ptr<PileupWeight> puweights_;
+	    
+	    // muonID weight
+	    std::shared_ptr<MuonIdWeight> muonIDweights_;
 
 
             std::map<std::string, double> xsections_;

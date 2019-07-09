@@ -212,4 +212,5 @@ else:
 os.chdir(cwd)
 if ntuples: 
    os.remove(tmpdir+"/"+os.path.basename(config))
+
 rmtree(tmpdir)
