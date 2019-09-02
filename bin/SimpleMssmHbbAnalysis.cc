@@ -63,8 +63,10 @@ int main(int argc, char * argv[])
 
   auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
   
-  auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V1_B_F.csv", "medium");
+  auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V3_B_F.csv", "medium");
   //auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "medium");
+
+  std::shared_ptr <PileupWeight> puweights = analysis.pileupWeights(pufile_);
    
   for ( auto & obj : triggerObjects_ )
     {
@@ -218,6 +220,7 @@ int main(int argc, char * argv[])
   cout << "reco: " << reco << endl;
   cout << "output file: " << outputRoot_.c_str() << endl;
   cout << "ntuples file: " << inputlist_.c_str() << endl;
+  cout << "PU file: " << pufile_.c_str() << endl;
   txtoutputfile << "This analysis has " << analysis.size() << " events" << endl;
   txtoutputfile << nevtmax_ << " events have been selected." << endl;
   txtoutputfile << "Selected category: "<< regions << endl;
@@ -227,6 +230,7 @@ int main(int argc, char * argv[])
   txtoutputfile << "reco: " << reco << endl;
   txtoutputfile << "output file: " << outputRoot_.c_str() << endl;
   txtoutputfile << "ntuples file: " << inputlist_.c_str() << endl;
+  txtoutputfile << "PU file: " << pufile_.c_str() << endl;
   
   // Cut flow
   // 0: triggered events (no. events for MC)
@@ -259,6 +263,11 @@ int main(int argc, char * argv[])
       bool goodEvent = true;
       bool muonpresent = false;
       float eventweight = 1.0;
+
+      if (isMC_){
+	float puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
+	eventweight *= puweight;
+      }
 
       int window = 0;
       
@@ -505,7 +514,7 @@ int main(int argc, char * argv[])
       double HT_after_bTag = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
-
+      
       //FSR recovery
       for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
 	{

@@ -33,6 +33,11 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   string xtitleEnr, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
   long binning = 0.0;
 
+  string outfilename = (var_ + "-" + region_ + "-3j" + ".root").c_str();
+  if (!threejets_) outfilename = (var_ + "-" + region_ + "-4j" + ".root").c_str();
+
+  cout << "output root file: " << outfilename << endl;
+
   HbbStylesNew style;
   style.SetStyle();
   gStyle->SetOptStat(0);
@@ -40,7 +45,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   cout << " " << endl;
   cout << "Checking variable consistency..." << endl;
   string var = var_;
-  if (var == "pt_0" || var == "pt_0_csv"){
+  if (var == "pt_0" || (var == "pt_0_csv" || var == "pt_0_aac")){
     cout << "pT of first jet selected" << endl;
     binning = rebin_*10.0;
     xtitleEnr = "p_{T}, 1^{st} jet [GeV], bEnriched";
@@ -48,7 +53,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "p_{T}, 1^{st} jet [GeV]";
     ytitle = ("Events/" + to_string(binning) + " GeV [a.u.]").c_str();
   }
-  else if (var == "pt_1" || var == "pt_1_csv"){
+  else if (var == "pt_1" || (var == "pt_1_csv" || var == "pt_1_aac")){
     cout << "pT of second jet selected"<< endl;
     binning = rebin_*10.0;
     xtitleEnr = "p_{T}, 2^{nd} jet [GeV], bEnriched";
@@ -56,7 +61,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "p_{T}, 2^{nd} jet [GeV]";
     ytitle = ("Events/" + to_string(binning) + " GeV [a.u.]").c_str();
   }
-  else if (var == "pt_2" || var == "pt_2_csv"){
+  else if (var == "pt_2" || (var == "pt_2_csv" || var == "pt_2_aac")){
     cout << "pT of third jet selected"<< endl;
     binning = rebin_*10.0;
     xtitleEnr = "p_{T}, 3^{rd} jet [GeV], bEnriched";
@@ -72,7 +77,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "p_{T}, 4^{th} jet [GeV]";
     ytitle = ("Events/" + to_string(binning) + " GeV [a.u.]").c_str();
   }
-  else if (var == "eta_0" || var == "eta_0_csv"){
+  else if (var == "eta_0" || (var == "eta_0_csv" || var == "eta_0_aac")){
     cout << "eta of first jet selected" << endl;
     binning = rebin_*0.01;
     xtitleEnr = "#eta, 1^{st} jet, bEnriched";
@@ -80,7 +85,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "#eta, 1^{st} jet";
     ytitle = ("Events/" + to_string(binning) + " [a.u.]").c_str();
   }
-  else if (var == "eta_1" || var == "eta_1_csv"){
+  else if (var == "eta_1" || (var == "eta_1_csv" || var == "eta_1_aac")){
     cout << "eta of second jet selected"<< endl;
     binning = rebin_*0.01;
     xtitleEnr = "#eta, 2^{nd} jet, bEnriched";
@@ -88,7 +93,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "#eta, 2^{nd} jet";
     ytitle = ("Events/" + to_string(binning) + " [a.u.]").c_str();
   }
-  else if (var == "eta_2" || var == "eta_2_csv"){
+  else if (var == "eta_2" || (var == "eta_2_csv" || var == "eta_2_aac")){
     cout << "eta of third jet selected"<< endl;
     binning = rebin_*0.01;
     xtitleEnr = "#eta, 3^{rd} jet, bEnriched";
@@ -96,7 +101,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "#eta, 3^{rd} jet";
     ytitle = ("Events/" + to_string(binning) + " [a.u.]").c_str();
   }
-  else if (var == "eta_3" || var == "eta_3_csv"){
+  else if (var == "eta_3" || (var == "eta_3_csv" || var == "eta_3_aac")){
     cout << "eta of fourth jet selected"<< endl;
     binning = rebin_*0.01;
     xtitleEnr = "#eta, 4^{th} jet, bEnriched";
@@ -104,7 +109,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     xtitleGes = "#eta, 4^{th} jet";
     ytitle = ("Events/" + to_string(binning) + " [a.u.]").c_str();
   }
-  else if (var == "m12" || var == "m12_csv"){
+  else if ( var == "m12" || (var == "m12_csv" || var == "m12_aac")){
     cout << "m12 selected" << endl;
     binning = rebin_*20.0;
     xtitleEnr = "m_{12} [GeV], bEnriched";
@@ -168,11 +173,11 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     scalefactorsEnr[pthatbins[i]] = sfvaluesEnr[i];
     scalefactorsGeF[pthatbins[i]] = sfvaluesGeF[i];
     //    colormap[pthatbins[i]] = colors[i];
-    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
-    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
+    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
+    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
     if (threejets_){
-      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
-      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_dCSV/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
+      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
+      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
     }
     histogramsEnr[pthatbins[i]] = (TH1F*)filesEnr[pthatbins[i]] -> Get(var_.c_str());
     style.InitHist(histogramsEnr[pthatbins[i]],xtitleEnr.c_str(),ytitle.c_str(),colors[i],0);
@@ -274,6 +279,8 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   hist_output_ges -> GetYaxis() -> SetTitleOffset(1.2);
   hist_output_ges -> GetYaxis() -> SetNdivisions(505);
 
+  cout << "Number of entries after adding and scaling all bins: " << hist_output_ges->Integral() << endl;
+
   TLegend* legGes = new TLegend(0.58,0.6,0.98,0.9);
   style.SetLegendStyle(legGes);
   legGes -> AddEntry(hist_output_ges,varname.c_str(),"LP");
@@ -321,33 +328,37 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
 
   GesCan -> cd();
   hist_output_ges -> Draw();
+
+  TFile* out_file = new TFile( (outfilename).c_str() , "RECREATE" );
+  hist_output_ges -> Write();
+
   legGes -> Draw("SAME");
   CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
   GesCan -> Update();
-
+  /*
   if (threejets_){
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
   }
   else{
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/mc-bg-4j3-dCSV-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
-  }
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
+    }*/
   return 0;
 }

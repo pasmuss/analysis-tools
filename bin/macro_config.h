@@ -22,6 +22,7 @@ bool signalregion_;
 std::string inputlist_;
 std::string outputRoot_;
 std::string json_;
+std::string pufile_;
 std::string reco_;
 std::string regions_;
 
@@ -178,6 +179,7 @@ int macro_config(int argc, char * argv[])
 	("runMax",po::value <int> (&runmax_)->default_value(-1), "Minimum run number")
 	("output",po::value <std::string> (&outputRoot_)->default_value("histograms.root"),"Output root file")
 	("json",po::value <std::string> (&json_)->default_value("no_json.txt"), "JSON file for data")
+	("PUfile",po::value <std::string> (&pufile_)->default_value("pileup_weights.root"), "root file containing weights for pileup corrections")
 	("seedFile",po::value <std::string> (&seedfile_)->default_value("seed.txt"), "txt file with seed for prescaling")
 	("seed",po::value <int> (&seed_)->default_value(1), "Seed value for random number generator")
 	("btagSF",po::value <std::string> (&btagsf_)->default_value("DeepCSV.csv"),"b-tagging scale factor in CSV format")
