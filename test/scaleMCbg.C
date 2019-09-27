@@ -33,8 +33,8 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   string xtitleEnr, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
   long binning = 0.0;
 
-  string outfilename = (var_ + "-" + region_ + "-3j" + ".root").c_str();
-  if (!threejets_) outfilename = (var_ + "-" + region_ + "-4j" + ".root").c_str();
+  string outfilename = ("MCbg-QCD-" + var_ + "-" + region_ + "-3j" + ".root").c_str();
+  if (!threejets_) outfilename = ("MCbg-QCD-" + var_ + "-" + region_ + "-4j" + ".root").c_str();
 
   cout << "output root file: " << outfilename << endl;
 
@@ -173,11 +173,11 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
     scalefactorsEnr[pthatbins[i]] = sfvaluesEnr[i];
     scalefactorsGeF[pthatbins[i]] = sfvaluesGeF[i];
     //    colormap[pthatbins[i]] = colors[i];
-    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
-    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
+    filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_pT110-100_Sep02-19/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + ".root").c_str(),"READ");
+    filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_pT110-100_Sep02-19/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + ".root").c_str(),"READ");
     if (threejets_){
-      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
-      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
+      filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_pT110-100_Sep02-19/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
+      filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_pT110-100_Sep02-19/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
     }
     histogramsEnr[pthatbins[i]] = (TH1F*)filesEnr[pthatbins[i]] -> Get(var_.c_str());
     style.InitHist(histogramsEnr[pthatbins[i]],xtitleEnr.c_str(),ytitle.c_str(),colors[i],0);
@@ -335,30 +335,30 @@ int scaleMCbg(string var_, int rebin_ , string region_, double xlow_, double xhi
   legGes -> Draw("SAME");
   CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
   GesCan -> Update();
-  /*
+  /*  
   if (threejets_){
-    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-total-3j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-total-3j.root").c_str() );
   }
   else{
-    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclPUweights-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-total-4j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/m12_ratio_CR-SR/mc-bg-inclOnlBtagSF-" + var_ + "-" + region_ + "-total-4j.root").c_str() );
     }*/
   return 0;
 }

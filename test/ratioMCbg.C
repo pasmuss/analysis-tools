@@ -42,7 +42,7 @@ int ratioMCbg(string basis_, double ylow_, double yhigh_, bool logy_, int rebin_
   
   hist_sr_3b -> Divide(hist_cr_3b);
   hist_sr_3b -> GetYaxis() -> SetRangeUser(ylow_,yhigh_);
-  hist_sr_3b -> Rebin(rebin_);
+  hist_sr_3b -> Rebin(rebin_);//take care: rebinning should probably not be done here but by rebinning the original histograms in order to keep the result consistent
   hist_sr_3b -> GetYaxis() -> SetTitle("bbb/bbnb");
 
   TCanvas* out_can_3b = style.MakeCanvas("out_can_3b", "", 700,700);

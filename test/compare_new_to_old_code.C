@@ -14,13 +14,13 @@ void compare_new_to_old_code(){
   style.SetStyle();
 
   //Definition of files (three or four jets required, respectively, all CR)
-  TFile* threeold = new TFile("Archive_NAF/ResultsJul13-mediumwp-3jets/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
-  TFile* threenew = new TFile("StandardConfig_3jets_bmedium_nbloose_pT10010040_deta1p5_dRij1/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
-  TFile* fourold = new TFile("Archive_NAF/ResultsJul13-mediumwp-4jets/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
-  TFile* fournew = new TFile("StandardConfig_4jets_bmedium_nbloose_pT1001004040_deta1p5_dRij1/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
+  TFile* threeold = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_incl_PUweights_Jul12-19/rereco/rereco-CDEF-deep-CR.root","READ");
+  TFile* threenew = new TFile("Configs_diffBTags_allmedium/rootfiles_4med_pT110-100_Sep02-19/rereco/rereco-CDEF-deep-CR.root","READ");
+  //TFile* fourold = new TFile("Archive_NAF/ResultsJul13-mediumwp-4jets/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
+  //TFile* fournew = new TFile("StandardConfig_4jets_bmedium_nbloose_pT1001004040_deta1p5_dRij1/rootfiles/rereco/rereco-CDEF-deep-CR.root","READ");
 
   //Histograms: pt1, pt2, m12 (all after cuts)
-  TH1F* pt1_threeold = (TH1F*)threeold->Get("pt_0_csv");
+  /*TH1F* pt1_threeold = (TH1F*)threeold->Get("pt_0_csv");
   TH1F* pt1_threenew = (TH1F*)threenew->Get("pt_0_csv");
   TH1F* pt1_fourold = (TH1F*)fourold->Get("pt_0_csv");
   TH1F* pt1_fournew = (TH1F*)fournew->Get("pt_0_csv");
@@ -29,12 +29,12 @@ void compare_new_to_old_code(){
   TH1F* pt2_threenew = (TH1F*)threenew->Get("pt_1_csv");
   TH1F* pt2_fourold = (TH1F*)fourold->Get("pt_1_csv");
   TH1F* pt2_fournew = (TH1F*)fournew->Get("pt_1_csv");
-
-  TH1F* m12_threeold = (TH1F*)threeold->Get("m12_csv");
-  TH1F* m12_threenew = (TH1F*)threenew->Get("m12_csv");
-  TH1F* m12_fourold = (TH1F*)fourold->Get("m12_csv");
-  TH1F* m12_fournew = (TH1F*)fournew->Get("m12_csv");
-
+  */
+  TH1F* m12_threeold = (TH1F*)threeold->Get("m12_aac");
+  TH1F* m12_threenew = (TH1F*)threenew->Get("m12_aac");
+  //TH1F* m12_fourold = (TH1F*)fourold->Get("m12_csv");
+  //TH1F* m12_fournew = (TH1F*)fournew->Get("m12_csv");
+  /*
   //pt1
   TCanvas* pt1threecan = style.MakeCanvas("pt1threecan","pt1threecan",700,700);
   pt1threecan -> SetLogy();
@@ -104,24 +104,26 @@ void compare_new_to_old_code(){
   pt2_fourold -> GetXaxis() -> SetNdivisions(505);
   pt2fourcan -> Update();
   pt2fourcan -> SaveAs("comp_old_new_code_pt2_4jetcat.pdf");
-
+*/
   //m12
   TCanvas* m12threecan = style.MakeCanvas("m12threecan","m12threecan",700,700);
   m12threecan -> SetLogy();
-  style.InitHist(m12_threeold,"m_{12}","Entries",kBlack,0);
+  style.InitHist(m12_threeold,"m_{12} [GeV]","Entries / 20 GeV",kBlack,0);
+  m12_threeold -> GetXaxis() -> SetRangeUser(0,2000);
+  m12_threeold -> SetNdivisions(505);
   m12_threeold->Draw();
-  style.InitHist(m12_threenew,"m_{12}","Entries",kRed,0);
+  style.InitHist(m12_threenew,"m_{12} [GeV]","Entries / 20 GeV",kRed,0);
   m12_threenew->Draw("SAME");
     
-  TLegend* m12threeleg = new TLegend(0.35,0.65,0.8,0.9);
+  TLegend* m12threeleg = new TLegend(0.54,0.65,0.98,0.9);
   style.SetLegendStyle(m12threeleg);
-  m12threeleg->AddEntry(m12_threeold,"old code (3 jet category)","L");
-  m12threeleg->AddEntry(m12_threenew,"new code (3 jet category)","L");
+  m12threeleg->AddEntry(m12_threeold,"p_{T}^{(1,2)} > 100/100","L");
+  m12threeleg->AddEntry(m12_threenew,"p_{T}^{(1,2)} > 110/100","L");
   m12threeleg->Draw("SAME");
 
   m12threecan -> Update();
-  m12threecan -> SaveAs("comp_old_new_code_m12_3jetcat.pdf");
-
+  m12threecan -> SaveAs("comp_old_new_code_m12_3jetcat_pt-110-100.pdf");
+  /*
   TCanvas* m12fourcan = style.MakeCanvas("m12fourcan","m12fourcan",700,700);
   m12fourcan -> SetLogy();
   style.InitHist(m12_fourold,"m_{12}","Entries",kBlack,0);
@@ -137,5 +139,5 @@ void compare_new_to_old_code(){
 
   m12fourcan -> Update();
   m12fourcan -> SaveAs("comp_old_new_code_m12_4jetcat.pdf");
-
+  */
 }

@@ -95,6 +95,8 @@ int main(int argc, char * argv[])
   TFile hout(outputRoot_.c_str(),"recreate");
   ofstream txtoutputfile;
   txtoutputfile.open("output.txt",ios::app);
+
+  TH2F* th2_pT_onlbtagsf = new TH2F("th2_pT_onlbtagsf", "", 210, 0, 210, 400, -2, 2);
    
   std::map<std::string, TH1F*> h1;
   h1["noofevents_h"]      = new TH1F("noofevents_h"     , "" ,   10,  0,    10);
@@ -128,6 +130,8 @@ int main(int argc, char * argv[])
   h1["rank_softjet"]      = new TH1F("rank_softjet"     , "",    20,  0,    20);
 
   h1["cutflow"]           = new TH1F("cutflow"          , "",    10,  0,    10);
+
+  h1["onl_btag_sf"]       = new TH1F("onl_btag_sf"      , "",  400 , -2,     2);
    
   for ( int i = 0 ; i < njetsmin_ ; ++i )
     {
@@ -437,13 +441,16 @@ int main(int argc, char * argv[])
 	      float jet_btag_sf = jet->btagSF(bsf_reader);
 	      eventweight *= jet_btag_sf;
 	      //online b tag sf
-	      if (btagalgo == "deepflavour"){
+	      /*if (btagalgo == "deepflavour"){
 		if ( j == 0 || j == 1){
-		  float onl_sf = 0.845 - jet->pt() * 0.0000975;
+		  float pt = jet->pt();
+		  float onl_sf = 0.852 - (pt * 0.0000616);
+		  h1["onl_btag_sf"] -> Fill(onl_sf);
 		  eventweight *= onl_sf;
+		  th2_pT_onlbtagsf -> Fill(pt,onl_sf);
 		}
 	      }
-	      else cout << "Can not calculate online b tag sf for any algorithm other than deepflavour (deepJet)." << endl;
+	      else cout << "Can not calculate online b tag sf for any algorithm other than deepflavour (deepJet)." << endl;*/
 	    }
 	    if (j==0){	      
 	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());

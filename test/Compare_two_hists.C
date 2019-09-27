@@ -22,14 +22,14 @@ void Compare_two_hists(){
   ///
   /// Files
   ///
-  TFile* file_1 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_incl_PUweights/mcbg/pt_2_aac-CR-3j.root","READ");
-  TFile* file_2 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_incl_PUweights/rereco/rereco-CDEF-deep-CR-3j.root","READ");
+  TFile* file_1 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_comp-no-asym-pT-no-onl-MC-sf_Sep24-19/rereco/rereco-CDEF-deep-CR-3j.root","READ");
+  TFile* file_2 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_comp-incl-asym-pT-incl-onl-MC-sf_Sep25-19/rereco/rereco-CDEF-deep-CR-3j.root","READ");
   
   ///
   /// histograms
   ///
-  TH1F* hist_1 = (TH1F*)file_1 -> Get("hist_output_ges");
-  TH1F* hist_2 = (TH1F*)file_2 -> Get("pt_2_aac");
+  TH1F* hist_1 = (TH1F*)file_1 -> Get("m12_aac");
+  TH1F* hist_2 = (TH1F*)file_2 -> Get("m12_aac");
 
   int binwidth_1 = hist_1 -> GetBinWidth(1);
   int binwidth_2 = hist_2 -> GetBinWidth(1);
@@ -38,10 +38,10 @@ void Compare_two_hists(){
 
   cout << "rebinning done" << endl;
 
-  TCanvas* can = style.MakeCanvas("can","data vs. MC, CR 3b, pt_2",700,700);
+  TCanvas* can = style.MakeCanvas("can","CR 3b, m12: w/ vs. w/o onl. btag sf",700,700);
   can -> SetLogy();
-  style.InitHist(hist_1,"p_{T}",("Entries / " + to_string(binwidth_1) + "GeV").c_str(),kBlue,0);
-  style.InitHist(hist_2,"p_{T}",("Entries / " + to_string(binwidth_1) + "GeV").c_str(),kRed,0);
+  style.InitHist(hist_1,"m_{12} [GeV]",("Entries / " + to_string(binwidth_1) + "GeV").c_str(),kBlue,0);
+  style.InitHist(hist_2,"m_{12} [GeV]",("Entries / " + to_string(binwidth_1) + "GeV").c_str(),kRed,0);
 
   std::vector<double> lines = {0.5,1.0,1.5};
 
@@ -64,23 +64,24 @@ void Compare_two_hists(){
 
   rp -> GetLowerRefYaxis() -> SetRangeUser(0.01,2.0);
   rp -> GetUpperRefYaxis() -> SetRangeUser(1,1000000);
-  rp -> GetLowerRefYaxis() -> SetTitle("data/MC");
+  rp -> GetLowerRefYaxis() -> SetTitle("asym/sym");
   rp -> GetLowerRefYaxis() -> SetTitleSize(0.035);
   rp -> GetLowerRefYaxis() -> SetTitleOffset(1.6);
-  rp -> GetLowerRefXaxis() -> SetRangeUser(0.1,2000);
-  rp -> GetUpperRefXaxis() -> SetRangeUser(0.1,2000);
-  
-  rp -> SetUpTopMargin(0.01);
+  rp -> GetLowerRefXaxis() -> SetRangeUser(100,2000);
+  rp -> GetUpperRefXaxis() -> SetRangeUser(100,2000);
+
+  rp -> SetUpTopMargin(0.03);
   rp -> SetLowBottomMargin(0.4);
   rp -> SetRightMargin(0.05);
   rp -> SetLeftMargin(0.12);
   rp -> SetSeparationMargin(0.02);
 
-  TLegend* leg = new TLegend(0.6,0.7,0.9,0.89);
+  TLegend* leg = new TLegend(0.44,0.72,0.84,0.91);
   style.SetLegendStyle(leg);
   //leg -> SetBorderSize(1);
-  leg -> AddEntry(hist_2,"p_{T}^{(2)} data","L");
-  leg -> AddEntry(hist_1,"p_{T}^{(2)} MC","L");
+  leg -> AddEntry(hist_2,"m_{12}, bbnb, data, onl. btag sf + asym. p_{T}","L");
+  leg -> AddEntry(hist_1,"m_{12}, bbnb, data, without both","L");
+  leg -> SetTextSize(0.04);
 
   rp -> GetUpperPad() -> cd();
 
@@ -89,5 +90,5 @@ void Compare_two_hists(){
   // CMSPrelim( "Simulation" , "Work in progress", 0.18, 0.77);
 
   can -> Update();
-  can -> SaveAs("Outputdata/comp_data_MC_pt_2_aac_bbnb.pdf");
+  can -> SaveAs("Outputdata/comp_data_w-wo-onl-btag-sf-and-asym-pt_m12_aac_bbnb.pdf");
 }
