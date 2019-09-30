@@ -76,9 +76,9 @@ int main(int argc, char * argv[])
       h1[Form("pt_%i_emulPFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_emulPFJet100xOffl_eta1to1p4",i), "", 210, 0, 2100);
       h1[Form("pt_%i_emulPFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_emulPFJet100xOffl_eta1p4to2p2",i), "", 210, 0, 2100);
 
-      h1[Form("pt_%i_ratio_eta0to1",i)] = new TH1F(Form("pt_%i_ratio_eta0to1",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_ratio_eta1to1p4",i)] = new TH1F(Form("pt_%i_ratio_eta1to1p4",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_ratio_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_ratio_eta1p4to2p2",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_eff_eta0to1",i)] = new TH1F(Form("pt_%i_eff_eta0to1",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_eff_eta1to1p4",i)] = new TH1F(Form("pt_%i_eff_eta1to1p4",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_eff_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_eff_eta1p4to2p2",i), "", 210, 0, 2100);
     }
    
   // Analysis of events
@@ -270,9 +270,9 @@ int main(int argc, char * argv[])
 	      return -1;
 	    }
 	  }
-	  h1[Form("pt_%i_ratio_eta0to1",i)] -> Divide(h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)], h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)]);
-	  h1[Form("pt_%i_ratio_eta1to1p4",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)], h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)]);
-	  h1[Form("pt_%i_ratio_eta1p4to2p2",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)], h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)]);
+	  h1[Form("pt_%i_eff_eta0to1",i)] -> Divide(h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)], h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)]);
+	  h1[Form("pt_%i_eff_eta1to1p4",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)], h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)]);
+	  h1[Form("pt_%i_eff_eta1p4to2p2",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)], h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)]);
 	}
 
 
