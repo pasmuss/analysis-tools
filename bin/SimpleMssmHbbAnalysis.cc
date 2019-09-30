@@ -441,7 +441,7 @@ int main(int argc, char * argv[])
 	      float jet_btag_sf = jet->btagSF(bsf_reader);
 	      eventweight *= jet_btag_sf;
 	      //online b tag sf
-	      /*if (btagalgo == "deepflavour"){
+	      if (btagalgo == "deepflavour"){
 		if ( j == 0 || j == 1){
 		  float pt = jet->pt();
 		  float onl_sf = 0.852 - (pt * 0.0000616);
@@ -450,7 +450,7 @@ int main(int argc, char * argv[])
 		  th2_pT_onlbtagsf -> Fill(pt,onl_sf);
 		}
 	      }
-	      else cout << "Can not calculate online b tag sf for any algorithm other than deepflavour (deepJet)." << endl;*/
+	      else cout << "Can not calculate online b tag sf for any algorithm other than deepflavour (deepJet)." << endl;
 	    }
 	    if (j==0){	      
 	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
