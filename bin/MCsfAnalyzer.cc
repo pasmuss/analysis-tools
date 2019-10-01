@@ -33,7 +33,6 @@ int main(int argc, char * argv[])
   Analysis analysis(inputlist_);
 
   analysis.addTree<Jet> ("Jets","MssmHbb/Events/updatedPatJets");
-  //analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
   if (isMC_) analysis.addTree<GenJet>("GenJets","MssmHbb/Events/slimmedGenJets");
 
   auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
@@ -105,8 +104,6 @@ int main(int argc, char * argv[])
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
       noofeventsstart ++;
-      //bool goodEvent = true;
-      //bool muonpresent = false;
       float eventweight = 1.0;
 
       if (isMC_){
@@ -169,12 +166,6 @@ int main(int argc, char * argv[])
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
-	  //Apply Jet Energy Corrections
-	  float regressionfactor = 1.0;
-	  if (useregression_){
-	    regressionfactor = jet->bRegCorr();
-	    correctJetpt(*jet,regressionfactor);
-	  }
 	  //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
 	  if (isMC_ && useJER_){
 	    jet->jerInfo(*jerinfo,0.2);
@@ -274,76 +265,6 @@ int main(int argc, char * argv[])
 	  h1[Form("pt_%i_eff_eta1to1p4",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)], h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)]);
 	  h1[Form("pt_%i_eff_eta1p4to2p2",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)], h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)]);
 	}
-
-
-
-
-
-
-
-
-
-
-      
-      //FSR recovery -- to be used???
-      ///
-      ///
-      ///
-
-      /*for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
-	{
-	  Jet & softjet = *selectedJets[s];
-	  //Cut on DeltaR softjet - b jet
-	  float dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2])});
-	  if (njetsmin_ == 4) dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2]),softjet.deltaR(*selectedJets[3])});
-	  if ( softjet.pt() < 20.0 ) continue;
-	  if ( dRminsoft_bj > 0.8 )  continue;
-	  for ( int j = 0; j < njetsmin_; ++j ) //dijet loop
-	    {
-	      Jet & bjet = *selectedJets[j];
-	      if ( dRminsoft_bj != softjet.deltaR(bjet) ) continue;
-	      bjet.p4( bjet.p4() + softjet.p4() );
-	      //Remove bjet and add corrected bjet
-	      //No need to remove soft jet: Iterator will proceed. So if soft jet erased plus iterator proceeds: one soft jet skipped
-	      selectedJets.erase(selectedJets.begin()+j);
-	      selectedJets.insert(selectedJets.begin()+j, &bjet );
-	    }
-	}*/
-
-      // Check for muons in the jets -- to be used?
-      ///
-      ///
-      ///
-
-      /*if (muonveto_){
-	std::vector<Muon*> selectedMuons;
-	const char muID = muonsid_.at(0);
-	auto slimmedMuons = analysis.collection<Muon>("Muons");
-	for ( int m = 0 ; m < slimmedMuons->size() ; ++m )
-	  {
-	    if ( (muID == 'M' && slimmedMuons->at(m).isMediumMuon()) || (muID == 'T' && slimmedMuons->at(m).isTightMuon())){
-	      selectedMuons.push_back(&slimmedMuons->at(m));
-	    }
-	  }
-	
-	std::vector<Muon*> MuonsinJet;
-	for ( size_t m = 0; m < selectedMuons.size(); ++m )      
-	  {
-	    Muon* muon = selectedMuons[m];
-	    if ( muon->pt() < muonsptmin_[m] || fabs(muon->eta()) > muonsetamax_[m] ) continue;
-	    
-	    float dR_muj0 = selectedJets[0]->deltaR(*muon);
-	    float dR_muj1 = selectedJets[1]->deltaR(*muon);
-	    
-	    if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
-	      {
-		muonpresent  = true;
-		MuonsinJet.push_back(muon);
-		break;
-	      }
-	  } //end: loop over muons
-	if ( muonpresent ) continue;
-      }*/ //end: muon veto
     }//end: event loop
   
   h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
