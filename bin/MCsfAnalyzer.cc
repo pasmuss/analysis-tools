@@ -166,12 +166,6 @@ int main(int argc, char * argv[])
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
-	  // b jet energy regression (should not play a major role: just B JETS)
-	  float regressionfactor = 1.0;
-          if (useregression_){
-            regressionfactor = jet->bRegCorr();
-            correctJetpt(*jet,regressionfactor);
-          }
 	  //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
 	  if (isMC_ && useJER_){
 	    jet->jerInfo(*jerinfo,0.2);
