@@ -1,21 +1,18 @@
 import os
 
-basedir = '/pnfs/desy.de/cms/tier2/store/user/rwalsh/Analysis/Ntuples/MC/Fall2017/ntuplizer_94X_mc_2017_fall17-v3/'
-prefix = 'SUSYGluGluToBBHToBB_M-'
-suffix = '_TuneCP5_13TeV-amcatnlo-pythia8/'
+basedir = '/pnfs/desy.de/cms/tier2/store/user/rwalsh/Analysis/Ntuples/DATA/Run2017/ntuplizer_94X_2017_rereco31Mar18-v4/JetHT/'
+prefix = 'Run2017'
+suffix = '-31Mar2018-v1/'
 
-masspoints = [120,130,140,160,180,200,250,350,400,450,500,600,700,800,900,1000,1200,1400,1600,1800,2000]
+eras = ['C','D','E','F']
 
-for masspoint in masspoints:
+for era in eras:
     ntuplelist = []
-    print(masspoint)
-    filelist = open('filelists/rootFileListMCsig'+str(masspoint)+'NLOFall17.txt','w')
-    foldercontent = os.listdir(basedir+prefix+str(masspoint)+suffix)
-    for folder in foldercontent:
-        folderpath = basedir+prefix+str(masspoint)+suffix+folder+'/'
-        times = os.listdir(folderpath)
+    print(era)
+    with open('filelists/rootFileListJetHT_Run2017'+str(era)+'.txt','w') as filelist:
+        times = os.listdir(basedir+prefix+str(era)+suffix)
         for time in times:
-            timepath = folderpath+time+'/'
+            timepath = basedir+prefix+str(era)+suffix+time+'/'
             parts = os.listdir(timepath)
             for part in parts:
                 partpath = timepath+part+'/'
@@ -23,4 +20,3 @@ for masspoint in masspoints:
                 for ntuple in ntuples:
                     ntuplepath = partpath+ntuple+'\n'
                     filelist.write(ntuplepath)
-    filelist.close()
