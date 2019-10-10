@@ -3,7 +3,6 @@ import os
 basedir = '/pnfs/desy.de/cms/tier2/store/user/rwalsh/Analysis/Ntuples/MC/Fall17/ntuplizer_94X_mc_2017_fall17-v4/'
 prefix = 'QCD_HT'
 suffix = '_TuneCP5_13TeV-madgraph-pythia8/'
-
 eras = ['200to300','300to500','500to700','700to1000','1000to1500','1500to2000','2000toInf']
 
 for era in eras:
