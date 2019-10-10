@@ -26,7 +26,7 @@ void correctJetpt ( Jet& , const float& );
 int main(int argc, char * argv[])
 {
   if ( KinSF_config(argc, argv) != 0 ) return -1;
-   
+
   TH1::SetDefaultSumw2();  // proper treatment of errors when scaling histograms
    
   // Input files list
@@ -38,14 +38,14 @@ int main(int argc, char * argv[])
   auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
   
   std::shared_ptr <PileupWeight> puweights = analysis.pileupWeights(pufile_);
-   
+
   for ( auto & obj : triggerObjects_ )
     {
       analysis.addTree<TriggerObject> (obj,Form("MssmHbb/Events/slimmedPatTrigger/%s",obj.c_str()));
     }
   
   analysis.triggerResults("MssmHbb/Events/TriggerResults");
-   
+
   if( !isMC_ )
     {
       int json_status = analysis.processJsonFile(json_);
@@ -71,9 +71,9 @@ int main(int argc, char * argv[])
       h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1to1p4",i), "", 210, 0, 2100);
       h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i), "", 210, 0, 2100);
 
-      h1[Form("pt_%i_emulPFJet100xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_emulPFJet100xOffl_eta0to1",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_emulPFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_emulPFJet100xOffl_eta1to1p4",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_emulPFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_emulPFJet100xOffl_eta1p4to2p2",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta0to1",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1to1p4",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i), "", 210, 0, 2100);
 
       h1[Form("pt_%i_eff_eta0to1",i)] = new TH1F(Form("pt_%i_eff_eta0to1",i), "", 210, 0, 2100);
       h1[Form("pt_%i_eff_eta1to1p4",i)] = new TH1F(Form("pt_%i_eff_eta1to1p4",i), "", 210, 0, 2100);
@@ -176,8 +176,9 @@ int main(int argc, char * argv[])
 
       /// Matching to respective trigger objects (those with 100 to emulate the less inclusive trigger; all using same HLT)
       std::vector<Jet*> Jets_l1_60, Jets_calo_60, Jets_pf_60, Jets_full_60, Jets_full_60_offl, Jets_l1_100, Jets_calo_100, Jets_pf_100, Jets_full_100, Jets_full_100_offl;
-
+      
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
+
       bool l1_60 = false, calo_60 = false, pf_60 = false, l1_100 = false, calo_100 = false, pf_100 = false, offline = false;
       bool full_60 = true, full_100 = true, num_100xoffl = true, den_60xoffl = true;
 
@@ -185,87 +186,88 @@ int main(int argc, char * argv[])
         {
           Jet * jet = selectedJets[j];
 	  double jeteta = jet->eta();
-	  if ( jet->matched(triggerObjects_[1]) ){
+	  double jetpt = jet->pt();
+	  if ( jet->matched(triggerObjects_[0]) ){
 	    l1_60 = true;
-	    full_60 = (full_60 && l1_60);
-	    den_60xoffl = (den_60xoffl && l1_60);
 	    Jets_l1_60.push_back(jet);
+	    if (jetpt >= 100 && fabs(jeteta) <= 2.3){
+	      l1_100 = true;
+	      Jets_l1_100.push_back(jet);
+	    }
 	  }
-	  if ( jet->matched(triggerObjects_[2]) ){
+	  else continue;
+	  full_60 = (full_60 && l1_60);
+	  den_60xoffl = (den_60xoffl && l1_60);
+	  full_100 = (full_100 && l1_100);
+	  num_100xoffl = (num_100xoffl && l1_100);
+	  if ( jet->matched(triggerObjects_[1]) ){
 	    calo_60 = true;
-	    full_60 = (full_60 && calo_60);
-	    den_60xoffl = (den_60xoffl && calo_60);
 	    Jets_calo_60.push_back(jet);
+	    if (jetpt >= 100 && fabs(jeteta) <= 2.3){
+	      calo_100 = true;
+	      Jets_calo_100.push_back(jet);
+	    }
 	  }
-	  if ( jet->matched(triggerObjects_[3]) ){
+	  else continue;
+	  full_60 = (full_60 && calo_60);
+	  den_60xoffl = (den_60xoffl && calo_60);
+	  full_100 = (full_100 && calo_100);
+	  num_100xoffl = (num_100xoffl && calo_100);
+	  if ( jet->matched(triggerObjects_[2]) ){
 	    pf_60 = true;
-	    full_60 = (full_60 && pf_60);
-	    den_60xoffl = (den_60xoffl && pf_60);
 	    Jets_pf_60.push_back(jet);
+	    if (jetpt >= 100 && fabs(jeteta) <= 2.3){
+	      pf_100 = true;
+	      Jets_pf_100.push_back(jet);
+	    }
 	  }
-	  if ( jet->matched(triggerObjects_[4]) ){
-	    l1_100 = true;
-	    full_100 = (full_100 && l1_100);
-	    num_100xoffl = (num_100xoffl && l1_100);
-	    Jets_l1_100.push_back(jet);
-	  }
-	  if ( jet->matched(triggerObjects_[5]) ){
-	    calo_100 = true;
-	    full_100 = (full_100 && calo_100);
-	    num_100xoffl = (num_100xoffl && calo_100);
-	    Jets_calo_100.push_back(jet);
-	  }
-	  if ( jet->matched(triggerObjects_[6]) ){
-	    pf_100 = true;
-	    full_100 = (full_100 && pf_100);
-	    num_100xoffl = (num_100xoffl && pf_100);
-	    Jets_pf_100.push_back(jet);
-	  }
+	  else continue;
+	  full_60 = (full_60 && pf_60);
+	  den_60xoffl = (den_60xoffl && pf_60);
+	  full_100 = (full_100 && pf_100);
+	  num_100xoffl = (num_100xoffl && pf_100);
 	  if (full_60) Jets_full_60.push_back(jet);
 	  if (full_100) Jets_full_100.push_back(jet);
-	  if ( (jet->pt() <= jetsptmin_[j] || fabs(jet->eta()) >= jetsetamax_[j]) ){
+	  if ( (jet->pt() >= jetsptmin_[j] && fabs(jet->eta()) <= jetsetamax_[j]) ){
 	    offline = true;
-	    den_60xoffl = (den_60xoffl && offline);
-	    num_100xoffl = (num_100xoffl && offline);
 	  }
+	  else continue;
+	  den_60xoffl = (den_60xoffl && offline);
+	  num_100xoffl = (num_100xoffl && offline);
 	  //fill numerator (100 && offl; 60 implicitly included via HLT) and denominator (60 && offl) histograms
 	  if (den_60xoffl){
 	    Jets_full_60_offl.push_back(jet);
 	    if (fabs(jeteta) < 1){
-	      h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)] -> Fill(jet->pt());
+	      h1[Form("pt_%i_PFJet60xOffl_eta0to1",j)] -> Fill(jet->pt());
 	    }
 	    else if (fabs(jeteta) > 1 && fabs(jeteta) < 1.4){
-	      h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)] -> Fill(jet->pt());
+	      h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",j)] -> Fill(jet->pt());
 	    }
 	    else if (fabs(jeteta) > 1.4 && fabs(jeteta) < 2.2){
-	      h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)] -> Fill(jet->pt());
-	    }
-	    else{
-	      cout << "Absolute value of eta (PFJet60) not in range. Please check." << endl;
-	      return -1;
+	      h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
 	    }
 	  }
 	  if (num_100xoffl){
 	    Jets_full_100_offl.push_back(jet);
 	    if (fabs(jeteta) < 1){
-	      h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)] -> Fill(jet->pt());
+	      h1[Form("pt_%i_PFJet100xOffl_eta0to1",j)] -> Fill(jet->pt());
 	    }
 	    else if (fabs(jeteta) > 1 && fabs(jeteta) < 1.4){
-	      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] -> Fill(jet->pt());
+	      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",j)] -> Fill(jet->pt());
 	    }
 	    else if (fabs(jeteta) > 1.4 && fabs(jeteta) < 2.2){
-	      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] -> Fill(jet->pt());
-	    }
-	    else{
-	      cout << "Absolute value of eta (PFJet100) not in range. Please check." << endl;
-	      return -1;
+	      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
 	    }
 	  }
-	  h1[Form("pt_%i_eff_eta0to1",i)] -> Divide(h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)], h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)]);
-	  h1[Form("pt_%i_eff_eta1to1p4",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)], h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)]);
-	  h1[Form("pt_%i_eff_eta1p4to2p2",i)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)], h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)]);
 	}
     }//end: event loop
+  //calculating ratio (with completed numerator and denominator histograms)
+  for ( int j = 0; j < njetsmin_; ++j )
+    {
+      h1[Form("pt_%i_eff_eta0to1",j)] -> Divide(h1[Form("pt_%i_PFJet100xOffl_eta0to1",j)], h1[Form("pt_%i_PFJet60xOffl_eta0to1",j)]);
+      h1[Form("pt_%i_eff_eta1to1p4",j)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",j)], h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",j)]);
+      h1[Form("pt_%i_eff_eta1p4to2p2",j)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",j)], h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",j)]);
+    }
   
   h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
   h1["noofevents_h"] -> SetBinContent(2,nsel[0]);
@@ -287,7 +289,6 @@ int main(int argc, char * argv[])
     }
   hout.Write();
   hout.Close();
-  
 } //end main
 
 void correctJetpt ( Jet& jet , const float& cor )
