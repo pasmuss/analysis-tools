@@ -531,30 +531,6 @@ int main(int argc, char * argv[])
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
       
-      //FSR recovery
-      for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
-	{
-	  Jet & softjet = *selectedJets[s];
-	  //Cut on DeltaR softjet - b jet
-	  float dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2])});
-	  if (njetsmin_ == 4) dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2]),softjet.deltaR(*selectedJets[3])});
-	  if ( softjet.pt() < 20.0 ) continue;
-	  if ( dRminsoft_bj > 0.8 )  continue;
-	  for ( int j = 0; j < njetsmin_; ++j ) //dijet loop
-	    {
-	      Jet & bjet = *selectedJets[j];
-	      if ( dRminsoft_bj != softjet.deltaR(bjet) ) continue;
-	      bjet.p4( bjet.p4() + softjet.p4() );
-	      //Remove bjet and add corrected bjet
-	      //No need to remove soft jet: Iterator will proceed. So if soft jet erased plus iterator proceeds: one soft jet skipped
-	      selectedJets.erase(selectedJets.begin()+j);
-	      selectedJets.insert(selectedJets.begin()+j, &bjet );
-	      h1["pt_softjet"] -> Fill(softjet.pt());
-	      h1["dR_jsoftjet"] -> Fill(softjet.deltaR(bjet));
-	      h1["rank_softjet"] -> Fill(s);
-	    }
-	}
-      
       // Is matched?
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
@@ -589,6 +565,30 @@ int main(int argc, char * argv[])
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
       else if(isMC_ && sgweight < 0) --nweigh[6];
+
+      //FSR recovery
+      for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
+	{
+	  Jet & softjet = *selectedJets[s];
+	  //Cut on DeltaR softjet - b jet
+	  float dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2])});
+	  if (njetsmin_ == 4) dRminsoft_bj = std::min({softjet.deltaR(*selectedJets[0]),softjet.deltaR(*selectedJets[1]),softjet.deltaR(*selectedJets[2]),softjet.deltaR(*selectedJets[3])});
+	  if ( softjet.pt() < 20.0 ) continue;
+	  if ( dRminsoft_bj > 0.8 )  continue;
+	  for ( int j = 0; j < njetsmin_; ++j ) //dijet loop
+	    {
+	      Jet & bjet = *selectedJets[j];
+	      if ( dRminsoft_bj != softjet.deltaR(bjet) ) continue;
+	      bjet.p4( bjet.p4() + softjet.p4() );
+	      //Remove bjet and add corrected bjet
+	      //No need to remove soft jet: Iterator will proceed. So if soft jet erased plus iterator proceeds: one soft jet skipped
+	      selectedJets.erase(selectedJets.begin()+j);
+	      selectedJets.insert(selectedJets.begin()+j, &bjet );
+	      h1["pt_softjet"] -> Fill(softjet.pt());
+	      h1["dR_jsoftjet"] -> Fill(softjet.deltaR(bjet));
+	      h1["rank_softjet"] -> Fill(s);
+	    }
+	}
 
       // Check for muons in the jets
       if (muonveto_){
