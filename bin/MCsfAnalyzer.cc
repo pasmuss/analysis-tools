@@ -61,9 +61,6 @@ int main(int argc, char * argv[])
   txtoutputfile.open("output.txt",ios::app);
 
   std::map<std::string, TH1F*> h1;
-  h1["noofevents_h"]      = new TH1F("noofevents_h"     , "" ,   10,  0,    10);
-  h1["noofevents_w_nlo"]  = new TH1F("noofevents_w_nlo" , "" ,   10,  0,    10);
-  h1["nentries"]          = new TH1F("nentries"         , "" ,    2,  0,     2);
 
   for ( int i = 0 ; i < njetsmin_ ; ++i )
     {
@@ -74,10 +71,6 @@ int main(int argc, char * argv[])
       h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta0to1",i), "", 210, 0, 2100);
       h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1to1p4",i), "", 210, 0, 2100);
       h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i), "", 210, 0, 2100);
-
-      h1[Form("pt_%i_eff_eta0to1",i)] = new TH1F(Form("pt_%i_eff_eta0to1",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_eff_eta1to1p4",i)] = new TH1F(Form("pt_%i_eff_eta1to1p4",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_eff_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_eff_eta1p4to2p2",i), "", 210, 0, 2100);
     }
    
   // Analysis of events
@@ -94,16 +87,10 @@ int main(int argc, char * argv[])
   txtoutputfile << "ntuples file: " << inputlist_.c_str() << endl;
   txtoutputfile << "PU file: " << pufile_.c_str() << endl;
   
-  int nsel[10] = { };
-  int nweigh[10] = { };
-
-  int noofeventsstart = 0;
-
   if ( nevtmax_ < 0 ) nevtmax_ = analysis.size();
   
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
-      noofeventsstart ++;
       float eventweight = 1.0;
 
       if (isMC_){
@@ -133,21 +120,30 @@ int main(int argc, char * argv[])
 	h1["nentries"] -> Fill((sgweight+1.)/2.);
       }
 
+      //Trigger Objects
+      std::vector<TriggerObject*> usedobjects_L1, usedobjects_Calo, usedobjects_PF;
+      auto L1Obj = analysis.collection<TriggerObject>(triggerObjects_[0].c_str());
+      auto CaloObj = analysis.collection<TriggerObject>(triggerObjects_[1].c_str());
+      auto PFObj = analysis.collection<TriggerObject>(triggerObjects_[2].c_str());
+
+      for (int a = 0; a < L1Obj -> size(); ++a){
+	usedobjects_L1.push_back(&L1Obj->at(a));
+      }
+      for (int b = 0; b < CaloObj -> size(); ++b){
+	usedobjects_Calo.push_back(&CaloObj->at(b));
+      }
+      for (int c = 0; c < PFObj -> size(); ++c){
+	usedobjects_PF.push_back(&PFObj->at(c));
+      }
+      
+
       if (isMC_ && sgweight == 0){
 	cout << "Neither positive nor negative weight detected for MC. This can not be right." << endl;
 	return -1;
       }
-
-      ++nsel[1];
-      if(isMC_ && sgweight > 0) ++nweigh[1];
-      else if(isMC_ && sgweight < 0) --nweigh[1];
       
       int triggerFired = analysis.triggerResult(hltPath_);
       if ( !triggerFired ) continue;//all events need to fire the HLT
-
-      ++nsel[2];
-      if(isMC_ && sgweight > 0) ++nweigh[2];
-      else if(isMC_ && sgweight < 0) --nweigh[2];
 
       std::vector<Jet*> selectedJets;
 
@@ -158,10 +154,6 @@ int main(int argc, char * argv[])
 
       //at least n jets present
       if ( (int)selectedJets.size() < njetsmin_ ) continue; //just a cross check, should never be less than required by the trigger; but if there are no jets, everything will be weird and useless
-
-      ++nsel[3];
-      if(isMC_ && sgweight > 0) ++nweigh[3];
-      else if(isMC_ && sgweight < 0) --nweigh[3];      
 
       for ( int j = 0; j < njetsmin_; ++j )
 	{
@@ -178,111 +170,65 @@ int main(int argc, char * argv[])
       std::vector<Jet*> Jets_l1_60, Jets_calo_60, Jets_pf_60, Jets_full_60, Jets_full_60_offl, Jets_l1_100, Jets_calo_100, Jets_pf_100, Jets_full_100, Jets_full_100_offl;
       
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
-
-      bool l1_60 = false, calo_60 = false, pf_60 = false, l1_100 = false, calo_100 = false, pf_100 = false, offline = false;
-      bool full_60 = true, full_100 = true, num_100xoffl = true, den_60xoffl = true;
-
-      for ( int j = 0; j < njetsmin_; ++j )
-        {
-          Jet * jet = selectedJets[j];
-	  double jeteta = jet->eta();
-	  double jetpt = jet->pt();
-	  if ( jet->matched(triggerObjects_[0]) ){
-	    l1_60 = true;
-	    Jets_l1_60.push_back(jet);
-	    if (jetpt >= 100 && fabs(jeteta) <= 2.3){
-	      l1_100 = true;
-	      Jets_l1_100.push_back(jet);
-	    }
-	  }
-	  else continue;
-	  full_60 = (full_60 && l1_60);
-	  den_60xoffl = (den_60xoffl && l1_60);
-	  full_100 = (full_100 && l1_100);
-	  num_100xoffl = (num_100xoffl && l1_100);
-	  if ( jet->matched(triggerObjects_[1]) ){
-	    calo_60 = true;
-	    Jets_calo_60.push_back(jet);
-	    if (jetpt >= 100 && fabs(jeteta) <= 2.3){
-	      calo_100 = true;
-	      Jets_calo_100.push_back(jet);
-	    }
-	  }
-	  else continue;
-	  full_60 = (full_60 && calo_60);
-	  den_60xoffl = (den_60xoffl && calo_60);
-	  full_100 = (full_100 && calo_100);
-	  num_100xoffl = (num_100xoffl && calo_100);
-	  if ( jet->matched(triggerObjects_[2]) ){
-	    pf_60 = true;
-	    Jets_pf_60.push_back(jet);
-	    if (jetpt >= 100 && fabs(jeteta) <= 2.3){
-	      pf_100 = true;
-	      Jets_pf_100.push_back(jet);
-	    }
-	  }
-	  else continue;
-	  full_60 = (full_60 && pf_60);
-	  den_60xoffl = (den_60xoffl && pf_60);
-	  full_100 = (full_100 && pf_100);
-	  num_100xoffl = (num_100xoffl && pf_100);
-	  if (full_60) Jets_full_60.push_back(jet);
-	  if (full_100) Jets_full_100.push_back(jet);
-	  if ( (jet->pt() >= jetsptmin_[j] && fabs(jet->eta()) <= jetsetamax_[j]) ){
-	    offline = true;
-	  }
-	  else continue;
-	  den_60xoffl = (den_60xoffl && offline);
-	  num_100xoffl = (num_100xoffl && offline);
-	  //fill numerator (100 && offl; 60 implicitly included via HLT) and denominator (60 && offl) histograms
-	  if (den_60xoffl){
-	    Jets_full_60_offl.push_back(jet);
-	    if (fabs(jeteta) < 1){
-	      h1[Form("pt_%i_PFJet60xOffl_eta0to1",j)] -> Fill(jet->pt());
-	    }
-	    else if (fabs(jeteta) > 1 && fabs(jeteta) < 1.4){
-	      h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",j)] -> Fill(jet->pt());
-	    }
-	    else if (fabs(jeteta) > 1.4 && fabs(jeteta) < 2.2){
-	      h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
-	    }
-	  }
-	  if (num_100xoffl){
-	    Jets_full_100_offl.push_back(jet);
-	    if (fabs(jeteta) < 1){
-	      h1[Form("pt_%i_PFJet100xOffl_eta0to1",j)] -> Fill(jet->pt());
-	    }
-	    else if (fabs(jeteta) > 1 && fabs(jeteta) < 1.4){
-	      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",j)] -> Fill(jet->pt());
-	    }
-	    else if (fabs(jeteta) > 1.4 && fabs(jeteta) < 2.2){
-	      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
-	    }
-	  }
+      
+      bool matched[6] = {true,true,true,true,true,true};//three objects times two jets: all need to be matched
+      bool goodEvent = true;
+      for (int i = 0; i < njetsmin_; i++){
+	Jet* jet = selectedJets[i];
+	for ( size_t io = 0; io < triggerObjects_.size(); ++io ){
+	  if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
+	  goodEvent = (goodEvent && matched[io]);
 	}
+	if ( !(jet->pt() >= jetsptmin_[i] && fabs(jet->eta()) <= jetsetamax_[i]) ) goodEvent = false;
+      }
+      if (!goodEvent) continue;
+      //NOW: Jet60 and offline are checked. Histograms may be filled for the denominator.
+      //IF INDIVIDUAL TRIGGER LEVELS WANTED: Go for entries 0, 1, and 2 of triggerObjects_, respectively and step by step, filling histograms/vectors for these steps
+
+      for (int j = 0; j < njetsmin_; j++){
+	Jet* jet = selectedJets[j];
+	double jeteta = jet->eta();
+	Jets_full_60_offl.push_back(jet);
+	if (fabs(jeteta) < 1){
+	  h1[Form("pt_%i_PFJet60xOffl_eta0to1",j)] -> Fill(jet->pt());
+	}
+	else if (fabs(jeteta) > 1 && fabs(jeteta) < 1.4){
+	  h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",j)] -> Fill(jet->pt());
+	}
+	else if (fabs(jeteta) > 1.4 && fabs(jeteta) < 2.2){
+	  h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
+	}
+      }
+      
+      //AFTER: Emulate 100 on trigger objects for numerator. Offline is already checked above.
+      
+      double L1pt = usedobjects_L1[0] -> pt();
+      double L1eta = usedobjects_L1[0] -> eta();
+      double Calopt = usedobjects_Calo[0] -> pt();
+      double Caloeta = usedobjects_Calo[0] -> eta();
+      double PFpt = usedobjects_PF[0] -> pt();
+      double PFeta = usedobjects_PF[0] -> eta();
+
+      if ( L1pt < 100 || fabs(L1eta) > 2.3 ) goodEvent = false;
+      if ( Calopt < 100 || fabs(Caloeta) > 2.3 ) goodEvent = false;
+      if ( PFpt < 100 || fabs(PFeta) > 2.3 ) goodEvent = false;
+      if (!goodEvent) continue;
+
+      for (int j = 0; j < njetsmin_; j++){
+	Jet* jet = selectedJets[j];
+	double jeteta = jet->eta();
+	Jets_full_100_offl.push_back(jet);
+	if (fabs(jeteta) < 1){
+	  h1[Form("pt_%i_PFJet100xOffl_eta0to1",j)] -> Fill(jet->pt());
+	}
+	else if (fabs(jeteta) > 1 && fabs(jeteta) < 1.4){
+	  h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",j)] -> Fill(jet->pt());
+	}
+	else if (fabs(jeteta) > 1.4 && fabs(jeteta) < 2.2){
+	  h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
+	}
+      }
     }//end: event loop
-  //calculating ratio (with completed numerator and denominator histograms)
-  for ( int j = 0; j < njetsmin_; ++j )
-    {
-      h1[Form("pt_%i_eff_eta0to1",j)] -> Divide(h1[Form("pt_%i_PFJet100xOffl_eta0to1",j)], h1[Form("pt_%i_PFJet60xOffl_eta0to1",j)]);
-      h1[Form("pt_%i_eff_eta1to1p4",j)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",j)], h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",j)]);
-      h1[Form("pt_%i_eff_eta1p4to2p2",j)]-> Divide(h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",j)], h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",j)]);
-    }
-  
-  h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
-  h1["noofevents_h"] -> SetBinContent(2,nsel[0]);
-  h1["noofevents_h"] -> SetBinContent(3,nsel[1]);
-  h1["noofevents_h"] -> SetBinContent(4,nsel[2]);
-  h1["noofevents_h"] -> SetBinContent(5,nsel[3]);
-
-  if(isMC_){//weighted number of events (important only for NLO) after each step of the cutflow
-    h1["noofevents_w_nlo"] -> SetBinContent(1,noofeventsstart); //total number of events
-    h1["noofevents_w_nlo"] -> SetBinContent(2,nweigh[0]);
-    h1["noofevents_w_nlo"] -> SetBinContent(3,nweigh[1]);
-    h1["noofevents_w_nlo"] -> SetBinContent(4,nweigh[2]);
-    h1["noofevents_w_nlo"] -> SetBinContent(5,nweigh[3]);
-  }
-
   for (auto & ih1 : h1)
     {
       ih1.second -> Write();

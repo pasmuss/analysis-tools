@@ -19,6 +19,7 @@ nohup.out
 */nohup.out
 test/Archive_NAF/
 test/Archive_scripts/
+test/filelists/
 test/ConfigMC/
 test/ConfigPrompt
 test/ConfigRerecoNewJSON/
