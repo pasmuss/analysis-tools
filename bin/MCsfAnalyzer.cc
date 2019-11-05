@@ -74,6 +74,8 @@ int main(int argc, char * argv[])
       h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1to1p4",i), "", 19, bins);
       h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i), "", 19, bins);
     }
+
+  h1["nentries"] = new TH1F("nentries", "", 2, 0, 2);
    
   // Analysis of events
   cout << "This analysis has " << analysis.size() << " events" << endl;
@@ -93,11 +95,9 @@ int main(int argc, char * argv[])
   
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
-      cout << "Event loop started" << endl;
       float eventweight = 1.0;
 
       if (isMC_){
-	cout << "Detected MC" << endl;
 	float puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
 	eventweight *= puweight;
       }
@@ -138,15 +138,13 @@ int main(int argc, char * argv[])
       }
       for (int c = 0; c < PFObj -> size(); ++c){
 	usedobjects_PF.push_back(&PFObj->at(c));
-      }      
+      }
 
       if (isMC_ && sgweight == 0){
 	cout << "Neither positive nor negative weight detected for MC. This can not be right." << endl;
 	return -1;
       }
 
-      cout << "Trigger objects treated" << endl;
-      
       int triggerFired = analysis.triggerResult(hltPath_);
       if ( !triggerFired ) continue;//all events need to fire the HLT
 
@@ -176,8 +174,6 @@ int main(int argc, char * argv[])
       
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
 
-      cout << "Matched" << endl;
-      
       bool matched[6] = {true,true,true,true,true,true};//three objects times up to two jets: all need to be matched
       bool goodEvent = true;
       for (int i = 0; i < njetsmin_; i++){
@@ -189,7 +185,7 @@ int main(int argc, char * argv[])
 	if ( !(jet->pt() >= jetsptmin_[i] && fabs(jet->eta()) <= jetsetamax_[i]) ) goodEvent = false;
       }
       if (!goodEvent) continue;
-      cout << "Passed matching" << endl;
+
       //NOW: Jet60 and offline are checked. Histograms may be filled for the denominator.
       //IF INDIVIDUAL TRIGGER LEVELS WANTED: Go for entries 0, 1, and 2 of triggerObjects_, respectively and step by step, filling histograms/vectors for these steps
 
@@ -207,7 +203,7 @@ int main(int argc, char * argv[])
 	  h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
 	}
       }
-      cout << "Filled PFJet60 histograms" << endl;
+
       //AFTER: Emulate 100 on trigger objects for numerator. Offline is already checked above.
       
       double L1pt = usedobjects_L1[0] -> pt();
@@ -238,7 +234,6 @@ int main(int argc, char * argv[])
 	  h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
 	}
       }
-      cout << "Filled PFJet100 histograms" << endl;
     }//end: event loop
   for (auto & ih1 : h1)
     {
