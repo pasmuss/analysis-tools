@@ -62,15 +62,17 @@ int main(int argc, char * argv[])
 
   std::map<std::string, TH1F*> h1;
 
+  float bins[20] = {100,110,120,130,140,150,160,170,180,190,200,220,240,260,280,300,350,400,450,500};
+
   for ( int i = 0 ; i < njetsmin_ ; ++i )
     {
-      h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta0to1",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1to1p4",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta0to1",i), "", 19, bins);
+      h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1to1p4",i), "", 19, bins);
+      h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i), "", 19, bins);
 
-      h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta0to1",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1to1p4",i), "", 210, 0, 2100);
-      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i), "", 210, 0, 2100);
+      h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta0to1",i), "", 19, bins);
+      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1to1p4",i), "", 19, bins);
+      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i), "", 19, bins);
     }
    
   // Analysis of events
@@ -91,9 +93,11 @@ int main(int argc, char * argv[])
   
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
+      cout << "Event loop started" << endl;
       float eventweight = 1.0;
 
       if (isMC_){
+	cout << "Detected MC" << endl;
 	float puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
 	eventweight *= puweight;
       }
@@ -134,13 +138,14 @@ int main(int argc, char * argv[])
       }
       for (int c = 0; c < PFObj -> size(); ++c){
 	usedobjects_PF.push_back(&PFObj->at(c));
-      }
-      
+      }      
 
       if (isMC_ && sgweight == 0){
 	cout << "Neither positive nor negative weight detected for MC. This can not be right." << endl;
 	return -1;
       }
+
+      cout << "Trigger objects treated" << endl;
       
       int triggerFired = analysis.triggerResult(hltPath_);
       if ( !triggerFired ) continue;//all events need to fire the HLT
@@ -170,8 +175,10 @@ int main(int argc, char * argv[])
       std::vector<Jet*> Jets_l1_60, Jets_calo_60, Jets_pf_60, Jets_full_60, Jets_full_60_offl, Jets_l1_100, Jets_calo_100, Jets_pf_100, Jets_full_100, Jets_full_100_offl;
       
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
+
+      cout << "Matched" << endl;
       
-      bool matched[6] = {true,true,true,true,true,true};//three objects times two jets: all need to be matched
+      bool matched[6] = {true,true,true,true,true,true};//three objects times up to two jets: all need to be matched
       bool goodEvent = true;
       for (int i = 0; i < njetsmin_; i++){
 	Jet* jet = selectedJets[i];
@@ -182,6 +189,7 @@ int main(int argc, char * argv[])
 	if ( !(jet->pt() >= jetsptmin_[i] && fabs(jet->eta()) <= jetsetamax_[i]) ) goodEvent = false;
       }
       if (!goodEvent) continue;
+      cout << "Passed matching" << endl;
       //NOW: Jet60 and offline are checked. Histograms may be filled for the denominator.
       //IF INDIVIDUAL TRIGGER LEVELS WANTED: Go for entries 0, 1, and 2 of triggerObjects_, respectively and step by step, filling histograms/vectors for these steps
 
@@ -199,7 +207,7 @@ int main(int argc, char * argv[])
 	  h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
 	}
       }
-      
+      cout << "Filled PFJet60 histograms" << endl;
       //AFTER: Emulate 100 on trigger objects for numerator. Offline is already checked above.
       
       double L1pt = usedobjects_L1[0] -> pt();
@@ -217,7 +225,9 @@ int main(int argc, char * argv[])
       for (int j = 0; j < njetsmin_; j++){
 	Jet* jet = selectedJets[j];
 	double jeteta = jet->eta();
+	double jetpt = jet->pt();
 	Jets_full_100_offl.push_back(jet);
+	if (jetpt < 100) continue;
 	if (fabs(jeteta) < 1){
 	  h1[Form("pt_%i_PFJet100xOffl_eta0to1",j)] -> Fill(jet->pt());
 	}
@@ -228,6 +238,7 @@ int main(int argc, char * argv[])
 	  h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",j)] -> Fill(jet->pt());
 	}
       }
+      cout << "Filled PFJet100 histograms" << endl;
     }//end: event loop
   for (auto & ih1 : h1)
     {

@@ -44,6 +44,7 @@ int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, strin
   if (era_ == "D") sfvalues = {0.01067539, 0.00216612, 0.00021602, 0.00005375, 0.00002655, 0.00000345, 0.00000138};
   else if (era_ == "E") sfvalues = {0.00759139, 0.00154035, 0.00015361, 0.00003822, 0.00001888, 0.00000245, 0.00000098};
   else if (era_ == "F") sfvalues = {0.00698513, 0.00141734, 0.00014135, 0.00003517, 0.00001737, 0.00000226, 0.00000090};
+  else if (era_ == "2017") sfvalues = {0.03192073, 0.00647697, 0.00064592, 0.00016072, 0.00007939, 0.00001032, 0.00000412};
   else cout << "Era C selected" << endl;
   
   vector<int> colors = {kRed,kBlue,kGreen,kMagenta,kCyan,kBlack,kViolet};
@@ -54,9 +55,11 @@ int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, strin
 
   for (unsigned int i = 0; i < pthatbins.size(); i++){
     scalefactors[pthatbins[i]] = sfvalues[i];
-    files[pthatbins[i]] = new TFile( ("Configs_jetTriggerSF/rootfiles/QCDMC_" + pthatbins[i] + ".root").c_str(),"READ");
+    files[pthatbins[i]] = new TFile( ("Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/QCDMC_" + pthatbins[i] + ".root").c_str(),"READ");
+    cout << ("Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/QCDMC_" + pthatbins[i] + ".root").c_str();
     histograms[pthatbins[i]] = (TH1F*)files[pthatbins[i]] -> Get(var_.c_str());
     style.InitHist(histograms[pthatbins[i]],xtitle_.c_str(),ytitle_.c_str(),colors[i],0);
+    cout << "initialized." << endl;
     histograms[pthatbins[i]] -> SetMarkerSize(1.0);
     histograms[pthatbins[i]] -> Scale(scalefactors[pthatbins[i]]);
     histograms[pthatbins[i]] -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
@@ -66,6 +69,7 @@ int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, strin
     histograms[pthatbins[i]] -> GetYaxis() -> SetTitleOffset(1.2);
     histograms[pthatbins[i]] -> GetYaxis() -> SetNdivisions(505);
     histograms[pthatbins[i]] -> GetXaxis() -> SetNdivisions(505);
+    cout << "Done." << endl;
   }
 
   double nbinsx = histograms[pthatbins[0]] -> GetNbinsX();

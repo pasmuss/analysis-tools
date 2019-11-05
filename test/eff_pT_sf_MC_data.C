@@ -18,19 +18,19 @@
 
 using namespace std;
 
-void eff_pT_per_eta_forSF() {
+void eff_pT_sf_MC_data() {
 
   HbbStylesNew style;
   style.SetStyle();
 
   gStyle->SetOptStat(0);
 
-  TFile* dataCin = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017C.root","READ");
+  TFile* datain = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017C.root","READ");
   TFile* dataDin = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017D.root","READ");
   TFile* dataEin = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017E.root","READ");
   TFile* dataFin = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017F.root","READ");
 
-  TFile* dataCout = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017C_eff_for_sf.root","RECREATE");
+  TFile* dataout = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017C_eff_for_sf.root","RECREATE");
   TFile* dataDout = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017D_eff_for_sf.root","RECREATE");
   TFile* dataEout = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017E_eff_for_sf.root","RECREATE");
   TFile* dataFout = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/2017F_eff_for_sf.root","RECREATE");
