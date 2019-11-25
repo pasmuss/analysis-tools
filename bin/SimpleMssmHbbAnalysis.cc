@@ -639,6 +639,28 @@ int main(int argc, char * argv[])
       h1["HT_csv"] -> Fill(HT_csv);
 
 
+      // Add weight for trigger turn-on (MC only)
+      // To be done for first TWO jets (both are triggered)
+      if (isMC_ && useTO_){
+	for (int j = 0; j < 2; j++){//first and second jet
+	  Jet* jet = selectedJets[j];
+	  double jetpt = jet->pt();
+	  double jetabseta = fabs(jet->eta());
+	  double triggersf = 0;
+	  if (jetabseta >= 0.0 && jetabseta <= 1.0){//central
+	    triggersf = 0.999 * erf( 0.036 * ( jetpt - 89.84 ) );
+	  }
+	  else if (jetabseta > 1.0 && jetabseta <= 1.4){//overlap
+	    triggersf = 0.998 * erf( 0.035 * ( jetpt - 90.96 ) );
+	  }
+	  else if (jetabseta > 1.4 && jetabseta <= 2.2){//endcaps
+	    triggersf = 1.002 * erf( 0.038 * ( jetpt - 93.74 ) );
+	  }
+	  else cout << "Trigger sf 0: eta out of range" << endl;
+	  eventweight *= triggersf;
+	}
+      }
+
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];

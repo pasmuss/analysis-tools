@@ -54,6 +54,7 @@ std::vector<float> torefetamax_[10];
 bool useregression_;
 bool useJER_;
 bool usebtagsf_;
+bool useTO_;
 
 int njetsmin_;
 int njetsmax_;
@@ -171,7 +172,7 @@ int macro_config(int argc, char * argv[])
       po::options_description config("Configuration");
       config.add_options()
 	("reco",po::value <std::string> (&reco_)->default_value("rereco"),"prompt or rereco")
-	("Regions",po::value <std::string> (&regions_)->default_value("3j"),"Definition of CR/SR")
+	("Regions",po::value <std::string> (&regions_)->default_value(""),"Definition of CR/SR")
 	("ntuplesList",po::value <std::string> (&inputlist_)->default_value("rootFileList.txt"),"File with list of ntuples")
 	("nEventsMax",po::value <int> (&nevtmax_)->default_value(-1), "Maximum number of events")
 	("nLumiSections",po::value <int> (&nlumis_)->default_value(-1), "Number of lumi sections processed")
@@ -190,6 +191,7 @@ int macro_config(int argc, char * argv[])
 	("useJER",po::value <bool> (&useJER_)->default_value(true),"Use smearing (Jet Energy Resolution) for MC")
 	("useRegression",po::value <bool> (&useregression_)->default_value(true),"Apply Jet Energy Regression (for b jets)")
 	("useBtagSF",po::value <bool> (&usebtagsf_)->default_value(true),"Use scale factor for b tagging")
+	("useTriggerTurnOn",po::value <bool> (&useTO_)->default_value(true),"Use scale factor for trigger turn-on efficiency")
 	("nJetsMin",po::value <int> (&njetsmin_)->default_value(0),"Minimum number of jets")
 	("nJetsMax",po::value <int> (&njetsmax_)->default_value(100),"Maximum number of jets")
 	("nBJetsMin",po::value <int> (&nbjetsmin_)->default_value(0),"Minimum number of btgaged jets")
@@ -318,7 +320,7 @@ int macro_config(int argc, char * argv[])
 	    }
 	  po::notify(vm);
 	  boost::algorithm::to_upper(jetsid_);
-	  if ( !(regions_ == "4j3" || regions_ == "4j4") && !(regions_ == "3j" || regions_ == "3jor") && regions_!="4jnn")
+	  if ( !(regions_ == "4j3" || regions_ == "4j4") && !(regions_ == "3j" || regions_ == "3jor") && !(regions_=="4jnn" || regions_ == "") )
 	    {
 	      std::cout << "Config Error *** No valid set of regions defined. Must be 3j, 4j3, 4j4, 4jnn or 3jor." << std::endl;
 	      return -1;
