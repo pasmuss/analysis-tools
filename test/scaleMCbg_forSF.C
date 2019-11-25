@@ -16,7 +16,7 @@
 
 using namespace std;
 
-int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, string xtitle_, double ylow_, double yhigh_, string ytitle_, bool logy_) {
+int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, string xtitle_, double ylow_, double yhigh_, string ytitle_, bool logy_, bool varbins_) {
 
   cout << " " << endl;
   cout << "Input to be provided:" << endl;
@@ -29,11 +29,11 @@ int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, strin
   cout << "(double)y-axis-end [" << yhigh_ << "]," << endl;
   cout << "(str) title of y axis [" << ytitle_ << "]," << endl;
   cout << "(bool)logy? [" << logy_ << "]" << endl;
+  cout << "(bool)use variable bin sizes? [" << varbins_ << "]" << endl;
 
   string xtitle, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
 
   string outfilename = ("QCDMC-" + var_ + "_" + era_ + "_for-sf.root").c_str();
-  cout << "output root file: " << outfilename << endl;
 
   HbbStylesNew style;
   style.SetStyle();
@@ -55,11 +55,9 @@ int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, strin
 
   for (unsigned int i = 0; i < pthatbins.size(); i++){
     scalefactors[pthatbins[i]] = sfvalues[i];
-    files[pthatbins[i]] = new TFile( ("Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/QCDMC_" + pthatbins[i] + ".root").c_str(),"READ");
-    cout << ("Configs_jetTriggerSF/TwoJets_StartingAt100GeV_Nov04-19/QCDMC_" + pthatbins[i] + ".root").c_str();
+    files[pthatbins[i]] = new TFile( ("Configs_jetTriggerSF/TwoJets_NewBinning_Nov07-19/QCDMC_" + pthatbins[i] + ".root").c_str(),"READ");
     histograms[pthatbins[i]] = (TH1F*)files[pthatbins[i]] -> Get(var_.c_str());
     style.InitHist(histograms[pthatbins[i]],xtitle_.c_str(),ytitle_.c_str(),colors[i],0);
-    cout << "initialized." << endl;
     histograms[pthatbins[i]] -> SetMarkerSize(1.0);
     histograms[pthatbins[i]] -> Scale(scalefactors[pthatbins[i]]);
     histograms[pthatbins[i]] -> GetXaxis() -> SetRangeUser(xlow_, xhigh_);
@@ -69,7 +67,6 @@ int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, strin
     histograms[pthatbins[i]] -> GetYaxis() -> SetTitleOffset(1.2);
     histograms[pthatbins[i]] -> GetYaxis() -> SetNdivisions(505);
     histograms[pthatbins[i]] -> GetXaxis() -> SetNdivisions(505);
-    cout << "Done." << endl;
   }
 
   double nbinsx = histograms[pthatbins[0]] -> GetNbinsX();
@@ -83,6 +80,10 @@ int scaleMCbg_forSF(string var_, string era_, double xlow_, double xhigh_, strin
     SingleCan -> SetLogy();
   }
   TH1F* hist_output_enr = new TH1F("hist_output_enr", "", nbinsx, xreflow, xrefhigh);
+  if (varbins_){
+    float bins[16] = {100,105,110,115,120,130,140,150,160,170,180,200,250,300,400,500};
+    hist_output_enr = new TH1F("hist_output_enr", "", 15, bins);
+  }
   style.InitHist(hist_output_enr,xtitle_.c_str(),ytitle_.c_str(),kBlue,0);
   hist_output_enr -> SetMarkerSize(1);
 

@@ -1,0 +1,6 @@
+root -l -q 'scaleMCbg_forSF.C("pt_0_PFJet60xOffl_eta0to1","2017",0,1500,"p_{T} [GeV]", 0.1,10000000,"Entries/10 GeV",1,1)'
+root -l -q 'scaleMCbg_forSF.C("pt_0_PFJet60xOffl_eta1to1p4","2017",0,1500,"p_{T} [GeV]", 0.1,10000000,"Entries/10 GeV",1,1)'
+root -l -q 'scaleMCbg_forSF.C("pt_0_PFJet60xOffl_eta1p4to2p2","2017",0,1500,"p_{T} [GeV]", 0.1,10000000,"Entries/10 GeV",1,1)'
+root -l -q 'scaleMCbg_forSF.C("pt_0_PFJet100xOffl_eta0to1","2017",0,1500,"p_{T} [GeV]", 0.1,10000000,"Entries/10 GeV",1,1)'
+root -l -q 'scaleMCbg_forSF.C("pt_0_PFJet100xOffl_eta1to1p4","2017",0,1500,"p_{T} [GeV]", 0.1,10000000,"Entries/10 GeV",1,1)'
+root -l -q 'scaleMCbg_forSF.C("pt_0_PFJet100xOffl_eta1p4to2p2","2017",0,1500,"p_{T} [GeV]", 0.1,10000000,"Entries/10 GeV",1,1)'

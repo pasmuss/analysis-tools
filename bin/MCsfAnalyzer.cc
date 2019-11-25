@@ -62,17 +62,17 @@ int main(int argc, char * argv[])
 
   std::map<std::string, TH1F*> h1;
 
-  float bins[20] = {100,110,120,130,140,150,160,170,180,190,200,220,240,260,280,300,350,400,450,500};
+  float bins[16] = {100,105,110,115,120,130,140,150,160,170,180,200,250,300,400,500};
 
   for ( int i = 0 ; i < njetsmin_ ; ++i )
     {
-      h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta0to1",i), "", 19, bins);
-      h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1to1p4",i), "", 19, bins);
-      h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i), "", 19, bins);
+      h1[Form("pt_%i_PFJet60xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta0to1",i), "", 15, bins);
+      h1[Form("pt_%i_PFJet60xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1to1p4",i), "", 15, bins);
+      h1[Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet60xOffl_eta1p4to2p2",i), "", 15, bins);
 
-      h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta0to1",i), "", 19, bins);
-      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1to1p4",i), "", 19, bins);
-      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i), "", 19, bins);
+      h1[Form("pt_%i_PFJet100xOffl_eta0to1",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta0to1",i), "", 15, bins);
+      h1[Form("pt_%i_PFJet100xOffl_eta1to1p4",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1to1p4",i), "", 15, bins);
+      h1[Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i)] = new TH1F(Form("pt_%i_PFJet100xOffl_eta1p4to2p2",i), "", 15, bins);
     }
 
   h1["nentries"] = new TH1F("nentries", "", 2, 0, 2);
@@ -96,6 +96,7 @@ int main(int argc, char * argv[])
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
       float eventweight = 1.0;
+      bool goodEvent = true;
 
       if (isMC_){
 	float puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
@@ -169,13 +170,26 @@ int main(int argc, char * argv[])
 	  }
 	}
 
+      if (njetsmin_ > 1){
+	for ( int j1 = 0; j1 < njetsmin_-1; ++j1 )
+	  {
+	    const Jet & jet1 = *selectedJets[j1];
+	    for ( int j2 = j1+1; j2 < njetsmin_; ++j2 )
+	      {
+		const Jet & jet2 = *selectedJets[j2];//if two jets are too close together: no good event
+		if ( jet1.deltaR(jet2) < drmin_ ) goodEvent = false;
+	      }
+	  }
+	if ( ! goodEvent ) continue;
+      }
+
       /// Matching to respective trigger objects (those with 100 to emulate the less inclusive trigger; all using same HLT)
       std::vector<Jet*> Jets_l1_60, Jets_calo_60, Jets_pf_60, Jets_full_60, Jets_full_60_offl, Jets_l1_100, Jets_calo_100, Jets_pf_100, Jets_full_100, Jets_full_100_offl;
       
       analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
 
       bool matched[6] = {true,true,true,true,true,true};//three objects times up to two jets: all need to be matched
-      bool goodEvent = true;
+
       for (int i = 0; i < njetsmin_; i++){
 	Jet* jet = selectedJets[i];
 	for ( size_t io = 0; io < triggerObjects_.size(); ++io ){
