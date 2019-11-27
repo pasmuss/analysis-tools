@@ -64,7 +64,6 @@ int main(int argc, char * argv[])
   auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
   
   auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V3_B_F.csv", "medium");
-  //auto bsf_reader = analysis.btagCalibration("deepcsv", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepCSV_94XSF_V3_B_F.csv", "medium");
 
   std::shared_ptr <PileupWeight> puweights = analysis.pileupWeights(pufile_);
    
@@ -266,11 +265,14 @@ int main(int argc, char * argv[])
       //int nomujet = 0;
       bool goodEvent = true;
       bool muonpresent = false;
+
       float eventweight = 1.0;
 
       if (isMC_){
 	float puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
 	eventweight *= puweight;
+	float pudown = puweights->weight(analysis.nTruePileup(),-2);
+	float puup = puweights->weight(analysis.nTruePileup(),+2);
       }
 
       int window = 0;
@@ -416,6 +418,10 @@ int main(int argc, char * argv[])
 
       //b tagging
       float storedisc = -1;
+      float jet_offl_sf_up = 1.0;
+      float jet_offl_sf_down = 1.0;
+      float jet_onl_sf_up = 1.0;
+      float jet_onl_sf_down = 1.0;
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
@@ -438,13 +444,21 @@ int main(int argc, char * argv[])
 	  if (isMC_){
 	    if (usebtagsf_){
 	      //offline b tag sf
-	      float jet_btag_sf = jet->btagSF(bsf_reader);
+	      float jet_btag_sf = jet -> btagSF(bsf_reader);
 	      eventweight *= jet_btag_sf;
+	      float jet_btag_sf_up = jet -> btagSFup(bsf_reader,2);
+	      jet_offl_sf_up *= jet_btag_sf_up;
+	      float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,2);
+	      jet_offl_sf_down *= jet_btag_sf_down;
 	      //online b tag sf
 	      if (btagalgo == "deepflavour"){
 		if ( j == 0 || j == 1){
 		  float pt = jet->pt();
 		  float onl_sf = 0.852 - (pt * 0.0000616);
+		  float onl_sf_up = 0.860 - (pt * 0.0000065);
+		  jet_onl_sf_up *= onl_sf_up;
+		  float onl_sf_down = 0.845 - (pt * 0.0001167);
+		  jet_onl_sf_down *= onl_sf_down;
 		  h1["onl_btag_sf"] -> Fill(onl_sf);
 		  eventweight *= onl_sf;
 		  th2_pT_onlbtagsf -> Fill(pt,onl_sf);
