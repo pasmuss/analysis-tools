@@ -660,15 +660,23 @@ int main(int argc, char * argv[])
 	  Jet* jet = selectedJets[j];
 	  double jetpt = jet->pt();
 	  double jetabseta = fabs(jet->eta());
-	  double triggersf = 0;
+	  double triggersf = 0.0;
+	  double trigger_sf_down = 0.0;
+	  double trigger_sf_up = 0.0;
 	  if (jetabseta >= 0.0 && jetabseta <= 1.0){//central
 	    triggersf = 0.999 * erf( 0.036 * ( jetpt - 89.84 ) );
+	    trigger_sf_up = 1.004 * erf( 0.038 * ( jetpt - 90.95 ) );
+	    trigger_sf_down = 0.994 * erf( 0.034 * ( jetpt - 88.73) );
 	  }
 	  else if (jetabseta > 1.0 && jetabseta <= 1.4){//overlap
 	    triggersf = 0.998 * erf( 0.035 * ( jetpt - 90.96 ) );
+	    trigger_sf_up = 1.006 * erf( 0.038 * ( jetpt - 92.62 ) );
+	    trigger_sf_down = 0.990 * erf( 0.032 * ( jetpt - 89.30 ) );
 	  }
 	  else if (jetabseta > 1.4 && jetabseta <= 2.2){//endcaps
 	    triggersf = 1.002 * erf( 0.038 * ( jetpt - 93.74 ) );
+	    trigger_sf_up = 1.008 * erf( 0.040 * ( jetpt - 94.65 ) );
+	    trigger_sf_down = 0.996 * erf( 0.036 * ( jetpt - 92.83 ) );
 	  }
 	  else cout << "Trigger sf 0: eta out of range" << endl;
 	  eventweight *= triggersf;
