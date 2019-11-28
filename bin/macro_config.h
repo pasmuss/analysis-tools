@@ -82,7 +82,7 @@ std::string jersf_;
 
 //systematic variations
 std::string jervar_;
-int jecsigma;
+int jecsigma_;
 
 // muons
 bool muonveto_;
@@ -205,7 +205,7 @@ int macro_config(int argc, char * argv[])
 	("jetsId",po::value <std::string> (&jetsid_)->default_value("TIGHT"),"Jets id criteria for all jets")
 	//
 	("JERvariation",po::value <std::string> (&jervar_)->default_value("central"),"Variation of JER for shape uncertainties; can be central, up, down")
-	("JECsigmas",po::value <std::string> (&jecsigma_)->default_value("0"),"Variation of JES by n standard deviations (sigmas)")
+	("JECsigmas",po::value <int> (&jecsigma_)->default_value(0),"Variation of JES by n standard deviations (sigmas)")
 	//
 	("l1tJetsNMin",po::value <int> (&l1tjetsnmin_)->default_value(0),"Minimum number of L1T jets")
 	("l1tJetsPtMin", po::value<std::vector<float> >(&l1tjetsptmin_)->multitoken(),"Mimium pt of the L1T jets")
