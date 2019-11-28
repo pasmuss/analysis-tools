@@ -24,7 +24,9 @@ void correctJetpt ( Jet& , const float& );
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window );
 void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT );
 
-//int nsubsamples = 1; // define here or in main? does it make a difference?
+// Systematic variations
+std::vector<std::string> systematics = { "PU", "SFbtag", "onlSFbtag", "JER", "JES", /*"muID", */ "trigeff" };
+std::vector<std::string> vars = { "up", "down" };
 
 // =============================================================================================   
 int main(int argc, char * argv[])
@@ -32,6 +34,7 @@ int main(int argc, char * argv[])
   if ( macro_config(argc, argv) != 0 ) return -1;
    
   TH1::SetDefaultSumw2();  // proper treatment of errors when scaling histograms
+  TH2::SetDefaultSumw2();
    
   // Input files list
   Analysis analysis(inputlist_);
@@ -163,6 +166,15 @@ int main(int argc, char * argv[])
   h1["m12_aac"]           = new TH1F("m12_aac"           , "" , 150, 0, 3000);
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
 
+  h1["m12_aac_PU_up"]            = new TH1F("m12_aac_PU_up", 0, 3000);
+  h1["m12_aac_PU_down"]          = new TH1F("m12_aac_PU_down", 0, 3000);
+  h1["m12_aac_SFbtag_up"]        = new TH1F("m12_aac_SFbtag_up", 0, 3000);
+  h1["m12_aac_SFbtag_down"]      = new TH1F("m12_aac_SFbtag_down", 0, 3000);
+  h1["m12_aac_onlSFbtag_up"]     = new TH1F("m12_aac_onlSFbtag_up", 0, 3000);
+  h1["m12_aac_onlSFbtag_down"]   = new TH1F("m12_aac_onlSFbtag_down", 0, 3000);
+  h1["m12_aac_jet_trigeff_up"]   = new TH1F("m12_aac_jet_trigeff_up", 0, 3000);
+  h1["m12_aac_jet_trigeff_down"] = new TH1F("m12_aac_jet_trigeff_down", 0, 3000);
+  
   for ( int i = 0 ; i < nsubsamples ; ++i )
     h1[Form("m12_sel_%i",i)]  = new TH1F(Form("m12_sel_%i",i) , "" , 150, 0, 3000);
 
@@ -204,6 +216,18 @@ int main(int argc, char * argv[])
   TTree *tree6 = new TTree("MssmHbb_13TeV_6","");
   tree6->Branch("mbb",&mbb,"mbb/D");
   tree6->Branch("weight",&weight,"weight/D");
+
+  std::map<std::string, TTree *> m12_vars;
+
+  for ( auto & sys : systematics)
+    {
+      for ( auto & var : vars )
+	{
+	  m12_vars[("m12_"+sys+"_"+var).c_str()] = new TTree( ("MssmHbb_13TeV_"+ sys +"_" + var).c_str() ,"" );
+	  m12_vars[("m12_"+sys+"_"+var).c_str()] ->Branch("mbb",&mbb,"mbb/D");
+	  m12_vars[("m12_"+sys+"_"+var).c_str()] ->Branch("weight",&weight,"weight/D");
+	}
+    }
    
   // Analysis of events
   cout << "This analysis has " << analysis.size() << " events" << endl;
@@ -306,7 +330,7 @@ int main(int argc, char * argv[])
 	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
 	h1["nentries"] -> Fill((sgweight+1.)/2.);
 	/*std::vector<Jet*> slimmedGenJets;//get a vector of GenJets
-	for (int a = 0; a < genjets->size(); a++){
+	  for (int a = 0; a < genjets->size(); a++){
 	  slimmedGenJets.push_back(&genjets->at(a));
 	  }*/
       }
@@ -358,11 +382,12 @@ int main(int argc, char * argv[])
 	  //Perform JER (jet energy resolution) matching and calculate corrections ("up"/"down" are +- 1 sigma uncertainties)
 	  if (isMC_ && useJER_){
 	    jet->jerInfo(*jerinfo,0.2);
-	    float correctResolution = jet->jerCorrection();
-	    correctJetpt(*jet,correctResolution);
-	    //float correctResolutionUp = selectedJets[i].jerCorrection("up");
-	    //float correctResolutionDown = selectedJets[i].jerCorrection("down");
+	    if      ( jervar_ == "up"  ) correctJetpt( *jet, jet->jerCorrection("up") );
+            else if ( jervar_ == "down") correctJetpt( *jet, jet->jerCorrection("down") );
+            else    correctJetpt( *jet, jet->jerCorrection() );
 	  }
+	  //For JES up and down variation
+	  if (isMC_ && jecsigma_ != 0 ) correctJetpt( *jet, 1.0 + jecsigma_*jet->jecUncert() );
 	}
       
       // Kinematic selection - 3/4 leading jets
@@ -418,8 +443,10 @@ int main(int argc, char * argv[])
 
       //b tagging
       float storedisc = -1;
+      float jet_offl_sf_cent = 1.0;
       float jet_offl_sf_up = 1.0;
       float jet_offl_sf_down = 1.0;
+      float jet_onl_sf_cent = 1.0;
       float jet_onl_sf_up = 1.0;
       float jet_onl_sf_down = 1.0;
       for ( int j = 0; j < njetsmin_; ++j )
@@ -446,6 +473,7 @@ int main(int argc, char * argv[])
 	      //offline b tag sf
 	      float jet_btag_sf = jet -> btagSF(bsf_reader);
 	      eventweight *= jet_btag_sf;
+	      jet_offl_sf_cent *= jet_btag_sf;
 	      float jet_btag_sf_up = jet -> btagSFup(bsf_reader,2);
 	      jet_offl_sf_up *= jet_btag_sf_up;
 	      float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,2);
@@ -460,6 +488,7 @@ int main(int argc, char * argv[])
 		  float onl_sf_down = 0.845 - (pt * 0.0001167);
 		  jet_onl_sf_down *= onl_sf_down;
 		  h1["onl_btag_sf"] -> Fill(onl_sf);
+		  jet_onl_sf_cent *= onl_sf;
 		  eventweight *= onl_sf;
 		  th2_pT_onlbtagsf -> Fill(pt,onl_sf);
 		}
@@ -660,9 +689,9 @@ int main(int argc, char * argv[])
 	  Jet* jet = selectedJets[j];
 	  double jetpt = jet->pt();
 	  double jetabseta = fabs(jet->eta());
-	  double triggersf = 0.0;
-	  double trigger_sf_down = 0.0;
-	  double trigger_sf_up = 0.0;
+	  double triggersf = 1.0;
+	  double trigger_sf_down = 1.0;
+	  double trigger_sf_up = 1.0;
 	  if (jetabseta >= 0.0 && jetabseta <= 1.0){//central
 	    triggersf = 0.999 * erf( 0.036 * ( jetpt - 89.84 ) );
 	    trigger_sf_up = 1.004 * erf( 0.038 * ( jetpt - 90.95 ) );
@@ -678,7 +707,7 @@ int main(int argc, char * argv[])
 	    trigger_sf_up = 1.008 * erf( 0.040 * ( jetpt - 94.65 ) );
 	    trigger_sf_down = 0.996 * erf( 0.036 * ( jetpt - 92.83 ) );
 	  }
-	  else cout << "Trigger sf 0: eta out of range" << endl;
+	  else cout << "Trigger sf: eta out of range" << endl;
 	  eventweight *= triggersf;
 	}
       }
@@ -748,12 +777,130 @@ int main(int argc, char * argv[])
 	  else if( window == 5 ) tree5 -> Fill();
 	  else if( window == 6 ) tree6 -> Fill();
 
-	  if ( !isMC_ && ! signalregion_) h1[Form("m12_sel_%i",window)] -> Fill(mbbw[window], eventweight);
+	  if ( !isMC_ && !signalregion_) h1[Form("m12_sel_%i",window)] -> Fill(mbbw[window], eventweight);
 	}
 
       if (isMC_){
 	ptH = (selectedJets[0]->p4() + selectedJets[1]->p4()).Pt();
 	h1["pt_HiggsCand"] -> Fill(ptH,eventweight);
+
+	//PU weight
+	double eventweight_PU_up ;
+	double eventweight_PU_down ;
+	if ( puweight != 0 && eventweight != 0 )
+	  {
+	    eventweight_PU_up   = eventweight / puweight * puup   ;
+	    eventweight_PU_down = eventweight / puweight * pudown ;
+	  }
+	else
+	  {
+	    eventweight_PU_up   = 0;
+	    eventweight_PU_down = 0;
+	  }
+	//Offbtag
+	double eventweight_offbtag_up   = eventweight * jet_offl_sf_up   / jet_offl_sf_cent;
+	double eventweight_offbtag_down = eventweight * jet_offl_sf_down / jet_offl_sf_cent;
+	//Onlbtag
+	double eventweight_onlbtag_up   = eventweight * jet_onl_sf_up   / jet_onl_sf_cent;
+	double eventweight_onlbtag_down = eventweight * jet_onl_sf_down / jet_onl_sf_cent;
+	//jet trig eff weight
+	double eventweight_jet_trigeff_up   = eventweight * trigger_sf_up   / triggersf;
+	double eventweight_jet_trigeff_down = eventweight * trigger_sf_down / triggersf;
+	//PU
+	h1["m12_aac_PU_up"]   -> Fill(mbb_sel, eventweight_PU_up   );
+	h1["m12_aac_PU_down"] -> Fill(mbb_sel, eventweight_PU_down );
+	//Offline btag
+	h1["m12_aac_SFbtag_up"]   -> Fill(mbb_sel, eventweight_offbtag_up  );
+	h1["m12_aac_SFbtag_down"] -> Fill(mbb_sel, eventweight_offbtag_down);
+	//Online btag
+	h1["m12_aac_onlSFbtag_up"]   -> Fill(mbb_sel, eventweight_onlbtag_up  );
+	h1["m12_aac_onlSFbtag_down"] -> Fill(mbb_sel, eventweight_onlbtag_down);
+	//Jet trig eff
+	h1["m12_aac_jet_trigeff_up"]   -> Fill(mbb_sel, eventweight_jet_trigeff_up   );
+	h1["m12_aac_jet_trigeff_down"] -> Fill(mbb_sel, eventweight_jet_trigeff_down );
+
+	//Fill trees
+	weight = eventweight_PU_up;
+	m12_vars["m12_PU_up"]->Fill();
+	weight = eventweight_PU_down;
+	m12_vars["m12_PU_down"]->Fill();
+
+	weight = eventweight_offbtag_up;
+	m12_vars["m12_SFbtag_up"]->Fill();
+	weight = eventweight_offbtag_down;
+	m12_vars["m12_SFbtag_down"]->Fill();
+
+	weight = eventweight_onlbtag_up;
+	m12_vars["m12_onlSFbtag_up"]->Fill();
+	weight = eventweight_onlbtag_down;
+	m12_vars["m12_onlSFbtag_down"]->Fill();
+
+	weight = eventweight_jet_trigeff_up;
+	m12_vars["m12_jet_trigeff_up"]->Fill();
+	weight = eventweight_jet_trigeff_down;
+	m12_vars["m12_jet_trigeff_down"]->Fill();
+
+	weight = eventweight;
+
+	//JER                                                                                                                                                                                             
+	std::vector<std::string> vars = { "up", "down" };
+	Jet * j0 = selectedJets[0];
+	Jet * j1 = selectedJets[1];
+	Jet * j0_beforeVars = new Jet(j0->pt(), j0->eta(), j0->phi(), j0->e());
+	Jet * j1_beforeVars = new Jet(j1->pt(), j1->eta(), j1->phi(), j1->e());
+	Jet * j0_JER_up   = new Jet(j0->pt(), j0->eta(), j0->phi(), j0->e());
+	Jet * j0_JER_down = new Jet(j0->pt(), j0->eta(), j0->phi(), j0->e());
+	Jet * j1_JER_up   = new Jet(j1->pt(), j1->eta(), j1->phi(), j1->e());
+	Jet * j1_JER_down = new Jet(j1->pt(), j1->eta(), j1->phi(), j1->e());
+
+	for ( auto & var : vars )
+	  {
+	    correctJetpt( *j0 , j0->jerCorrection(var.c_str())/ j0->jerCorrection() );
+	    correctJetpt( *j1 , j1->jerCorrection(var.c_str())/ j1->jerCorrection() );
+
+	    h1[Form("m12_aac_JER_%s",var.c_str())] -> Fill( (j0->p4() + j1->p4()).M() , eventweight);
+	    h1[Form("pt_0_JER_%s",var.c_str())] -> Fill( j0->pt() , eventweight);
+	    h1[Form("pt_1_JER_%s",var.c_str())] -> Fill( j1->pt() , eventweight);
+	    mbb = (j0->p4() + j1->p4()).M();
+	    m12_vars[("m12_JER_"+var).c_str()]->Fill();
+
+	    //restore pT before variation
+	    if ( var =="up" )
+	      {
+		copyJetpt( *j0_JER_up, *j0);
+		copyJetpt( *j1_JER_up, *j1);
+	      }
+	    if ( var =="down" )
+	      {
+		copyJetpt( *j0_JER_down, *j0);
+		copyJetpt( *j1_JER_down, *j1);
+	      }
+	    copyJetpt( *j0, *j0_beforeVars);
+	    copyJetpt( *j1, *j1_beforeVars);
+	  }
+
+	//JES
+	std::vector<std::pair<string,int>> sigmas = { {"up",2}, {"down",-2} };
+	for ( auto & var : sigmas)
+	  {
+	    correctJetpt( *j0, 1 + var.second*j0->jecUncert()  );
+	    correctJetpt( *j1, 1 + var.second*j1->jecUncert()  );
+	    
+	    h1[Form("m12_aac_JES_%s",var.first.c_str())] -> Fill( (j0->p4() + j1->p4()).M() , eventweight);
+	    h1[Form("pt_0_JES_%s",var.first.c_str())] -> Fill( j0->pt() , eventweight);
+	    h1[Form("pt_1_JES_%s",var.first.c_str())] -> Fill( j1->pt() , eventweight);
+
+	    mbb = (j0->p4() + j1->p4()).M();
+	    m12_vars[("m12_JES_"+var.first).c_str()]->Fill();
+
+	    copyJetpt( *j0, *j0_beforeVars);
+	    copyJetpt( *j1, *j1_beforeVars);
+	  }
+	
+	h1["j0_JER_diff"] -> Fill( j0_JER_up->pt()-j0_JER_down->pt() );
+	h1["j1_JER_diff"] -> Fill( j1_JER_up->pt()-j1_JER_down->pt() );
+	h1["m12_JER_diff"] -> Fill( (j0_JER_up->p4() + j1_JER_up->p4()).M() - (j0_JER_down->p4() + j1_JER_down->p4()).M() );
+	
       }
     }//end: event loop
 
@@ -784,6 +931,11 @@ int main(int argc, char * argv[])
   for (auto & ih1 : h1)
     {
       ih1.second -> Write();
+    }
+
+  for ( auto & m12_var : m12_vars )
+    {
+      m12_var.second->Write();
     }
    
   // PRINT OUTS
