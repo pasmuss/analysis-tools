@@ -21,6 +21,7 @@ using namespace analysis::tools;
 
 //Function declarations
 void correctJetpt ( Jet& , const float& );
+void copyJetpt    ( Jet & , Jet & );
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window );
 void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT );
 
@@ -166,14 +167,14 @@ int main(int argc, char * argv[])
   h1["m12_aac"]           = new TH1F("m12_aac"           , "" , 150, 0, 3000);
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
 
-  h1["m12_aac_PU_up"]            = new TH1F("m12_aac_PU_up", 0, 3000);
-  h1["m12_aac_PU_down"]          = new TH1F("m12_aac_PU_down", 0, 3000);
-  h1["m12_aac_SFbtag_up"]        = new TH1F("m12_aac_SFbtag_up", 0, 3000);
-  h1["m12_aac_SFbtag_down"]      = new TH1F("m12_aac_SFbtag_down", 0, 3000);
-  h1["m12_aac_onlSFbtag_up"]     = new TH1F("m12_aac_onlSFbtag_up", 0, 3000);
-  h1["m12_aac_onlSFbtag_down"]   = new TH1F("m12_aac_onlSFbtag_down", 0, 3000);
-  h1["m12_aac_jet_trigeff_up"]   = new TH1F("m12_aac_jet_trigeff_up", 0, 3000);
-  h1["m12_aac_jet_trigeff_down"] = new TH1F("m12_aac_jet_trigeff_down", 0, 3000);
+  h1["m12_aac_PU_up"]            = new TH1F("m12_aac_PU_up", "", 150, 0, 3000);
+  h1["m12_aac_PU_down"]          = new TH1F("m12_aac_PU_down", "", 150, 0, 3000);
+  h1["m12_aac_SFbtag_up"]        = new TH1F("m12_aac_SFbtag_up", "", 150, 0, 3000);
+  h1["m12_aac_SFbtag_down"]      = new TH1F("m12_aac_SFbtag_down", "", 150, 0, 3000);
+  h1["m12_aac_onlSFbtag_up"]     = new TH1F("m12_aac_onlSFbtag_up", "", 150, 0, 3000);
+  h1["m12_aac_onlSFbtag_down"]   = new TH1F("m12_aac_onlSFbtag_down", "", 150, 0, 3000);
+  h1["m12_aac_jet_trigeff_up"]   = new TH1F("m12_aac_jet_trigeff_up", "", 150, 0, 3000);
+  h1["m12_aac_jet_trigeff_down"] = new TH1F("m12_aac_jet_trigeff_down", "", 150, 0, 3000);
   
   for ( int i = 0 ; i < nsubsamples ; ++i )
     h1[Form("m12_sel_%i",i)]  = new TH1F(Form("m12_sel_%i",i) , "" , 150, 0, 3000);
@@ -291,12 +292,15 @@ int main(int argc, char * argv[])
       bool muonpresent = false;
 
       float eventweight = 1.0;
+      float puweight = 0;
+      float pudown = 0;
+      float puup = 0;
 
       if (isMC_){
-	float puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
+	puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
 	eventweight *= puweight;
-	float pudown = puweights->weight(analysis.nTruePileup(),-2);
-	float puup = puweights->weight(analysis.nTruePileup(),+2);
+	pudown = puweights->weight(analysis.nTruePileup(),-2);
+	puup = puweights->weight(analysis.nTruePileup(),+2);
       }
 
       int window = 0;
@@ -684,6 +688,11 @@ int main(int argc, char * argv[])
 
       // Add weight for trigger turn-on (MC only)
       // To be done for first TWO jets (both are triggered)
+
+      double trigger_weight_up = 1;
+      double trigger_weight_down = 1;
+      double trigger_weight = 1;
+
       if (isMC_ && useTO_){
 	for (int j = 0; j < 2; j++){//first and second jet
 	  Jet* jet = selectedJets[j];
@@ -708,6 +717,9 @@ int main(int argc, char * argv[])
 	    trigger_sf_down = 0.996 * erf( 0.036 * ( jetpt - 92.83 ) );
 	  }
 	  else cout << "Trigger sf: eta out of range" << endl;
+	  trigger_weight_up *= trigger_sf_up;
+	  trigger_weight_down *= trigger_sf_down;
+	  trigger_weight *= triggersf;
 	  eventweight *= triggersf;
 	}
       }
@@ -804,8 +816,8 @@ int main(int argc, char * argv[])
 	double eventweight_onlbtag_up   = eventweight * jet_onl_sf_up   / jet_onl_sf_cent;
 	double eventweight_onlbtag_down = eventweight * jet_onl_sf_down / jet_onl_sf_cent;
 	//jet trig eff weight
-	double eventweight_jet_trigeff_up   = eventweight * trigger_sf_up   / triggersf;
-	double eventweight_jet_trigeff_down = eventweight * trigger_sf_down / triggersf;
+	double eventweight_jet_trigeff_up   = eventweight * trigger_weight_up   / trigger_weight;
+	double eventweight_jet_trigeff_down = eventweight * trigger_weight_down / trigger_weight;
 	//PU
 	h1["m12_aac_PU_up"]   -> Fill(mbb_sel, eventweight_PU_up   );
 	h1["m12_aac_PU_down"] -> Fill(mbb_sel, eventweight_PU_down );
@@ -1045,6 +1057,13 @@ void correctJetpt ( Jet& jet , const float& cor )
   TLorentzVector CorJet;
   CorJet.SetPtEtaPhiM(jet.pt()*cor , jet.eta(), jet.phi(), (jet.p4()).M());
   jet.p4(CorJet);
+}
+
+void copyJetpt ( Jet& jet , Jet& newjet )
+{
+  TLorentzVector appo ;
+  appo.SetPtEtaPhiE( newjet.pt() , newjet.eta(), newjet.phi(), newjet.e());
+  jet.p4( appo );
 }
 
 void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT ){

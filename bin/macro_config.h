@@ -80,6 +80,9 @@ std::string btagsf_;
 std::string jerpt_;
 std::string jersf_;
 
+//systematic variations
+std::string jervar_;
+int jecsigma;
 
 // muons
 bool muonveto_;
@@ -200,6 +203,9 @@ int macro_config(int argc, char * argv[])
 	("jetsEtaMax", po::value<std::vector<float> >(&jetsetamax_)->multitoken(),"Maximum |eta| of the jets")
 	("jetsBtagMin", po::value<std::vector<float> >(&jetsbtagmin_)->multitoken(),"Minimum btag of the jets; if < 0 -> reverse btag")
 	("jetsId",po::value <std::string> (&jetsid_)->default_value("TIGHT"),"Jets id criteria for all jets")
+	//
+	("JERvariation",po::value <std::string> (&jervar_)->default_value("central"),"Variation of JER for shape uncertainties; can be central, up, down")
+	("JECsigmas",po::value <std::string> (&jecsigma_)->default_value("0"),"Variation of JES by n standard deviations (sigmas)")
 	//
 	("l1tJetsNMin",po::value <int> (&l1tjetsnmin_)->default_value(0),"Minimum number of L1T jets")
 	("l1tJetsPtMin", po::value<std::vector<float> >(&l1tjetsptmin_)->multitoken(),"Mimium pt of the L1T jets")
