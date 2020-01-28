@@ -26,7 +26,7 @@ void applyPrescale ( const int& run, const double& random, float& prescaleEra, c
 void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT );
 
 // Systematic variations
-std::vector<std::string> systematics = { "PU", "SFbtag", "onlSFbtag", "JER", "JES", /*"muID", */ "trigeff" };
+std::vector<std::string> systematics = { "PU", "SFbtag", "onlSFbtag", "JER", "JES", "jet_trigeff" };
 std::vector<std::string> vars = { "up", "down" };
 
 // =============================================================================================   
@@ -157,8 +157,7 @@ int main(int argc, char * argv[])
       //after all cuts (including m12)
       h1[Form("pt_%i_aac",i)]              = new TH1F(Form("pt_%i_aac",i)              , "" , 210,  0, 2100);
       h1[Form("eta_%i_aac",i)]             = new TH1F(Form("eta_%i_aac",i)             , "" , 120, -6,    6);
-      h1[Form("deepflavourbtag_%i_aac",i)] = new TH1F(Form("deepflavourbtag_%i_aac",i) , "" , 600,  0,  1.2);
-  
+      h1[Form("deepflavourbtag_%i_aac",i)] = new TH1F(Form("deepflavourbtag_%i_aac",i) , "" , 600,  0,  1.2);  
 
       h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
     }
@@ -166,6 +165,17 @@ int main(int argc, char * argv[])
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
   h1["m12_aac"]           = new TH1F("m12_aac"           , "" , 150, 0, 3000);
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
+
+  h1["pt_0_JER_up"]                    = new TH1F("pt_0_JER_up"                    , "" , 210,  0, 2100);
+  h1["pt_0_JER_down"]                  = new TH1F("pt_0_JER_down"                  , "" , 210,  0, 2100);
+  h1["j0_JER_diff"]                    = new TH1F("j0_JER_diff"                    , "" , 210,  0, 2100);
+  h1["j1_JER_diff"]                    = new TH1F("j1_JER_diff"                    , "" , 210,  0, 2100);
+  h1["pt_1_JER_up"]                    = new TH1F("pt_1_JER_up"                    , "" , 210,  0, 2100);
+  h1["pt_1_JER_down"]                  = new TH1F("pt_1_JER_down"                  , "" , 210,  0, 2100);
+  h1["pt_0_JES_up"]                    = new TH1F("pt_0_JES_up"                    , "" , 210,  0, 2100);
+  h1["pt_0_JES_down"]                  = new TH1F("pt_0_JES_down"                  , "" , 210,  0, 2100);
+  h1["pt_1_JES_up"]                    = new TH1F("pt_1_JES_up"                    , "" , 210,  0, 2100);
+  h1["pt_1_JES_down"]                  = new TH1F("pt_1_JES_down"                  , "" , 210,  0, 2100);
 
   h1["m12_aac_PU_up"]            = new TH1F("m12_aac_PU_up", "", 150, 0, 3000);
   h1["m12_aac_PU_down"]          = new TH1F("m12_aac_PU_down", "", 150, 0, 3000);
@@ -175,6 +185,11 @@ int main(int argc, char * argv[])
   h1["m12_aac_onlSFbtag_down"]   = new TH1F("m12_aac_onlSFbtag_down", "", 150, 0, 3000);
   h1["m12_aac_jet_trigeff_up"]   = new TH1F("m12_aac_jet_trigeff_up", "", 150, 0, 3000);
   h1["m12_aac_jet_trigeff_down"] = new TH1F("m12_aac_jet_trigeff_down", "", 150, 0, 3000);
+  h1["m12_aac_JER_up"]           = new TH1F("m12_aac_JER_up", "", 150, 0, 3000);
+  h1["m12_aac_JER_down"]         = new TH1F("m12_aac_JER_down", "", 150, 0, 3000);
+  h1["m12_JER_diff"]             = new TH1F("m12_JER_diff", "", 150, 0, 3000);
+  h1["m12_aac_JES_up"]           = new TH1F("m12_aac_JES_up", "", 150, 0, 3000);
+  h1["m12_aac_JES_down"]         = new TH1F("m12_aac_JES_down", "", 150, 0, 3000);
   
   for ( int i = 0 ; i < nsubsamples ; ++i )
     h1[Form("m12_sel_%i",i)]  = new TH1F(Form("m12_sel_%i",i) , "" , 150, 0, 3000);
@@ -249,6 +264,7 @@ int main(int argc, char * argv[])
   cout << "output file: " << outputRoot_.c_str() << endl;
   cout << "ntuples file: " << inputlist_.c_str() << endl;
   cout << "PU file: " << pufile_.c_str() << endl;
+  cout << "JER variations: " << jervar_.c_str() << ", JES: " << jecsigma_ << " sigmas" << endl;
   txtoutputfile << "This analysis has " << analysis.size() << " events" << endl;
   txtoutputfile << nevtmax_ << " events have been selected." << endl;
   txtoutputfile << "Selected category: "<< regions << endl;
@@ -259,6 +275,7 @@ int main(int argc, char * argv[])
   txtoutputfile << "output file: " << outputRoot_.c_str() << endl;
   txtoutputfile << "ntuples file: " << inputlist_.c_str() << endl;
   txtoutputfile << "PU file: " << pufile_.c_str() << endl;
+  txtoutputfile << "JER variations: " << jervar_.c_str() << ", JES: " << jecsigma_ << " sigmas" << endl;
   
   // Cut flow
   // 0: triggered events (no. events for MC)
@@ -393,7 +410,7 @@ int main(int argc, char * argv[])
 	  //For JES up and down variation
 	  if (isMC_ && jecsigma_ != 0 ) correctJetpt( *jet, 1.0 + jecsigma_*jet->jecUncert() );
 	}
-      
+
       // Kinematic selection - 3/4 leading jets
       for ( int j = 0; j < njetsmin_; ++j )
 	{
@@ -818,6 +835,7 @@ int main(int argc, char * argv[])
 	//jet trig eff weight
 	double eventweight_jet_trigeff_up   = eventweight * trigger_weight_up   / trigger_weight;
 	double eventweight_jet_trigeff_down = eventweight * trigger_weight_down / trigger_weight;
+
 	//PU
 	h1["m12_aac_PU_up"]   -> Fill(mbb_sel, eventweight_PU_up   );
 	h1["m12_aac_PU_down"] -> Fill(mbb_sel, eventweight_PU_down );
@@ -854,8 +872,7 @@ int main(int argc, char * argv[])
 
 	weight = eventweight;
 
-	//JER                                                                                                                                                                                             
-	std::vector<std::string> vars = { "up", "down" };
+	//JER
 	Jet * j0 = selectedJets[0];
 	Jet * j1 = selectedJets[1];
 	Jet * j0_beforeVars = new Jet(j0->pt(), j0->eta(), j0->phi(), j0->e());
@@ -872,7 +889,8 @@ int main(int argc, char * argv[])
 
 	    h1[Form("m12_aac_JER_%s",var.c_str())] -> Fill( (j0->p4() + j1->p4()).M() , eventweight);
 	    h1[Form("pt_0_JER_%s",var.c_str())] -> Fill( j0->pt() , eventweight);
-	    h1[Form("pt_1_JER_%s",var.c_str())] -> Fill( j1->pt() , eventweight);
+	    h1[Form("pt_1_JER_%s",var.c_str())] -> Fill( j1->pt() , eventweight);	    
+
 	    mbb = (j0->p4() + j1->p4()).M();
 	    m12_vars[("m12_JER_"+var).c_str()]->Fill();
 

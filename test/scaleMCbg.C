@@ -20,7 +20,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
 
   cout << " " << endl;
   cout << "Input to be provided:" << endl;
-  cout << "(str)variable ('pt_n', 'eta_n', 'HT' or 'm12' with n=(0,1,2,3) and '_aac' for quantity after all cuts) [set to " << var_ <<"]," << endl;
+  cout << "(str)variable ('pt_n', 'eta_n', 'phi_n', 'HT' or 'm12' with n=(0,1,2,3) and '_aac' for quantity after all cuts) [set to " << var_ <<"]," << endl;
   cout << "(int)rebinning factor [" << rebin_ << "]," << endl;
   cout << "(str)region ('CR'/'SR') [" << region_ << "]," << endl;
   cout << "(str)era ('C'/'D'/'E'/'F'/'CDE'/'CDEF') [" << era_ << "]," << endl;
@@ -32,7 +32,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   cout << "(bool)3jets? [" << threejets_ << "]" << endl;
 
   string xtitleEnr, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
-  long binning = 0.0;
+  double binning = 0.0;
 
   string outfilename = ("Configs_diffBTags_allmedium/rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/mcbg/MCbg-QCD-" + var_ + "-2017" + era_ + "-" + region_ + "-3j" + ".root").c_str();
   if (!threejets_) outfilename = ("Configs_diffBTags_allmedium/rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/mcbg/MCbg-QCD-" + var_ + "-2017" + era_ + "-" + region_ + "-4j" + ".root").c_str();
@@ -126,11 +126,45 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
     xtitleGes = "H_{T} [GeV]";
     ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
   }
+  else if ((var_ == "phi_0" || var_ == "phi_0_csv") || var_ == "phi_0_bef_cuts"){
+    cout << "phi_0 selected" << endl;
+    binning = rebin_*0.1;
+    cout << "binning: " << binning << endl;
+    xtitleEnr = "#phi, 1^{st} jet, bEnriched";
+    xtitleGeF = "#phi, 1^{st} jet, bGenFilter";
+    xtitleGes = "#phi, 1^{st} jet";
+    ytitle = ("Events/" + to_string(binning)).c_str();
+  }
+  else if ((var_ == "phi_1" || var_ == "phi_1_csv") || var_ == "phi_1_bef_cuts"){
+    cout << "phi_1 selected" << endl;
+    binning = rebin_*0.1;
+    xtitleEnr = "#phi, 2^{nd} jet, bEnriched";
+    xtitleGeF = "#phi, 2^{nd} jet, bGenFilter";
+    xtitleGes = "#phi, 2^{nd} jet";
+    ytitle = ("Events/" + to_string(binning)).c_str();
+  }
+  else if ((var_ == "phi_2" || var_ == "phi_2_csv") || var_ == "phi_2_bef_cuts"){
+    cout << "phi_2 selected" << endl;
+    binning = rebin_*0.1;
+    xtitleEnr = "#phi, 3^{rd} jet, bEnriched";
+    xtitleGeF = "#phi, 3^{rd} jet, bGenFilter";
+    xtitleGes = "#phi, 3^{rd} jet";
+    ytitle = ("Events/" + to_string(binning)).c_str();
+  }
+  else if ((var_ == "phi_3" || var_ == "phi_3_csv") || var_ == "phi_3_bef_cuts"){
+    cout << "phi_3 selected" << endl;
+    binning = rebin_*0.1;
+    xtitleEnr = "#phi, 4^{th} jet, bEnriched";
+    xtitleGeF = "#phi, 4^{th} jet, bGenFilter";
+    xtitleGes = "#phi, 4^{th} jet";
+    ytitle = ("Events/" + to_string(binning)).c_str();
+  }
   else{
     cout << "No known variable selected. Please select 'pt_n', 'eta_n', 'HT' or 'm12' with n=(0,1,2,3). For the quantities after cuts, please add '_aac' to the string." << endl; 
     return -1;
   }
   cout << "Variable check successful. Bin width: " << binning << endl;
+  cout << "titles: " << xtitleEnr << " " << xtitleGeF << " " << xtitleGes << " " << ytitle << endl;
 
   cout << " " << endl;
   cout << "Checking region consistency..." << endl;
@@ -142,18 +176,20 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   cout << "Region check successful." << endl;
 
   string varname;
-  if ( var_ == "pt_0" || var_ == "pt_0_csv") varname = "p_{T}, 1^{st} jet";
-  else if ( var_ == "pt_1" || var_ == "pt_1_csv") varname = "p_{T}, 2^{nd} jet";
-  else if ( var_ == "pt_2" || var_ == "pt_2_csv") varname = "p_{T}, 3^{rd} jet";
-  else if ( var_ == "eta_0" || var_ == "eta_0_csv") varname = "#eta, 1^{st} jet";
-  else if ( var_ == "eta_1" || var_ == "eta_1_csv") varname = "#eta, 2^{nd} jet";
-  else if ( var_ == "eta_2" || var_ == "eta_2_csv") varname = "#eta, 3^{rd} jet";
+  if ( var_ == "pt_0" || var_ == "pt_0_aac") varname = "p_{T}, 1^{st} jet";
+  else if ( var_ == "pt_1" || var_ == "pt_1_aac") varname = "p_{T}, 2^{nd} jet";
+  else if ( var_ == "pt_2" || var_ == "pt_2_aac") varname = "p_{T}, 3^{rd} jet";
+  else if ( var_ == "eta_0" || var_ == "eta_0_aac") varname = "#eta, 1^{st} jet";
+  else if ( var_ == "eta_1" || var_ == "eta_1_aac") varname = "#eta, 2^{nd} jet";
+  else if ( var_ == "eta_2" || var_ == "eta_2_aac") varname = "#eta, 3^{rd} jet";
   else if ( var_ == "phi_0" || var_ == "phi_0_csv") varname = "#phi, 1^{st} jet";
   else if ( var_ == "phi_1" || var_ == "phi_1_csv") varname = "#phi, 2^{nd} jet";
   else if ( var_ == "phi_2" || var_ == "phi_2_csv") varname = "#phi, 3^{rd} jet";
   else if ( (var_ == "HT" || var_ == "HT_aac") || var_ == "HT_bef_cuts") varname = "H_{T}";
-  else if ( var_ == "m12" || var_ == "m12_csv") varname = "m_{12}";
+  else if ( var_ == "m12" || var_ == "m12_aac") varname = "m_{12}";
   else varname = var_;
+
+  cout << "Set varname: " << varname << endl;
 
   vector<string> pthatbins = {"200to300","300to500","500to700","700to1000","1000to1500", "1500to2000", "2000toInf"};
   vector<double> sfvaluesEnr = {291.08  ,  168.74  ,   26.64  ,   11.70   ,    6.26    ,     2.19    ,    0.08    };
@@ -179,6 +215,8 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
     sfvaluesGeF = {292.856, 114.510, 9.122, 8.992, 2.470, 1.369, 0.307};
   }
   if (jetht_) sfvaluesGeF = {0.03192073, 0.00647697, 0.00064592, 0.00016072, 0.00007939, 0.00001032, 0.00000412};
+
+  cout << "Selected scale factors." << endl;
   
   vector<int> colors = {kRed,kBlue,kGreen,kMagenta,kCyan,kBlack,kViolet};
   //  map<string, string> colormap;
@@ -201,7 +239,11 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
       if (!jetht_) filesEnr[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/mcbg/mc-bg-HT-" + pthatbins[i] + "-bEnriched-" + region_ + "-3j.root").c_str(),"READ");
       filesGeF[pthatbins[i]] = new TFile( ("Configs_diffBTags_allmedium/rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/mcbg/mc-bg-HT-" + pthatbins[i] + "-bGenFilter-" + region_ + "-3j.root").c_str(),"READ");
     }
+
+    cout << "Selected input files." << endl;
+
     if (!jetht_){
+      cout << "QCD samples" << endl;
       histogramsEnr[pthatbins[i]] = (TH1F*)filesEnr[pthatbins[i]] -> Get(var_.c_str());
       style.InitHist(histogramsEnr[pthatbins[i]],xtitleEnr.c_str(),ytitle.c_str(),colors[i],0);
       histogramsEnr[pthatbins[i]] -> SetMarkerSize(1.0);
@@ -229,6 +271,8 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
     histogramsGeF[pthatbins[i]] -> GetXaxis() -> SetNdivisions(505);
   }
 
+  cout << "Extracted histogram from file" << endl;
+
   double nbinsx = histogramsGeF[pthatbins[0]] -> GetNbinsX();
   double xreflow = histogramsGeF[pthatbins[0]] -> GetXaxis() -> GetBinLowEdge( 1 );
   double xrefhigh = histogramsGeF[pthatbins[0]] -> GetXaxis() -> GetBinLowEdge( histogramsGeF[pthatbins[0]] -> GetNbinsX()+1 );
@@ -254,6 +298,8 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   if (!jetht_) hist_output_enr -> SetMarkerSize(1);
   hist_output_gef -> SetMarkerSize(1);
   hist_output_ges -> SetMarkerSize(1);
+
+  cout << "Filled histograms" << endl;
 
   if (!jetht_) {
     for (auto const &hist1 : histogramsEnr){
