@@ -55,6 +55,7 @@ bool useregression_;
 bool useJER_;
 bool usebtagsf_;
 bool useTO_;
+bool useBtagWeights_;
 
 int njetsmin_;
 int njetsmax_;
@@ -195,6 +196,7 @@ int macro_config(int argc, char * argv[])
 	("useRegression",po::value <bool> (&useregression_)->default_value(true),"Apply Jet Energy Regression (for b jets)")
 	("useBtagSF",po::value <bool> (&usebtagsf_)->default_value(true),"Use scale factor for b tagging")
 	("useTriggerTurnOn",po::value <bool> (&useTO_)->default_value(true),"Use scale factor for trigger turn-on efficiency")
+	("useBtagWeights",po::value <bool> (&useBtagWeights_)->default_value(false),"Use weights instead of cuts")
 	("nJetsMin",po::value <int> (&njetsmin_)->default_value(0),"Minimum number of jets")
 	("nJetsMax",po::value <int> (&njetsmax_)->default_value(100),"Maximum number of jets")
 	("nBJetsMin",po::value <int> (&nbjetsmin_)->default_value(0),"Minimum number of btgaged jets")

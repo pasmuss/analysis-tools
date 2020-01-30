@@ -58,7 +58,10 @@ int main(int argc, char * argv[])
   else if (reco == "rereco"){//this is the default and also applicable for MC!
     analysis.addTree<Jet> ("Jets","MssmHbb/Events/updatedPatJets");
     analysis.addTree<Muon>("Muons","MssmHbb/Events/slimmedMuons");
-    if (isMC_) analysis.addTree<GenJet>("GenJets","MssmHbb/Events/slimmedGenJets");
+    if (isMC_){
+      analysis.addTree<GenJet>("GenJets","MssmHbb/Events/slimmedGenJets");
+      analysis.addTree<GenParticle>("GenParticles","MssmHbb/Events/prunedGenParticles");
+    }
   }
   else{
     cout << "Neither prompt nor rereco data selected. Aborting." << endl;
@@ -68,6 +71,8 @@ int main(int argc, char * argv[])
   auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
   
   auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V3_B_F.csv", "medium");
+
+  TFile* btagweightfile = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/btag_eff_deepflavour_medium_pt_eta_flavour.root","READ");
 
   std::shared_ptr <PileupWeight> puweights = analysis.pileupWeights(pufile_);
    
@@ -322,7 +327,7 @@ int main(int argc, char * argv[])
 
       int window = 0;
       
-      if ( i > 0 && i%10000==0 ){
+      if ( i > 0 && i%100000==0 ){
 	std::cout << i << " events processed!" << std::endl;
 	txtoutputfile << i << " events processed!" << endl;
       }
@@ -342,6 +347,9 @@ int main(int argc, char * argv[])
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
 
+      //GenParticles for ExtendedFlavor
+      auto particles = analysis.collection<GenParticle>("GenParticles");
+      
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
       float sgweight = 0;
@@ -350,10 +358,14 @@ int main(int argc, char * argv[])
 	slimmedJets->addGenJets(genjets);
 	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
 	h1["nentries"] -> Fill((sgweight+1.)/2.);
+
 	/*std::vector<Jet*> slimmedGenJets;//get a vector of GenJets
 	  for (int a = 0; a < genjets->size(); a++){
 	  slimmedGenJets.push_back(&genjets->at(a));
 	  }*/
+
+	//Assigning flavor to jet
+	slimmedJets->associatePartons(particles,0.4,5);
       }
 
       if (isMC_ && sgweight == 0){
@@ -394,6 +406,7 @@ int main(int argc, char * argv[])
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
+	  cout << "extFlavour = "    << jet -> extendedFlavour() << endl;
 	  //Apply Jet Energy Corrections
 	  float regressionfactor = 1.0;
 	  if (useregression_){
@@ -1092,8 +1105,11 @@ void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const dou
     targetHT += jet->pt();
   }
 }
-
-
+/*
+void addBtagWeight (Jet& jet, double& weight){
+    
+}
+*/
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window  )
 {
   //Get correct Prescale for each Era
