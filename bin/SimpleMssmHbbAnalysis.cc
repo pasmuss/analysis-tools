@@ -11,6 +11,7 @@
 #include "TH1.h" 
 #include "TRandom3.h"
 #include "TLorentzVector.h"
+#include "TGraphAsymmErrors.h"
 
 #include "Analysis/Tools/interface/Analysis.h"
 #include "Analysis/Tools/bin/macro_config.h"
@@ -24,10 +25,14 @@ void correctJetpt ( Jet& , const float& );
 void copyJetpt    ( Jet & , Jet & );
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window );
 void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT );
+void addBtagWeight (Jet& jet, float& weight);
 
 // Systematic variations
 std::vector<std::string> systematics = { "PU", "SFbtag", "onlSFbtag", "JER", "JES", "jet_trigeff" };
 std::vector<std::string> vars = { "up", "down" };
+
+// b tag weight file
+TFile* btagweightfile = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/btag_eff_deepflavour_medium_pt_eta_flavour.root","READ");
 
 // =============================================================================================   
 int main(int argc, char * argv[])
@@ -71,8 +76,6 @@ int main(int argc, char * argv[])
   auto jerinfo = analysis.jetResolutionInfo("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_PtResolution_AK4PFchs.txt", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/Fall17_V3_MC_SF_AK4PFchs.txt");
   
   auto bsf_reader = analysis.btagCalibration("deepflavour", "/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/DeepFlavour_94XSF_V3_B_F.csv", "medium");
-
-  TFile* btagweightfile = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/btag_eff_deepflavour_medium_pt_eta_flavour.root","READ");
 
   std::shared_ptr <PileupWeight> puweights = analysis.pileupWeights(pufile_);
    
@@ -346,9 +349,6 @@ int main(int argc, char * argv[])
 	//if ( !(triggerFired && triggerFiredL1) ) continue;
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
-
-      //GenParticles for ExtendedFlavor
-      auto particles = analysis.collection<GenParticle>("GenParticles");
       
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
@@ -364,7 +364,8 @@ int main(int argc, char * argv[])
 	  slimmedGenJets.push_back(&genjets->at(a));
 	  }*/
 
-	//Assigning flavor to jet
+	//Assigning flavor to jets
+	auto particles = analysis.collection<GenParticle>("GenParticles");
 	slimmedJets->associatePartons(particles,0.4,5);
       }
 
@@ -406,7 +407,6 @@ int main(int argc, char * argv[])
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
-	  cout << "extFlavour = "    << jet -> extendedFlavour() << endl;
 	  //Apply Jet Energy Corrections
 	  float regressionfactor = 1.0;
 	  if (useregression_){
@@ -535,75 +535,96 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
-	  if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
-	  if (regions == "3j"){
-	    if (! signalregion_){//CR 3j: bbnb
-	      if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
+	  if (!usebtagweights_){
+	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+	    if (regions == "3j"){
+	      if (! signalregion_){//CR 3j: bbnb
+		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
+	      }
+	      else{//SR 3j: bbb
+		if (j == 2 && btagdisc < jetsbtagmin_[j]) goodEvent = false;
+	      }
+	    }//3j
+	    else if (regions == "4j3"){
+	      if (! signalregion_){//CR 4j3: bbnbb
+		if ( (j == 2 && btagdisc > nonbtagwp_) || (j == 3 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
+	      }
+	      else{//SR 4j3 bbbb
+		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
+	      }
+	    }//4j3
+	    else if (regions == "4j4"){
+	      if (! signalregion_){//CR 4j4: bbbnb
+		if ( (j == 3 && btagdisc > nonbtagwp_) || (j == 2 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
+	      }
+	      else{//SR 4j4: bbbb
+		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
+	      }
+	    }//4j4
+	    else if (regions == "3jor"){
+	      if (! signalregion_){//CR 3jor: bbnbnb
+		if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
+	      }
+	      else{//SR 3jor: bbbnb || bbnbb (3rd or 4th jet may be third b-jet)
+		if (j == 2) storedisc = btagdisc;
+		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
+		if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
+		if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
+	      }
+	    }//3jor
+	    else if (regions == "4jor"){
+	      if (!signalregion_){//CR 4jor: bbbnb || bbnbb (3rd or 4th jet may be reversed)
+		if (j == 2) storedisc = btagdisc;
+		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
+		if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
+		if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
+	      }
+	      else{//SR 4jor:bbbb
+		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;	      
+	      }
+	    }//4jor
+	    else if (regions == "4jnn"){
+	      if (! signalregion_){//CR 4jnn: bbnbnb
+		if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
+	      }//CR 4jnn
+	      else{//SR 4jnn: bbbb
+		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
+	      }//SR 4jnn
+	    }//4jnn
+	    if ( border_other_wp > 0 && other_wp > 0 ){//set a different wp for leading two jets (e.g. tight instead of medium)
+	      if (j < 2){//leading two jets
+		if ( (jet->pt() > border_other_wp) && (btagdisc < other_wp) ) goodEvent = false;
+	      }
+	    }//other btag wp for leading two jets
+	  }//if not usebtagweights
+	  else{//if usebtagweights
+	    if (!(regions == "3j" || regions == "4j3")){
+	      cout << "Use of b tag weights only implemented for regions '3j' and '4j3' so far. Please use either of them or implement the use for the region you want to use. Aborting." << endl;
+	      break;
 	    }
-	    else{//SR 3j: bbb
-	      if (j == 2 && btagdisc < jetsbtagmin_[j]) goodEvent = false;
-	    }
-	  }//3j
-	  else if (regions == "4j3"){
-	    if (! signalregion_){//CR 4j3: bbnbb
-	      if ( (j == 2 && btagdisc > nonbtagwp_) || (j == 3 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
-	    }
-	    else{//SR 4j3 bbbb
-	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
-	    }
-	  }//4j3
-	  else if (regions == "4j4"){
-            if (! signalregion_){//CR 4j4: bbbnb
-	      if ( (j == 3 && btagdisc > nonbtagwp_) || (j == 2 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
-            }
-            else{//SR 4j4: bbbb
-	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
-            }
-	  }//4j4
-	  else if (regions == "3jor"){
-            if (! signalregion_){//CR 3jor: bbnbnb
-	      if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
-            }
-            else{//SR 3jor: bbbnb || bbnbb (3rd or 4th jet may be third b-jet)
-	      if (j == 2) storedisc = btagdisc;
-	      if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
-	      if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
-	      if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
-            }
-	  }//3jor
-	  else if (regions == "4jor"){
-	    if (!signalregion_){//CR 4jor: bbbnb || bbnbb (3rd or 4th jet may be reversed)
-	      if (j == 2) storedisc = btagdisc;
-              if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
-              if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
-	      if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
-	    }
-	    else{//SR 4jor:bbbb
-	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;	      
-	    }
-	  }//4jor
-	  else if (regions == "4jnn"){
-	    if (! signalregion_){//CR 4jnn: bbnbnb
-	      if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
-	    }//CR 4jnn
-	    else{//SR 4jnn: bbbb
-	      if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
-	    }//SR 4jnn
-	  }//4jnn
-	  
-	  if ( border_other_wp > 0 && other_wp > 0 ){//set a different wp for leading two jets (e.g. tight instead of medium)
-	    if (j < 2){//leading two jets
-	      if ( (jet->pt() > border_other_wp) && (btagdisc < other_wp) ) goodEvent = false;
-	    }
-	  }//other btag wp for leading two jets
-	  
+	    else{//3j or 4j3
+	      if (!signalregion_){//CR
+		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
+		else if (j < 2){
+		  addBtagWeight(*jet, eventweight);
+		}
+	      }//CR
+	      else{//SR
+		if (j <= 2 && regions == "3j"){
+		  addBtagWeight(*jet, eventweight);
+		}
+		else if (j <= 3 && regions == "4j3"){
+		  addBtagWeight(*jet, eventweight);
+		}
+		else {cout << "Unknown region for b tag weighting! Aborting" << endl; break;}
+	      }//SR
+	    }//3j or 4j3
+	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
-
       if ( ! goodEvent ) continue;
       ++nsel[5];
       if(isMC_ && sgweight > 0) ++nweigh[5];
       else if(isMC_ && sgweight < 0) --nweigh[5];
-
       double HT_after_bTag = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
@@ -1105,11 +1126,23 @@ void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const dou
     targetHT += jet->pt();
   }
 }
-/*
-void addBtagWeight (Jet& jet, double& weight){
-    
+
+void addBtagWeight (Jet& jet, float& weight){
+  double pt = jet.pt();
+  double eta = jet.eta();
+  string flavor = jet.extendedFlavour();
+
+  string etarange = "0.0-0.5";
+  if (eta >= 0.5 && eta < 1.0) etarange = "0.5-1.0";
+  else if (eta >= 1.0 && eta < 1.4) etarange = "1.0-1.4";
+  else if (eta >= 1.4 && eta < 2.2) etarange = "1.4-2.2";
+
+  string graphname = ("btag_eff_deepflavour_medium_" + flavor + "_pt_eta_" + etarange).c_str();
+  TGraphAsymmErrors* evalgraph = (TGraphAsymmErrors*)btagweightfile -> Get(graphname.c_str());
+
+  weight *= evalgraph->Eval(pt);
 }
-*/
+
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window  )
 {
   //Get correct Prescale for each Era
