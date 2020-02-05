@@ -605,17 +605,11 @@ int main(int argc, char * argv[])
 	    else{//3j or 4j3
 	      if (!signalregion_){//CR
 		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
-		else if (j < 2){
-		  addBtagWeight(*jet, eventweight);
-		}
+		if ((j == 2 && btagdisc <= nonbtagwp_) || j < 2 )  addBtagWeight(*jet, eventweight);
 	      }//CR
 	      else{//SR
-		if (j <= 2 && regions == "3j"){
-		  addBtagWeight(*jet, eventweight);
-		}
-		else if (j <= 3 && regions == "4j3"){
-		  addBtagWeight(*jet, eventweight);
-		}
+		if (j <= 2 && regions == "3j") addBtagWeight(*jet, eventweight);
+		else if (j <= 3 && regions == "4j3") addBtagWeight(*jet, eventweight);
 		else {cout << "Unknown region for b tag weighting! Aborting" << endl; break;}
 	      }//SR
 	    }//3j or 4j3
