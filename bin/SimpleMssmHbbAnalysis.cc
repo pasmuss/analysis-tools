@@ -638,7 +638,7 @@ int main(int argc, char * argv[])
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
       
       // Is matched?
-      /*analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
+      analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
       
       //last step of cutflow for MC: trigger
@@ -671,7 +671,7 @@ int main(int argc, char * argv[])
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
       else if(isMC_ && sgweight < 0) --nweigh[6];
-*/
+
       //FSR recovery
       for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
 	{
