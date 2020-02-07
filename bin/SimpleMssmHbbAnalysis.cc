@@ -137,6 +137,7 @@ int main(int argc, char * argv[])
   h1["dR_muj1"]           = new TH1F("dR_muj1"          , "" ,  120,  0,     0.6);
 
   h1["deltaeta12_aac"]    = new TH1F("deltaeta12_aac"   , "" ,  120, -6,     6);
+  h1["deltaphi12_aac"]    = new TH1F("deltaphi12_aac"   , "" ,  120, -6,     6);
 
   h1["pt_softjet"]        = new TH1F("pt_softjet"       , "",   210,  0,  2100);
   h1["dR_jsoftjet"]       = new TH1F("dR_jsoftjet"      , "",   120,  0,     0.6);
@@ -814,6 +815,9 @@ int main(int argc, char * argv[])
 
       double deltaeta12_aac = fabs(selectedJets[0]->eta() - selectedJets[1]->eta());
       h1["deltaeta12_aac"] -> Fill(deltaeta12_aac,eventweight);
+
+      double deltaphi12_aac = fabs(selectedJets[0]->phi() - selectedJets[1]->phi());
+      h1["deltaphi12_aac"] -> Fill(deltaphi12_aac,eventweight);
 
       for ( int j = 0; j < njetsmin_; ++j )//get histograms for most important quantities after all cuts (including m12 cut)
         {
