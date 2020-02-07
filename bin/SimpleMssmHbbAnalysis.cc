@@ -25,7 +25,7 @@ void correctJetpt ( Jet& , const float& );
 void copyJetpt    ( Jet & , Jet & );
 void applyPrescale ( const int& run, const double& random, float& prescaleEra, const int nsubsamples, int& window );
 void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const double eta, double& targetHT );
-void addBtagWeight (Jet& jet, float& weight);
+void addBtagWeight (Jet* jet, float& weight);
 
 // Systematic variations
 std::vector<std::string> systematics = { "PU", "SFbtag", "onlSFbtag", "JER", "JES", "jet_trigeff" };
@@ -486,6 +486,7 @@ int main(int argc, char * argv[])
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
+	  cout << "b tagging Jet " << j+1 << endl;
 	  h1[Form("pt_%i",j)]   -> Fill(jet->pt());
 	  h1[Form("eta_%i",j)]  -> Fill(jet->eta());
 	  h1[Form("phi_%i",j)]  -> Fill(jet->phi());
@@ -503,6 +504,7 @@ int main(int argc, char * argv[])
 	  else return -1;
 
 	  if (isMC_){
+	    cout << "Eventweight before anything: " << eventweight << endl;
 	    if (usebtagsf_){
 	      //offline b tag sf
 	      float jet_btag_sf = jet -> btagSF(bsf_reader);
@@ -535,7 +537,10 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
+	  cout << "Event weight after sf: " << eventweight << endl;
+
 	  if (!usebtagweights_){
+	    cout << "Using cuts" << endl;
 	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
@@ -598,24 +603,38 @@ int main(int argc, char * argv[])
 	    }//other btag wp for leading two jets
 	  }//if not usebtagweights
 	  else{//if usebtagweights
+	    cout << "Using weights" << endl;
 	    if (!(regions == "3j" || regions == "4j3")){
 	      cout << "Use of b tag weights only implemented for regions '3j' and '4j3' so far. Please use either of them or implement the use for the region you want to use. Aborting." << endl;
 	      break;
 	    }
 	    else{//3j or 4j3
 	      if (!signalregion_){//CR
+		cout << "CR" << endl;
+		cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() << " " << btagdisc << endl;
 		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
-		if ((j == 2 && btagdisc <= nonbtagwp_) || j < 2 )  addBtagWeight(*jet, eventweight);
+		//else if (j < 2){
+		addBtagWeight(jet, eventweight);
+		cout << "Event weight after b tagging: " << eventweight << endl;
+		  //}
 	      }//CR
 	      else{//SR
-		if (j <= 2 && regions == "3j") addBtagWeight(*jet, eventweight);
-		else if (j <= 3 && regions == "4j3") addBtagWeight(*jet, eventweight);
-		else {cout << "Unknown region for b tag weighting! Aborting" << endl; break;}
+		cout << "SR" << endl;
+		cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() <<" " << btagdisc << endl;
+		//if (j <= 2 && regions == "3j"){
+		addBtagWeight(jet, eventweight);
+		cout <<"Event weight after b tagging: " << eventweight<< endl;
+		  //	}
+		  //else if (j <= 3 && regions == "4j3"){
+		  //addBtagWeight(*jet, eventweight);
+		  //}
+		  //else {cout << "Unknown region for b tag weighting! Aborting" << endl; break;}
 	      }//SR
 	    }//3j or 4j3
 	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
       if ( ! goodEvent ) continue;
+      cout << "Event passed b tagging procedure." << endl;
       ++nsel[5];
       if(isMC_ && sgweight > 0) ++nweigh[5];
       else if(isMC_ && sgweight < 0) --nweigh[5];
@@ -1121,10 +1140,10 @@ void calculateEventHT ( const std::vector<Jet*> jets, const double pt, const dou
   }
 }
 
-void addBtagWeight (Jet& jet, float& weight){
-  double pt = jet.pt();
-  double eta = jet.eta();
-  string flavor = jet.extendedFlavour();
+void addBtagWeight (Jet* jet, float& weight){
+  double pt = jet->pt();
+  double eta = jet->eta();
+  string flavor = jet->extendedFlavour();
 
   string etarange = "0.0-0.5";
   if (eta >= 0.5 && eta < 1.0) etarange = "0.5-1.0";
@@ -1133,6 +1152,8 @@ void addBtagWeight (Jet& jet, float& weight){
 
   string graphname = ("btag_eff_deepflavour_medium_" + flavor + "_pt_eta_" + etarange).c_str();
   TGraphAsymmErrors* evalgraph = (TGraphAsymmErrors*)btagweightfile -> Get(graphname.c_str());
+
+  cout << "B tag weight: " << evalgraph->Eval(pt) << endl;
 
   weight *= evalgraph->Eval(pt);
 }
