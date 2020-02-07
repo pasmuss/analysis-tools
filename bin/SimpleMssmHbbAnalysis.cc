@@ -460,7 +460,6 @@ int main(int argc, char * argv[])
       if(isMC_ && sgweight > 0) ++nweigh[4];
       else if(isMC_ && sgweight < 0) --nweigh[4];
       
-      
       // Fill histograms of kinematic passed events
       for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
 	{
@@ -486,7 +485,6 @@ int main(int argc, char * argv[])
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
-	  cout << "b tagging Jet " << j+1 << endl;
 	  h1[Form("pt_%i",j)]   -> Fill(jet->pt());
 	  h1[Form("eta_%i",j)]  -> Fill(jet->eta());
 	  h1[Form("phi_%i",j)]  -> Fill(jet->phi());
@@ -504,7 +502,6 @@ int main(int argc, char * argv[])
 	  else return -1;
 
 	  if (isMC_){
-	    cout << "Eventweight before anything: " << eventweight << endl;
 	    if (usebtagsf_){
 	      //offline b tag sf
 	      float jet_btag_sf = jet -> btagSF(bsf_reader);
@@ -537,10 +534,7 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
-	  cout << "Event weight after sf: " << eventweight << endl;
-
 	  if (!usebtagweights_){
-	    cout << "Using cuts" << endl;
 	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
@@ -603,38 +597,36 @@ int main(int argc, char * argv[])
 	    }//other btag wp for leading two jets
 	  }//if not usebtagweights
 	  else{//if usebtagweights
-	    cout << "Using weights" << endl;
-	    if (!(regions == "3j" || regions == "4j3")){
+	    /*if (!(regions == "3j" || regions == "4j3")){
 	      cout << "Use of b tag weights only implemented for regions '3j' and '4j3' so far. Please use either of them or implement the use for the region you want to use. Aborting." << endl;
 	      break;
 	    }
-	    else{//3j or 4j3
-	      if (!signalregion_){//CR
-		cout << "CR" << endl;
-		cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() << " " << btagdisc << endl;
-		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
-		//else if (j < 2){
-		addBtagWeight(jet, eventweight);
-		cout << "Event weight after b tagging: " << eventweight << endl;
-		  //}
-	      }//CR
-	      else{//SR
-		cout << "SR" << endl;
-		cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() <<" " << btagdisc << endl;
-		//if (j <= 2 && regions == "3j"){
-		addBtagWeight(jet, eventweight);
-		cout <<"Event weight after b tagging: " << eventweight<< endl;
-		  //	}
-		  //else if (j <= 3 && regions == "4j3"){
-		  //addBtagWeight(*jet, eventweight);
-		  //}
-		  //else {cout << "Unknown region for b tag weighting! Aborting" << endl; break;}
-	      }//SR
-	    }//3j or 4j3
+	    else{//3j or 4j3*/
+	    //if (!signalregion_){//CR
+	      //cout << "CR" << endl;
+	      //cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() << " " << btagdisc << endl;
+	      //if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
+	      //else if (j < 2){
+	      //addBtagWeight(jet, eventweight);
+	      //cout << "Event weight after b tagging: " << eventweight << endl;
+	      //}
+	    //}//CR
+	    //else{//SR
+	      //cout << "SR" << endl;
+	      //cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() <<" " << btagdisc << endl;
+	      //if (j <= 2 && regions == "3j"){
+	    addBtagWeight(jet, eventweight);
+	      //cout <<"Event weight after b tagging: " << eventweight<< endl;
+	      //	}
+	      //else if (j <= 3 && regions == "4j3"){
+	      //addBtagWeight(*jet, eventweight);
+	      //}
+	      //else {cout << "Unknown region for b tag weighting! Aborting" << endl; break;}
+	      // }//SR
+	    //}//3j or 4j3
 	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
       if ( ! goodEvent ) continue;
-      cout << "Event passed b tagging procedure." << endl;
       ++nsel[5];
       if(isMC_ && sgweight > 0) ++nweigh[5];
       else if(isMC_ && sgweight < 0) --nweigh[5];
@@ -643,7 +635,7 @@ int main(int argc, char * argv[])
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
       
       // Is matched?
-      analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
+      /*analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
       
       //last step of cutflow for MC: trigger
@@ -652,7 +644,7 @@ int main(int argc, char * argv[])
 	if ( !triggerFired ) continue;
 	//++nsel[7];
       }
-
+      
       for ( int j = 0; j < 2; ++j )
 	{
 	  Jet * jet = selectedJets[j];
@@ -676,7 +668,7 @@ int main(int argc, char * argv[])
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
       else if(isMC_ && sgweight < 0) --nweigh[6];
-
+*/
       //FSR recovery
       for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
 	{
@@ -722,7 +714,7 @@ int main(int argc, char * argv[])
 	    float dR_muj0 = selectedJets[0]->deltaR(*muon);
 	    float dR_muj1 = selectedJets[1]->deltaR(*muon);
 	    
-	    if ( dR_muj0 < drmax_  || dR_muj1 < drmax_) //at least 1 muon in a jet originating from the Higgs
+	    if ( dR_muj0 < drmax_ || dR_muj1 < drmax_ ) //at least 1 muon in a jet originating from the Higgs
 	      {
 		muonpresent  = true;
 		MuonsinJet.push_back(muon);
@@ -837,7 +829,7 @@ int main(int argc, char * argv[])
           else mbbw[i] = mbb_sel;
 	}
 
-
+      
       if ( !signalregion_ || isMC_)//blinding
 	{ 
 	  h1["m12_aac"] -> Fill(mbb_sel,eventweight); //unprescaled
@@ -882,7 +874,7 @@ int main(int argc, char * argv[])
 	//jet trig eff weight
 	double eventweight_jet_trigeff_up   = eventweight * trigger_weight_up   / trigger_weight;
 	double eventweight_jet_trigeff_down = eventweight * trigger_weight_down / trigger_weight;
-
+	
 	//PU
 	h1["m12_aac_PU_up"]   -> Fill(mbb_sel, eventweight_PU_up   );
 	h1["m12_aac_PU_down"] -> Fill(mbb_sel, eventweight_PU_down );
@@ -916,9 +908,9 @@ int main(int argc, char * argv[])
 	m12_vars["m12_jet_trigeff_up"]->Fill();
 	weight = eventweight_jet_trigeff_down;
 	m12_vars["m12_jet_trigeff_down"]->Fill();
-
+	
 	weight = eventweight;
-
+	
 	//JER
 	Jet * j0 = selectedJets[0];
 	Jet * j1 = selectedJets[1];
@@ -977,7 +969,7 @@ int main(int argc, char * argv[])
 	h1["j0_JER_diff"] -> Fill( j0_JER_up->pt()-j0_JER_down->pt() );
 	h1["j1_JER_diff"] -> Fill( j1_JER_up->pt()-j1_JER_down->pt() );
 	h1["m12_JER_diff"] -> Fill( (j0_JER_up->p4() + j1_JER_up->p4()).M() - (j0_JER_down->p4() + j1_JER_down->p4()).M() );
-	
+		
       }
     }//end: event loop
 
@@ -1080,10 +1072,10 @@ int main(int argc, char * argv[])
         }
     }
   }
-  /* else if (isMC_){
-     for ( int i = 0; i < 8; ++i )
-     {
-     fracAbs[i] = double(nsel[i])/nsel[0];
+  /*else if (isMC_){
+    for ( int i = 0; i < 8; ++i )
+      {
+	fracAbs[i] = double(nsel[i])/nsel[0];
      if ( i>0 )
      fracRel[i] = double(nsel[i])/nsel[i-1];
      else
@@ -1153,7 +1145,7 @@ void addBtagWeight (Jet* jet, float& weight){
   string graphname = ("btag_eff_deepflavour_medium_" + flavor + "_pt_eta_" + etarange).c_str();
   TGraphAsymmErrors* evalgraph = (TGraphAsymmErrors*)btagweightfile -> Get(graphname.c_str());
 
-  cout << "B tag weight: " << evalgraph->Eval(pt) << endl;
+  //cout << "B tag weight: " << evalgraph->Eval(pt) << endl;
 
   weight *= evalgraph->Eval(pt);
 }
