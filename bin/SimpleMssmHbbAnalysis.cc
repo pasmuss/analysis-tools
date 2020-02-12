@@ -1,3 +1,4 @@
+
 #include "boost/program_options.hpp"
 #include "boost/algorithm/string.hpp"
 #include <string>
@@ -323,14 +324,14 @@ int main(int argc, char * argv[])
       float puweight = 0;
       float pudown = 0;
       float puup = 0;
-
+      
       if (isMC_){
 	puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
 	eventweight *= puweight;
 	pudown = puweights->weight(analysis.nTruePileup(),-2);
 	puup = puweights->weight(analysis.nTruePileup(),+2);
       }
-
+      
       int window = 0;
       
       if ( i > 0 && i%100000==0 ){
@@ -507,6 +508,7 @@ int main(int argc, char * argv[])
 	  if (isMC_){
 	    if (usebtagsf_){
 	      //offline b tag sf
+	      if (!usebtagweights_){//offline b tag sf is included in weights
 	      float jet_btag_sf = jet -> btagSF(bsf_reader);
 	      eventweight *= jet_btag_sf;
 	      jet_offl_sf_cent *= jet_btag_sf;
@@ -514,8 +516,9 @@ int main(int argc, char * argv[])
 	      jet_offl_sf_up *= jet_btag_sf_up;
 	      float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,2);
 	      jet_offl_sf_down *= jet_btag_sf_down;
+	      }
 	      //online b tag sf
-	      if (btagalgo == "deepflavour"){
+	      /*if (btagalgo == "deepflavour"){
 		if ( j == 0 || j == 1){
 		  float pt = jet->pt();
 		  float onl_sf = 0.852 - (pt * 0.0000616);
@@ -529,7 +532,7 @@ int main(int argc, char * argv[])
 		  th2_pT_onlbtagsf -> Fill(pt,onl_sf);
 		}
 	      }
-	      else cout << "Can not calculate online b tag sf for any algorithm other than deepflavour (deepJet)." << endl;
+	      else cout << "Can not calculate online b tag sf for any algorithm other than deepflavour (deepJet)." << endl;*/
 	    }
 	    if (j==0){	      
 	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
@@ -600,33 +603,19 @@ int main(int argc, char * argv[])
 	    }//other btag wp for leading two jets
 	  }//if not usebtagweights
 	  else{//if usebtagweights
-	    /*if (!(regions == "3j" || regions == "4j3")){
+	    if (!(regions == "3j" || regions == "4j3")){
 	      cout << "Use of b tag weights only implemented for regions '3j' and '4j3' so far. Please use either of them or implement the use for the region you want to use. Aborting." << endl;
 	      break;
 	    }
-	    else{//3j or 4j3*/
-	    //if (!signalregion_){//CR
-	      //cout << "CR" << endl;
-	      //cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() << " " << btagdisc << endl;
-	      //if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
-	      //else if (j < 2){
-	      //addBtagWeight(jet, eventweight);
-	      //cout << "Event weight after b tagging: " << eventweight << endl;
-	      //}
-	    //}//CR
-	    //else{//SR
-	      //cout << "SR" << endl;
-	      //cout << "pt/eta/flavor/disc: " << jet->pt() << " " << jet->eta() << " " << jet->extendedFlavour() <<" " << btagdisc << endl;
-	      //if (j <= 2 && regions == "3j"){
-	    addBtagWeight(jet, eventweight);
-	      //cout <<"Event weight after b tagging: " << eventweight<< endl;
-	      //	}
-	      //else if (j <= 3 && regions == "4j3"){
-	      //addBtagWeight(*jet, eventweight);
-	      //}
-	      //else {cout << "Unknown region for b tag weighting! Aborting" << endl; break;}
-	      // }//SR
-	    //}//3j or 4j3
+	    else{//3j or 4j3
+	      if (!signalregion_){//CR
+		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
+		addBtagWeight(jet, eventweight);
+	      }//CR
+	      else{//SR
+		addBtagWeight(jet, eventweight);
+	      }//SR
+	    }//3j or 4j3
 	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
       if ( ! goodEvent ) continue;
@@ -636,42 +625,43 @@ int main(int argc, char * argv[])
       double HT_after_bTag = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
-      
+              
       // Is matched?
-      analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
+      if (!isMC_) analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
-      
+      /*
       //last step of cutflow for MC: trigger
       if(isMC_ || invertCutflow_){
 	int triggerFired = analysis.triggerResult(hltPath_);
 	if ( !triggerFired ) continue;
 	//++nsel[7];
       }
-      
-      for ( int j = 0; j < 2; ++j )
-	{
-	  Jet * jet = selectedJets[j];
-	  for ( size_t io = 0; io < triggerObjects_.size(); ++io )
-	    {
-	      if (run > run_crit && io == 0) continue;
-	      else if (run <= run_crit && io == 1) continue;
+      */
+      if (!isMC_){//if data (currently not using trigger and matching for MC)
+	for ( int j = 0; j < 2; ++j )
+	  {
+	    Jet * jet = selectedJets[j];
+	    for ( size_t io = 0; io < triggerObjects_.size(); ++io )
+	      {
+		if (run > run_crit && io == 0) continue;
+		else if (run <= run_crit && io == 1) continue;
 	      if ( ! jet->matched(triggerObjects_[io]) ) matched[io] = false;
-	    }
-	}
-      
-      for ( size_t io = 0; io < triggerObjects_.size(); ++io )
-	{
-	  if ((run > run_crit && io == 0) || isMC_) continue;
-	  else if (run <= run_crit && io == 1) continue;
-	  if ( matched[io] ) ++nmatch[io];
-	  goodEvent = ( goodEvent && matched[io] );
-	}
+	      }
+	  }
+	for ( size_t io = 0; io < triggerObjects_.size(); ++io )
+	  {
+	    if ((run > run_crit && io == 0) || isMC_) continue;
+	    else if (run <= run_crit && io == 1) continue;
+	    if ( matched[io] ) ++nmatch[io];
+	    goodEvent = ( goodEvent && matched[io] );
+	  }
+      }//if data
       
       if ( ! goodEvent ) continue;
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
       else if(isMC_ && sgweight < 0) --nweigh[6];
-
+      
       //FSR recovery
       for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
 	{
@@ -747,7 +737,7 @@ int main(int argc, char * argv[])
 
       // Add weight for trigger turn-on (MC only)
       // To be done for first TWO jets (both are triggered)
-
+      /*    
       double trigger_weight_up = 1;
       double trigger_weight_down = 1;
       double trigger_weight = 1;
@@ -782,7 +772,7 @@ int main(int argc, char * argv[])
 	  eventweight *= triggersf;
 	}
       }
-
+      AS LONG AS TRIGGER IS NOT USED: NO TURN-ON SF NEEDED AS WELL*/
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
@@ -875,39 +865,39 @@ int main(int argc, char * argv[])
 	    eventweight_PU_down = 0;
 	  }
 	//Offbtag
-	double eventweight_offbtag_up   = eventweight * jet_offl_sf_up   / jet_offl_sf_cent;
-	double eventweight_offbtag_down = eventweight * jet_offl_sf_down / jet_offl_sf_cent;
+	/*double eventweight_offbtag_up   = eventweight * jet_offl_sf_up   / jet_offl_sf_cent;
+	  double eventweight_offbtag_down = eventweight * jet_offl_sf_down / jet_offl_sf_cent;*/
 	//Onlbtag
-	double eventweight_onlbtag_up   = eventweight * jet_onl_sf_up   / jet_onl_sf_cent;
+	/*double eventweight_onlbtag_up   = eventweight * jet_onl_sf_up   / jet_onl_sf_cent;
 	double eventweight_onlbtag_down = eventweight * jet_onl_sf_down / jet_onl_sf_cent;
 	//jet trig eff weight
 	double eventweight_jet_trigeff_up   = eventweight * trigger_weight_up   / trigger_weight;
 	double eventweight_jet_trigeff_down = eventweight * trigger_weight_down / trigger_weight;
-	
+	*/ // ONLINE B TAG AND TRIGGER SF BOTH RELATED TO CURRENTLY NOT USED TRIGGER
 	//PU
 	h1["m12_aac_PU_up"]   -> Fill(mbb_sel, eventweight_PU_up   );
 	h1["m12_aac_PU_down"] -> Fill(mbb_sel, eventweight_PU_down );
 	//Offline btag
-	h1["m12_aac_SFbtag_up"]   -> Fill(mbb_sel, eventweight_offbtag_up  );
-	h1["m12_aac_SFbtag_down"] -> Fill(mbb_sel, eventweight_offbtag_down);
+	/*	h1["m12_aac_SFbtag_up"]   -> Fill(mbb_sel, eventweight_offbtag_up  );
+		h1["m12_aac_SFbtag_down"] -> Fill(mbb_sel, eventweight_offbtag_down);*/
 	//Online btag
-	h1["m12_aac_onlSFbtag_up"]   -> Fill(mbb_sel, eventweight_onlbtag_up  );
+	/*h1["m12_aac_onlSFbtag_up"]   -> Fill(mbb_sel, eventweight_onlbtag_up  );
 	h1["m12_aac_onlSFbtag_down"] -> Fill(mbb_sel, eventweight_onlbtag_down);
 	//Jet trig eff
 	h1["m12_aac_jet_trigeff_up"]   -> Fill(mbb_sel, eventweight_jet_trigeff_up   );
 	h1["m12_aac_jet_trigeff_down"] -> Fill(mbb_sel, eventweight_jet_trigeff_down );
-
+	CURRENTLY NOT NEEDED (TRIGGER RELATED); OFFLINE B TAG USED FOR CUT BASED APPROACH*/
 	//Fill trees
 	weight = eventweight_PU_up;
 	m12_vars["m12_PU_up"]->Fill();
 	weight = eventweight_PU_down;
 	m12_vars["m12_PU_down"]->Fill();
-
+	/*
 	weight = eventweight_offbtag_up;
 	m12_vars["m12_SFbtag_up"]->Fill();
 	weight = eventweight_offbtag_down;
-	m12_vars["m12_SFbtag_down"]->Fill();
-
+	m12_vars["m12_SFbtag_down"]->Fill();*/
+	/*
 	weight = eventweight_onlbtag_up;
 	m12_vars["m12_onlSFbtag_up"]->Fill();
 	weight = eventweight_onlbtag_down;
@@ -917,7 +907,7 @@ int main(int argc, char * argv[])
 	m12_vars["m12_jet_trigeff_up"]->Fill();
 	weight = eventweight_jet_trigeff_down;
 	m12_vars["m12_jet_trigeff_down"]->Fill();
-	
+	*/
 	weight = eventweight;
 	
 	//JER
