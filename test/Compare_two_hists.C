@@ -22,14 +22,14 @@ void Compare_two_hists(){
   ///
   /// Files (ratio is taken file2/file1 in the end)
   ///
-  TFile* file_1 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_JSONforPFjet100NotPrescaled_apartSameAsNov12-19_Jan30-20/rereco/rereco-CDEF-deep-CR.root","READ");
-  TFile* file_2 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/rereco/rereco-CDEF-deep-SR-3j.root","READ");
+  TFile* file_1 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_btagcuts_notrigger-onlyofflbtagsf_Feb13-20/mcbg/MCbg-QCD-m12_aac-2017CDEF-CR-3j.root","READ");
+  TFile* file_2 = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_btagweights_notriggernosf_Feb13-20/mcbg/MCbg-QCD-m12_aac-2017CDEF-CR-3j.root","READ");
   
   ///
   /// histograms
   ///
-  TH1F* hist_1 = (TH1F*)file_1 -> Get("pt_0_aac");
-  TH1F* hist_2 = (TH1F*)file_2 -> Get("pt_0_aac");
+  TH1F* hist_1 = (TH1F*)file_1 -> Get("hist_output_ges");
+  TH1F* hist_2 = (TH1F*)file_2 -> Get("hist_output_ges");
 
   hist_1 -> Rebin(1);
   hist_2 -> Rebin(1);
@@ -65,13 +65,13 @@ void Compare_two_hists(){
   rp -> GetUpperRefYaxis() -> SetTitleOffset(1.05);
   rp -> GetLowerRefXaxis() -> SetTitleOffset(1.0);
 
-  rp -> GetLowerRefYaxis() -> SetRangeUser(5,15);
-  rp -> GetUpperRefYaxis() -> SetRangeUser(1,10000000);
-  rp -> GetLowerRefYaxis() -> SetTitle("bbnb/bbnbb");// file2/file1
+  rp -> GetLowerRefYaxis() -> SetRangeUser(0.01,1.99);
+  rp -> GetUpperRefYaxis() -> SetRangeUser(1,1000000);
+  rp -> GetLowerRefYaxis() -> SetTitle("weights/cuts");// file2/file1
   rp -> GetLowerRefYaxis() -> SetTitleSize(0.035);
   rp -> GetLowerRefYaxis() -> SetTitleOffset(1.6);
-  rp -> GetLowerRefXaxis() -> SetRangeUser(100,1000);
-  rp -> GetUpperRefXaxis() -> SetRangeUser(100,1000);
+  rp -> GetLowerRefXaxis() -> SetRangeUser(100,2000);
+  rp -> GetUpperRefXaxis() -> SetRangeUser(100,2000);
 
   rp -> SetUpTopMargin(0.03);
   rp -> SetLowBottomMargin(0.4);
@@ -79,11 +79,11 @@ void Compare_two_hists(){
   rp -> SetLeftMargin(0.12);
   rp -> SetSeparationMargin(0.02);
 
-  TLegend* leg = new TLegend(0.26,0.72,0.66,0.91);
+  TLegend* leg = new TLegend(0.58,0.72,0.98,0.91);
   style.SetLegendStyle(leg);
   //leg -> SetBorderSize(1);
-  leg -> AddEntry(hist_2,"m_{12}, bbb (data)","L");
-  leg -> AddEntry(hist_1,"m_{12}, bbnbb (data)","L");
+  leg -> AddEntry(hist_2,"m_{12}, weights","L");
+  leg -> AddEntry(hist_1,"m_{12}, cuts","L");
   leg -> SetTextSize(0.04);
 
   rp -> GetUpperPad() -> cd();
@@ -93,5 +93,5 @@ void Compare_two_hists(){
   // CMSPrelim( "Simulation" , "Work in progress", 0.18, 0.77);
 
   can -> Update();
-  can -> SaveAs("Outputdata/comp_bbb_bbnbb_3-4b_pt0aac_05022020-1720.pdf");
+  can -> SaveAs("Outputdata/CutsVsWeights_Feb13-20/comp_cuts-weights-m12_aac_nosf_notrigger_fullHT_3bCR_20200213-1730.pdf");
 }

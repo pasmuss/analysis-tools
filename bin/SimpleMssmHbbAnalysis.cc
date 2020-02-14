@@ -609,8 +609,8 @@ int main(int argc, char * argv[])
 	    }
 	    else{//3j or 4j3
 	      if (!signalregion_){//CR
-		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
-		addBtagWeight(jet, eventweight);
+		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must not be b tagged + no nb weight
+		if (j != 2) addBtagWeight(jet, eventweight);//1st/2nd and, if it is there, 4th jet weighted (would be b tagged in cut based approach)
 	      }//CR
 	      else{//SR
 		addBtagWeight(jet, eventweight);
