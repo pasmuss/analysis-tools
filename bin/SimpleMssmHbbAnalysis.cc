@@ -508,14 +508,14 @@ int main(int argc, char * argv[])
 	  if (isMC_){
 	    if (usebtagsf_){
 	      //offline b tag sf
-	      if (!usebtagweights_){//offline b tag sf is included in weights
-	      float jet_btag_sf = jet -> btagSF(bsf_reader);
-	      eventweight *= jet_btag_sf;
-	      jet_offl_sf_cent *= jet_btag_sf;
-	      float jet_btag_sf_up = jet -> btagSFup(bsf_reader,2);
-	      jet_offl_sf_up *= jet_btag_sf_up;
-	      float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,2);
-	      jet_offl_sf_down *= jet_btag_sf_down;
+	      if (!usebtagweights_ && (j!=2 || signalregion_) ){//offline b tag sf is included in weights
+		float jet_btag_sf = jet -> btagSF(bsf_reader);
+		eventweight *= jet_btag_sf;
+		jet_offl_sf_cent *= jet_btag_sf;
+		float jet_btag_sf_up = jet -> btagSFup(bsf_reader,2);
+		jet_offl_sf_up *= jet_btag_sf_up;
+		float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,2);
+		jet_offl_sf_down *= jet_btag_sf_down;
 	      }
 	      //online b tag sf
 	      /*if (btagalgo == "deepflavour"){
