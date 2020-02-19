@@ -540,8 +540,9 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
+	  if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+
 	  if (!usebtagweights_){
-	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
@@ -610,10 +611,10 @@ int main(int argc, char * argv[])
 	    else{//3j or 4j3
 	      if (!signalregion_){//CR
 		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must not be b tagged + no nb weight
-		if (j != 2) addBtagWeight(jet, eventweight);//1st/2nd and, if it is there, 4th jet weighted (would be b tagged in cut based approach)
+		//if (j != 2) addBtagWeight(jet, eventweight);//1st/2nd and, if it is there, 4th jet weighted (would be b tagged in cut based approach)
 	      }//CR
 	      else{//SR
-		addBtagWeight(jet, eventweight);
+		if (j == 2) addBtagWeight(jet, eventweight);
 	      }//SR
 	    }//3j or 4j3
 	  }//end: if usebtagweights
