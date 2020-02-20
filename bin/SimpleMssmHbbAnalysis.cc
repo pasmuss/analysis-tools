@@ -540,9 +540,10 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
-	  if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+	  if (j < 2) addBtagWeight(jet, eventweight);
 
 	  if (!usebtagweights_){
+	    //if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
