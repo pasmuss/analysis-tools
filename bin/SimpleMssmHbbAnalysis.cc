@@ -1,4 +1,3 @@
-
 #include "boost/program_options.hpp"
 #include "boost/algorithm/string.hpp"
 #include <string>
@@ -31,6 +30,7 @@ void addBtagWeight (Jet* jet, float& weight);
 // Systematic variations
 std::vector<std::string> systematics = { "PU", "SFbtag", "onlSFbtag", "JER", "JES", "jet_trigeff" };
 std::vector<std::string> vars = { "up", "down" };
+std::vector<std::string> flavors = { "b", "bb", "c", "cc", "udsg" };
 
 // b tag weight file
 TFile* btagweightfile = new TFile("/afs/desy.de/user/a/asmusspa/Documents/CMSSW_9_2_15/src/Analysis/Tools/data/btag_eff_deepflavour_medium_pt_eta_flavour.root","READ");
@@ -172,6 +172,23 @@ int main(int argc, char * argv[])
       h1[Form("deepflavourbtag_%i_aac",i)] = new TH1F(Form("deepflavourbtag_%i_aac",i) , "" , 600,  0,  1.2);  
 
       h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
+
+      //for flavors
+      for (unsigned int f = 0; f < flavors.size(); f++){
+	h1[Form("pt_%i_%s",i,(flavors[f]).c_str())]                  = new TH1F(Form("pt_%i_%s",i,(flavors[f]).c_str())                  , "" , 210, 0, 2100);
+	h1[Form("eta_%i_%s",i,(flavors[f]).c_str())]                 = new TH1F(Form("eta_%i_%s",i,(flavors[f]).c_str())                 , "" , 120, -6, 6);
+	h1[Form("phi_%i_%s",i,(flavors[f]).c_str())]                 = new TH1F(Form("phi_%i_%s",i,(flavors[f]).c_str())                 , "" , 120, -6, 6);
+	h1[Form("deepflavourbtag_%i_%s",i,(flavors[f]).c_str())]     = new TH1F(Form("deepflavourbtag_%i_%s",i,(flavors[f]).c_str())     , "" , 600, 0, 1.2);
+	h1[Form("pt_%i_%s_csv",i,(flavors[f]).c_str())]              = new TH1F(Form("pt_%i_%s_csv",i,(flavors[f]).c_str())              , "" , 210, 0, 2100);
+	h1[Form("eta_%i_%s_csv",i,(flavors[f]).c_str())]             = new TH1F(Form("eta_%i_%s_csv",i,(flavors[f]).c_str())             , "" , 120, -6, 6);
+	h1[Form("phi_%i_%s_csv",i,(flavors[f]).c_str())]             = new TH1F(Form("phi_%i_%s_csv",i,(flavors[f]).c_str())             , "" , 120, -6, 6);
+	h1[Form("deepflavourbtag_%i_%s_csv",i,(flavors[f]).c_str())] = new TH1F(Form("deepflavourbtag_%i_%s_csv",i,(flavors[f]).c_str()) , "" , 600, 0, 1.2);
+	h1[Form("pt_%i_%s_aac",i,(flavors[f]).c_str())]              = new TH1F(Form("pt_%i_%s_aac",i,(flavors[f]).c_str())              , "" , 210,  0, 2100);
+	h1[Form("eta_%i_%s_aac",i,(flavors[f]).c_str())]             = new TH1F(Form("eta_%i_%s_aac",i,(flavors[f]).c_str())             , "" , 120, -6,    6);
+	h1[Form("phi_%i_%s_aac",i,(flavors[f]).c_str())]             = new TH1F(Form("phi_%i_%s_aac",i,(flavors[f]).c_str())             , "" , 120, -6, 6);
+	h1[Form("deepflavourbtag_%i_%s_aac",i,(flavors[f]).c_str())] = new TH1F(Form("deepflavourbtag_%i_%s_aac",i,(flavors[f]).c_str()) , "" , 600,  0,  1.2);
+      }
+      
     }
   h1["m12_noCuts"]        = new TH1F("m12_noCuts"        , "" , 150, 0, 3000);
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
@@ -497,6 +514,15 @@ int main(int argc, char * argv[])
 	  h1[Form("deepflavourbtag_%i",j)] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
 
 	  h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
+
+	  for (unsigned int f = 0; f < flavors.size(); f++){
+	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
+	      h1[Form("pt_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->pt());
+	      h1[Form("eta_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->eta());
+	      h1[Form("phi_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->phi());
+	      h1[Form("deepflavourbtag_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
+	    }
+	  }
 	  
 	  float btagdisc;
 
@@ -782,8 +808,16 @@ int main(int argc, char * argv[])
 	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag("btag_csvivf"),eventweight);
 	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"),eventweight);
 	  h1[Form("deepflavourbtag_%i_csv",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
+	  
+	  for (unsigned int f = 0; f < flavors.size(); f++){
+	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
+	      h1[Form("pt_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->pt());
+	      h1[Form("eta_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->eta());
+	      h1[Form("phi_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->phi());
+	      h1[Form("deepflavourbtag_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
+	    }
+	  }
 	}
-
       mbb_sel = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
 
       if (m12min_ > 0 && mbb_sel < m12min_) goodEvent = false;
@@ -815,7 +849,15 @@ int main(int argc, char * argv[])
           h1[Form("pt_%i_aac",j)]   -> Fill(jet->pt(),eventweight);
           h1[Form("eta_%i_aac",j)]  -> Fill(jet->eta(),eventweight);
           h1[Form("deepflavourbtag_%i_aac",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
-        }
+	  for (unsigned int f = 0; f < flavors.size(); f++){
+	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
+	      h1[Form("pt_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->pt());
+	      h1[Form("eta_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->eta());
+	      h1[Form("phi_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->phi());
+	      h1[Form("deepflavourbtag_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
+	    }
+	  }
+	}
 
       if ( ! isMC_ && ! signalregion_ ){
 	applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  );
