@@ -111,6 +111,8 @@ int main(int argc, char * argv[])
   TH2F* th2_pT_onlbtagsf = new TH2F("th2_pT_onlbtagsf", "", 210, 0, 210, 400, -2, 2);
    
   std::map<std::string, TH1F*> h1;
+  std::map<std::string, TH2F*> h2;
+
   h1["noofevents_h"]      = new TH1F("noofevents_h"     , "" ,   10,  0,    10);
   h1["noofevents_w_nlo"]  = new TH1F("noofevents_w_nlo" , "" ,   10,  0,    10);
   h1["n"]                 = new TH1F("n"                , "" ,   30,  0,    30);
@@ -157,6 +159,8 @@ int main(int argc, char * argv[])
       h1[Form("btag_%i",i)]        = new TH1F(Form("btag_%i",i)        , "" , 600, 0, 1.2);
       h1[Form("deepcsvbtag_%i",i)] = new TH1F(Form("deepcsvbtag_%i",i) , "" , 600, 0, 1.2);
       h1[Form("deepflavourbtag_%i",i)] = new TH1F(Form("deepflavourbtag_%i",i) , "" , 600, 0, 1.2);
+
+      h2[Form("pt_eta_%i",i)] = new TH2F(Form("pt_eta_%i",i), "" , 210, 0, 2100, 120, -6, 6);
       
       //after b tagging
       h1[Form("pt_%i_csv",i)]     = new TH1F(Form("pt_%i_csv",i)               , "" , 210, 0, 2100);
@@ -166,12 +170,16 @@ int main(int argc, char * argv[])
       h1[Form("deepcsvbtag_%i_csv",i)] = new TH1F(Form("deepcsvbtag_%i_csv",i) , "" , 600, 0, 1.2);
       h1[Form("deepflavourbtag_%i_csv",i)] = new TH1F(Form("deepflavourbtag_%i_csv",i) , "" , 600, 0, 1.2);
 
+      h2[Form("pt_eta_%i_csv",i)] = new TH2F(Form("pt_eta_%i_csv",i), "" , 210, 0, 2100, 120, -6, 6);
+
       //after all cuts (including m12)
       h1[Form("pt_%i_aac",i)]              = new TH1F(Form("pt_%i_aac",i)              , "" , 210,  0, 2100);
       h1[Form("eta_%i_aac",i)]             = new TH1F(Form("eta_%i_aac",i)             , "" , 120, -6,    6);
-      h1[Form("deepflavourbtag_%i_aac",i)] = new TH1F(Form("deepflavourbtag_%i_aac",i) , "" , 600,  0,  1.2);  
+      h1[Form("deepflavourbtag_%i_aac",i)] = new TH1F(Form("deepflavourbtag_%i_aac",i) , "" , 600,  0,  1.2);
 
       h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
+
+      h2[Form("pt_eta_%i_aac",i)] = new TH2F(Form("pt_eta_%i_aac",i), "" , 210, 0, 2100, 120, -6, 6);
 
       //for flavors
       for (unsigned int f = 0; f < flavors.size(); f++){
@@ -187,6 +195,10 @@ int main(int argc, char * argv[])
 	h1[Form("eta_%i_%s_aac",i,(flavors[f]).c_str())]             = new TH1F(Form("eta_%i_%s_aac",i,(flavors[f]).c_str())             , "" , 120, -6,    6);
 	h1[Form("phi_%i_%s_aac",i,(flavors[f]).c_str())]             = new TH1F(Form("phi_%i_%s_aac",i,(flavors[f]).c_str())             , "" , 120, -6, 6);
 	h1[Form("deepflavourbtag_%i_%s_aac",i,(flavors[f]).c_str())] = new TH1F(Form("deepflavourbtag_%i_%s_aac",i,(flavors[f]).c_str()) , "" , 600,  0,  1.2);
+
+	h2[Form("pt_eta_%i_%s",i,(flavors[f]).c_str())]     = new TH2F(Form("pt_eta_%i_%s",i,(flavors[f]).c_str()), "" , 210, 0, 2100, 120, -6, 6);
+	h2[Form("pt_eta_%i_%s_csv",i,(flavors[f]).c_str())] = new TH2F(Form("pt_eta_%i_%s_csv",i,(flavors[f]).c_str()), "" , 210, 0, 2100, 120, -6, 6);
+	h2[Form("pt_eta_%i_%s_aac",i,(flavors[f]).c_str())] = new TH2F(Form("pt_eta_%i_%s_aac",i,(flavors[f]).c_str()), "" , 210, 0, 2100, 120, -6, 6);
       }
       
     }
@@ -512,15 +524,15 @@ int main(int argc, char * argv[])
 	  h1[Form("btag_%i",j)] -> Fill(jet->btag("btag_csvivf"));
 	  h1[Form("deepcsvbtag_%i",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
 	  h1[Form("deepflavourbtag_%i",j)] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
-
 	  h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
-
+	  h2[Form("pt_eta_%i",i)] -> Fill(jet->pt(),jet->eta());
 	  for (unsigned int f = 0; f < flavors.size(); f++){
 	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
 	      h1[Form("pt_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->pt());
 	      h1[Form("eta_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->eta());
 	      h1[Form("phi_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->phi());
 	      h1[Form("deepflavourbtag_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
+	      h2[Form("pt_eta_%i_%s",i,(flavors[f]).c_str())] -> Fill(jet->pt(),jet->eta());
 	    }
 	  }
 	  
@@ -808,13 +820,14 @@ int main(int argc, char * argv[])
 	  h1[Form("btag_%i_csv",j)] -> Fill(jet->btag("btag_csvivf"),eventweight);
 	  h1[Form("deepcsvbtag_%i_csv",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"),eventweight);
 	  h1[Form("deepflavourbtag_%i_csv",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
-	  
+	  h2[Form("pt_eta_%i_csv",j)] -> Fill(jet->pt(),jet->eta(),eventweight);
 	  for (unsigned int f = 0; f < flavors.size(); f++){
 	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
-	      h1[Form("pt_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->pt());
-	      h1[Form("eta_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->eta());
-	      h1[Form("phi_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->phi());
-	      h1[Form("deepflavourbtag_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
+	      h1[Form("pt_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->pt(),eventweight);
+	      h1[Form("eta_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->eta(),eventweight);
+	      h1[Form("phi_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->phi(),eventweight);
+	      h1[Form("deepflavourbtag_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"),eventweight);
+	      h2[Form("pt_eta_%i_%s_csv",j,(flavors[f]).c_str())] -> Fill(jet->pt(),jet->eta(),eventweight);
 	    }
 	  }
 	}
@@ -849,12 +862,15 @@ int main(int argc, char * argv[])
           h1[Form("pt_%i_aac",j)]   -> Fill(jet->pt(),eventweight);
           h1[Form("eta_%i_aac",j)]  -> Fill(jet->eta(),eventweight);
           h1[Form("deepflavourbtag_%i_aac",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
+	  h2[Form("pt_eta_%i_aac",j)] -> Fill(jet->pt(),jet->eta(),eventweight);
+	  
 	  for (unsigned int f = 0; f < flavors.size(); f++){
 	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
-	      h1[Form("pt_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->pt());
-	      h1[Form("eta_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->eta());
-	      h1[Form("phi_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->phi());
-	      h1[Form("deepflavourbtag_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
+	      h1[Form("pt_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->pt(),eventweight);
+	      h1[Form("eta_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->eta(),eventweight);
+	      h1[Form("phi_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->phi(),eventweight);
+	      h1[Form("deepflavourbtag_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"),eventweight);
+	      h2[Form("pt_eta_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->pt(),jet->eta(),eventweight);
 	    }
 	  }
 	}
