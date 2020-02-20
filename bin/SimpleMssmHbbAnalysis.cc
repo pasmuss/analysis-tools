@@ -9,6 +9,7 @@
 #include "TFileCollection.h"
 #include "TChain.h"
 #include "TH1.h" 
+#include "TH2.h"
 #include "TRandom3.h"
 #include "TLorentzVector.h"
 #include "TGraphAsymmErrors.h"
