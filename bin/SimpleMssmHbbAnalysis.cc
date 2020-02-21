@@ -516,6 +516,7 @@ int main(int argc, char * argv[])
       float jet_onl_sf_cent = 1.0;
       float jet_onl_sf_up = 1.0;
       float jet_onl_sf_down = 1.0;
+
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
@@ -525,15 +526,15 @@ int main(int argc, char * argv[])
 	  h1[Form("btag_%i",j)] -> Fill(jet->btag("btag_csvivf"));
 	  h1[Form("deepcsvbtag_%i",j)] -> Fill(jet->btag("btag_deepb")+jet->btag("btag_deepbb"));
 	  h1[Form("deepflavourbtag_%i",j)] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
-	  h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M(),eventweight);
-	  h2[Form("pt_eta_%i",i)] -> Fill(jet->pt(),jet->eta());
+	  h1["m12"] -> Fill((selectedJets[0]->p4() + selectedJets[1]->p4()).M());
+	  h2[Form("pt_eta_%i",j)] -> Fill(jet->pt(),jet->eta());
 	  for (unsigned int f = 0; f < flavors.size(); f++){
 	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
 	      h1[Form("pt_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->pt());
 	      h1[Form("eta_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->eta());
 	      h1[Form("phi_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->phi());
 	      h1[Form("deepflavourbtag_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->btag("btag_dfb") + jet->btag("btag_dfbb") + jet->btag("btag_dflepb"));
-	      h2[Form("pt_eta_%i_%s",i,(flavors[f]).c_str())] -> Fill(jet->pt(),jet->eta());
+	      h2[Form("pt_eta_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->pt(),jet->eta());
 	    }
 	  }
 	  
@@ -547,7 +548,8 @@ int main(int argc, char * argv[])
 	  if (isMC_){
 	    if (usebtagsf_){
 	      //offline b tag sf
-	      if (!usebtagweights_ && (j!=2 || signalregion_) ){//offline b tag sf is included in weights
+	      //if (!usebtagweights_ && (j!=2 || signalregion_) ){//offline b tag sf is included in weights
+	      if ( j < 2 || (!usebtagweights_ && signalregion_) ){//cut on 1/2, offl bt sf included in weights, never apply for rev b
 		float jet_btag_sf = jet -> btagSF(bsf_reader);
 		eventweight *= jet_btag_sf;
 		jet_offl_sf_cent *= jet_btag_sf;
@@ -579,8 +581,10 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
+	  if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+
 	  if (!usebtagweights_){
-	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
@@ -649,10 +653,10 @@ int main(int argc, char * argv[])
 	    else{//3j or 4j3
 	      if (!signalregion_){//CR
 		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must not be b tagged + no nb weight
-		if (j != 2) addBtagWeight(jet, eventweight);//1st/2nd and, if it is there, 4th jet weighted (would be b tagged in cut based approach)
+		//if (j != 2) addBtagWeight(jet, eventweight);//1st/2nd and, if it is there, 4th jet weighted (would be b tagged in cut based approach)
 	      }//CR
 	      else{//SR
-		addBtagWeight(jet, eventweight);
+		if (j == 2) addBtagWeight(jet, eventweight);
 	      }//SR
 	    }//3j or 4j3
 	  }//end: if usebtagweights
@@ -812,6 +816,7 @@ int main(int argc, char * argv[])
 	}
       }
       AS LONG AS TRIGGER IS NOT USED: NO TURN-ON SF NEEDED AS WELL*/
+
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
@@ -832,6 +837,7 @@ int main(int argc, char * argv[])
 	    }
 	  }
 	}
+
       mbb_sel = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
 
       if (m12min_ > 0 && mbb_sel < m12min_) goodEvent = false;
