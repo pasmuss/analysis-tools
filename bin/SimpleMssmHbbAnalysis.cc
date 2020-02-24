@@ -549,7 +549,7 @@ int main(int argc, char * argv[])
 	    if (usebtagsf_){
 	      //offline b tag sf
 	      //if (!usebtagweights_ && (j!=2 || signalregion_) ){//offline b tag sf is included in weights
-	      if ( j < 2 || (!usebtagweights_ && signalregion_) ){//cut on 1/2, offl bt sf included in weights, never apply for rev b
+	      if ( j == 2 && (!usebtagweights_ && signalregion_) ){//weight for 1/2, offl bt sf included in weights, never apply for rev b
 		float jet_btag_sf = jet -> btagSF(bsf_reader);
 		eventweight *= jet_btag_sf;
 		jet_offl_sf_cent *= jet_btag_sf;
@@ -581,10 +581,10 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
-	  if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+	  if ( j < 2 ) addBtagWeight(jet, eventweight);
 
 	  if (!usebtagweights_){
-
+	    //if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
