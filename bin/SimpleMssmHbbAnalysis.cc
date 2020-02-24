@@ -549,7 +549,7 @@ int main(int argc, char * argv[])
 	    if (usebtagsf_){
 	      //offline b tag sf
 	      //if (!usebtagweights_ && (j!=2 || signalregion_) ){//offline b tag sf is included in weights
-	      if ( j == 2 && (!usebtagweights_ && signalregion_) ){//weight for 1/2, offl bt sf included in weights, never apply for rev b
+	      if ( (!usebtagweights_ && j < 2) || (j == 2 && signalregion_) ){//weight for 1/2, offl bt sf included in weights, never apply for rev b
 		float jet_btag_sf = jet -> btagSF(bsf_reader);
 		eventweight *= jet_btag_sf;
 		jet_offl_sf_cent *= jet_btag_sf;
@@ -581,17 +581,18 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
-	  if ( j < 2 ) addBtagWeight(jet, eventweight);
+	  if (j == 2 && (signalregion_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;
+	  if (j == 2 && (!signalregion_ && btagdisc > nonbtagwp_) ) goodEvent = false;
 
 	  if (!usebtagweights_){
-	    //if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
-	      if (! signalregion_){//CR 3j: bbnb
+	      /*if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
 	      }
 	      else{//SR 3j: bbb
 		if (j == 2 && btagdisc < jetsbtagmin_[j]) goodEvent = false;
-	      }
+		}*/
 	    }//3j
 	    else if (regions == "4j3"){
 	      if (! signalregion_){//CR 4j3: bbnbb
@@ -651,13 +652,14 @@ int main(int argc, char * argv[])
 	      break;
 	    }
 	    else{//3j or 4j3
-	      if (!signalregion_){//CR
+	      if (j < 2) addBtagWeight(jet, eventweight);
+	      /*if (!signalregion_){//CR
 		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must not be b tagged + no nb weight
 		//if (j != 2) addBtagWeight(jet, eventweight);//1st/2nd and, if it is there, 4th jet weighted (would be b tagged in cut based approach)
 	      }//CR
 	      else{//SR
 		if (j == 2) addBtagWeight(jet, eventweight);
-	      }//SR
+	      }*///SR
 	    }//3j or 4j3
 	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
