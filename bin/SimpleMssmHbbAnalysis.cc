@@ -582,12 +582,12 @@ int main(int argc, char * argv[])
 
 	  if (!usebtagweights_){
 	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
-	    /*if (regions == "3j"){
+	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
-	      if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
+		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
 	      }
 	      else{//SR 3j: bbb
-	      if (j == 2 && btagdisc < jetsbtagmin_[j]) goodEvent = false;
+		if (j == 2 && btagdisc < jetsbtagmin_[j]) goodEvent = false;
 	      }
 	    }//3j
 	    else if (regions == "4j3"){
@@ -640,10 +640,10 @@ int main(int argc, char * argv[])
 	    if (j < 2){//leading two jets
 		if ( (jet->pt() > border_other_wp) && (btagdisc < other_wp) ) goodEvent = false;
 		}
-	      }*///other btag wp for leading two jets
+	      }//other btag wp for leading two jets
 	  }//if not usebtagweights
 	  else{//if usebtagweights
-	    /*if (!(regions == "3j" || regions == "4j3")){
+	    if (!(regions == "3j" || regions == "4j3")){
 	      cout << "Use of b tag weights only implemented for regions '3j' and '4j3' so far. Please use either of them or implement the use for the region you want to use. Aborting." << endl;
 	      break;
 	    }
@@ -652,10 +652,10 @@ int main(int argc, char * argv[])
 		if (j == 2 && btagdisc > nonbtagwp_ ) goodEvent = false;//3rd jet must not be b tagged + no nb weight
 		if (j != 2) addBtagWeight(jet, eventweight);//1st/2nd and, if it is there, 4th jet weighted (would be b tagged in cut based approach)
 	      }//CR
-	      else{*///SR
-	    addBtagWeight(jet, eventweight);
-		//}//SR
-		//}//3j or 4j3
+	      else{//SR
+		addBtagWeight(jet, eventweight);
+	      }//SR
+	    }//3j or 4j3
 	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
       if ( ! goodEvent ) continue;
