@@ -34,7 +34,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   string xtitleEnr, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
   double binning = 0.0;
 
-  string assigndir = "rootfiles_4med_btagweights_notriggernosf_Feb13-20/";
+  string assigndir = "rootfiles_4med_3bSel_NoM12ForTF_MConly_cuts_Mar03-20/";
   string directory = ("Configs_diffBTags_allmedium/" + assigndir).c_str();
 
   string outfilename = (directory + "mcbg/MCbg-QCD-" + var_ + "-2017" + era_ + "-" + region_ + "-3j" + ".root").c_str();
