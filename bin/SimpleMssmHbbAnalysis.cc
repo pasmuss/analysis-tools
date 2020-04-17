@@ -180,6 +180,8 @@ int main(int argc, char * argv[])
 
       h1[Form("pt_corrected_comp_%i",i)] = new TH1F(Form("pt_corrected_comp_%i",i), "" , 210, 0, 2100);
 
+      h1[Form("eta_%i_aac_pTbelowMax",i)]  = new TH1F(Form("eta_%i_aac_pTbelowMax",i)  , "" , 120, -6,    6);
+
       h2[Form("pt_eta_%i_aac",i)] = new TH2F(Form("pt_eta_%i_aac",i), "" , 210, 0, 2100, 120, -6, 6);
 
       //for flavors
@@ -462,14 +464,15 @@ int main(int argc, char * argv[])
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
-	  if ( (jet->pt() < jetsptmin_[j] || fabs(jet->eta()) > jetsetamax_[j]) || jet->pt() > jetsptmax_[j] )
+	  if ( jet->pt() < jetsptmin_[j] || fabs(jet->eta()) > jetsetamax_[j] )
 	    {
 	      goodEvent = false;
 	      break;
 	    }
 	}
-      
+  
       if ( ! goodEvent ) continue;
+
       ++nsel[2];
       if(isMC_ && sgweight > 0) ++nweigh[2];
       else if(isMC_ && sgweight < 0) --nweigh[2];
@@ -483,7 +486,7 @@ int main(int argc, char * argv[])
 	      if ( jet1.deltaR(jet2) < drmin_ ) goodEvent = false;
 	    }
 	}
-      
+
       if ( ! goodEvent ) continue;
       ++nsel[3];
       if(isMC_ && sgweight > 0) ++nweigh[3];
@@ -500,7 +503,7 @@ int main(int argc, char * argv[])
 	  if ( selectedJets[j]->pt() < 20. ) continue;
 	  ++njets;
 	}
-      
+
       h1["n"] -> Fill(selectedJets.size());
       h1["n_ptmin20"] -> Fill(njets);
 
@@ -537,7 +540,7 @@ int main(int argc, char * argv[])
 	      h2[Form("pt_eta_%i_%s",j,(flavors[f]).c_str())] -> Fill(jet->pt(),jet->eta());
 	    }
 	  }
-	  
+
 	  float btagdisc;
 
 	  if (btagalgo == "csv") btagdisc = jet->btag("btag_csvivf");
@@ -582,7 +585,7 @@ int main(int argc, char * argv[])
 
 	  if (!usebtagweights_){
 	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
-	    if (regions == "3j"){
+	    /*if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
 	      }
@@ -637,13 +640,14 @@ int main(int argc, char * argv[])
 	      }//SR 4jnn
 	    }//4jnn
 	    if ( border_other_wp > 0 && other_wp > 0 ){//set a different wp for leading two jets (e.g. tight instead of medium)
-	    if (j < 2){//leading two jets
+	      if (j < 2){//leading two jets
 		if ( (jet->pt() > border_other_wp) && (btagdisc < other_wp) ) goodEvent = false;
-		}
-	      }//other btag wp for leading two jets
+	      }
+	    }//other btag wp for leading two jets
+*/
 	  }//if not usebtagweights
 	  else{//if usebtagweights
-	    if (!(regions == "3j" || regions == "4j3")){
+	    /*if (!(regions == "3j" || regions == "4j3")){
 	      cout << "Use of b tag weights only implemented for regions '3j' and '4j3' so far. Please use either of them or implement the use for the region you want to use. Aborting." << endl;
 	      break;
 	    }
@@ -655,9 +659,11 @@ int main(int argc, char * argv[])
 	      else{//SR
 		addBtagWeight(jet, eventweight);
 	      }//SR
-	    }//3j or 4j3
+	      }*///3j or 4j3
+	    addBtagWeight(jet, eventweight);
 	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
+      
       if ( ! goodEvent ) continue;
       ++nsel[5];
       if(isMC_ && sgweight > 0) ++nweigh[5];
@@ -665,7 +671,7 @@ int main(int argc, char * argv[])
       double HT_after_bTag = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
-              
+
       // Is matched?
       if (!isMC_) analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
@@ -696,7 +702,7 @@ int main(int argc, char * argv[])
 	    goodEvent = ( goodEvent && matched[io] );
 	  }
       }//if data
-      
+
       if ( ! goodEvent ) continue;
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
@@ -759,7 +765,7 @@ int main(int argc, char * argv[])
 	if(isMC_ && sgweight > 0) ++nweigh[7];
 	else if(isMC_ && sgweight < 0) --nweigh[7];
       } //end: muon veto
-      
+
       // Fill histograms of passed bbnb btagging selection
       for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
 	{
@@ -865,9 +871,12 @@ int main(int argc, char * argv[])
           Jet* jet = selectedJets[j];
           h1[Form("pt_%i_aac",j)]   -> Fill(jet->pt(),eventweight);
           h1[Form("eta_%i_aac",j)]  -> Fill(jet->eta(),eventweight);
+
+	  if (jet->pt() < jetsptmax_[j])
+	  h1[Form("eta_%i_aac_pTbelowMax",j)] -> Fill(jet->eta(),eventweight);
+
           h1[Form("deepflavourbtag_%i_aac",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
 	  h2[Form("pt_eta_%i_aac",j)] -> Fill(jet->pt(),jet->eta(),eventweight);
-	  
 	  for (unsigned int f = 0; f < flavors.size(); f++){
 	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
 	      h1[Form("pt_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->pt(),eventweight);
