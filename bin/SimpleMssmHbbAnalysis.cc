@@ -434,12 +434,6 @@ int main(int argc, char * argv[])
       if(isMC_ && sgweight > 0) ++nweigh[1];
       else if(isMC_ && sgweight < 0) --nweigh[1];
 
-      ///
-      /// STILL SAVE ORIGINAL VALUES FOR APPLICATION OF SCALE FACTORS
-      /// Jet * jet = selectedJets[j]; jet->pt(); OR selectedJets[0]->eta();
-      /// IF DESIRED AT SOME POINT
-      ///
-
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
@@ -551,7 +545,7 @@ int main(int argc, char * argv[])
 	  if (isMC_){
 	    if (usebtagsf_){
 	      //offline b tag sf
-	      if (!usebtagweights_ && (j!=2 || signalregion_) ){//offline b tag sf is included in weights but not known for rev b --> 2nd jet in CR does not get one
+	      if (!usebtagweights_ && (j!=2 || signalregion_) ){//offline b tag sf is included in weights but not known for rev b --> 3rd jet in CR does not get one
 		float jet_btag_sf = jet -> btagSF(bsf_reader);
 		eventweight *= jet_btag_sf;
 		jet_offl_sf_cent *= jet_btag_sf;
@@ -585,7 +579,7 @@ int main(int argc, char * argv[])
 
 	  if (!usebtagweights_){
 	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
-	    /*if (regions == "3j"){
+	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
 	      }
@@ -644,10 +638,9 @@ int main(int argc, char * argv[])
 		if ( (jet->pt() > border_other_wp) && (btagdisc < other_wp) ) goodEvent = false;
 	      }
 	    }//other btag wp for leading two jets
-*/
 	  }//if not usebtagweights
 	  else{//if usebtagweights
-	    /*if (!(regions == "3j" || regions == "4j3")){
+	    if (!(regions == "3j" || regions == "4j3")){
 	      cout << "Use of b tag weights only implemented for regions '3j' and '4j3' so far. Please use either of them or implement the use for the region you want to use. Aborting." << endl;
 	      break;
 	    }
@@ -659,8 +652,7 @@ int main(int argc, char * argv[])
 	      else{//SR
 		addBtagWeight(jet, eventweight);
 	      }//SR
-	      }*///3j or 4j3
-	    addBtagWeight(jet, eventweight);
+	    }//3j or 4j3
 	  }//end: if usebtagweights
 	}//end of loop over jets for b tagging
       
@@ -683,6 +675,12 @@ int main(int argc, char * argv[])
 	//++nsel[7];
       }
       */
+
+      //
+      // NOTE: TRIGGER NOT IMPLEMENTED FOR MC --> CAN NOT REALLY COMPARE DATA TO MC IN THIS STATE
+      //
+
+
       if (!isMC_){//if data (currently not using trigger and matching for MC)
 	for ( int j = 0; j < 2; ++j )
 	  {
