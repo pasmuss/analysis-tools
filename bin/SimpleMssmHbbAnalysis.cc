@@ -514,7 +514,7 @@ int main(int argc, char * argv[])
       float jet_onl_sf_up = 1.0;
       float jet_onl_sf_down = 1.0;
 
-      for ( int j = 0; j < nbjetsmin_; ++j )
+      for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
 	  h1[Form("pt_%i",j)]   -> Fill(jet->pt());
@@ -575,29 +575,29 @@ int main(int argc, char * argv[])
 	  }
 
 	  if (!usebtagweights_){
-	    if ( j < 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
+	    if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
 		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
 	      }
 	      else{//SR 3j: bbb
-		if (j == 2 && btagdisc < jetsbtagmin_[j]) goodEvent = false;
+		if (j == 2 && btagdisc < btagwp_) goodEvent = false;
 	      }
 	    }//3j
 	    else if (regions == "4j3"){
 	      if (! signalregion_){//CR 4j3: bbnbb
-		if ( (j == 2 && btagdisc > nonbtagwp_) || (j == 3 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
+		if ( (j == 2 && btagdisc > nonbtagwp_) || (j == 3 && btagdisc < btagwp_)) goodEvent = false;
 	      }
 	      else{//SR 4j3 bbbb
-		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
+		if ( j >= 2 && btagdisc < btagwp_ ) goodEvent = false;
 	      }
 	    }//4j3
 	    else if (regions == "4j4"){
 	      if (! signalregion_){//CR 4j4: bbbnb
-		if ( (j == 3 && btagdisc > nonbtagwp_) || (j == 2 && btagdisc < jetsbtagmin_[j])) goodEvent = false;
+		if ( (j == 3 && btagdisc > nonbtagwp_) || (j == 2 && btagdisc < btagwp_)) goodEvent = false;
 	      }
 	      else{//SR 4j4: bbbb
-		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
+		if ( j >= 2 && btagdisc < btagwp_ ) goodEvent = false;
 	      }
 	    }//4j4
 	    else if (regions == "3jor"){
@@ -606,20 +606,20 @@ int main(int argc, char * argv[])
 	      }
 	      else{//SR 3jor: bbbnb || bbnbb (3rd or 4th jet may be third b-jet)
 		if (j == 2) storedisc = btagdisc;
-		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
+		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < btagwp_) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
 		if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
-		if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
+		if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < btagwp_) ) goodEvent= false;//if third nb, fourth must be b
 	      }
 	    }//3jor
 	    else if (regions == "4jor"){
 	      if (!signalregion_){//CR 4jor: bbbnb || bbnbb (3rd or 4th jet may be reversed)
 		if (j == 2) storedisc = btagdisc;
-		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
+		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < btagwp_) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
 		if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
-		if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < jetsbtagmin_[j]) ) goodEvent= false;//if third nb, fourth must be b
+		if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < btagwp_) ) goodEvent= false;//if third nb, fourth must be b
 	      }
 	      else{//SR 4jor:bbbb
-		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;	      
+		if ( j >= 2 && btagdisc < btagwp_ ) goodEvent = false;	      
 	      }
 	    }//4jor
 	    else if (regions == "4jnn"){
@@ -627,7 +627,7 @@ int main(int argc, char * argv[])
 		if ( j >= 2 && btagdisc > nonbtagwp_ ) goodEvent = false;
 	      }//CR 4jnn
 	      else{//SR 4jnn: bbbb
-		if ( j >= 2 && btagdisc < jetsbtagmin_[j] ) goodEvent = false;
+		if ( j >= 2 && btagdisc < btagwp_ ) goodEvent = false;
 	      }//SR 4jnn
 	    }//4jnn
 	    if ( border_other_wp > 0 && other_wp > 0 ){//set a different wp for leading two jets (e.g. tight instead of medium)
