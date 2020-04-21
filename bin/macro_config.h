@@ -270,7 +270,7 @@ int macro_config(int argc, char * argv[])
 	("btagWPMedium",po::value <float> (&btagwpmedium_)->default_value(0.3033),"BTag working point MEDIUM")
 	("btagWPTight",po::value <float> (&btagwptight_)->default_value(0.7489),"BTag working point TIGHT")
 	//         
-	("btagWP",po::value <float> (&btagwp_)->default_value(0.3031),"Btag working point")
+	("btagWP",po::value <float> (&btagwp_)->default_value(0.3033),"Btag working point")
 	("nonbtagWP",po::value <float> (&nonbtagwp_)->default_value(0.0521),"non-Btag working point")
 	//
 	("BorderOtherWP",po::value <float> (&BorderOtherWP_)->default_value(-9999.),"Threshold for setting a different btag wp")
@@ -333,6 +333,8 @@ int macro_config(int argc, char * argv[])
 	      std::cout << "Config Error *** No valid set of regions defined. Must be 3j, 4j3, 4j4, 4jnn or 3jor." << std::endl;
 	      return -1;
 	    }
+	  if (regions_ == "3j") njetsmin_ = 3;
+	  if (regions_ == "4j3") njetsmin_ = 4;
 	  if ( ((regions_ == "4j3" || regions_ == "4j4") || regions_ == "4jnn") && njetsmin_ != 4)
 	    {
 	      std::cout << "Config Error *** Minimum Number of jets does not fit requirement of defined regions (with 4jn, njetsmin should be 4). Please check regions and njetsmin." << std::endl;
