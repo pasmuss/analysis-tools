@@ -514,6 +514,15 @@ int main(int argc, char * argv[])
       float jet_onl_sf_up = 1.0;
       float jet_onl_sf_down = 1.0;
 
+      //check for 4th b jet; selectedJets ordered by pt and only checked for leading 3/4
+      //--> only [3] needs to be tested
+      //in 3b cat: veto 4th but only exclude those events which are caught in 4b cat in order not to lose stat
+      if (regions == "3j"){
+	Jet *j4 = selectedJets[3];
+	float btag4 = j4->btag("btag_dfb") + j4->btag("btag_dfbb") + j4->btag("btag_dflepb");
+	if (btag4 > btagwp_) goodEvent = false;
+      }
+
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
