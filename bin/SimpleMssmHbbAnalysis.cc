@@ -288,7 +288,7 @@ int main(int argc, char * argv[])
 	  m12_vars[("m12_"+sys+"_"+var).c_str()] ->Branch("weight",&weight,"weight/D");
 	}
     }
-   
+
   // Analysis of events
   cout << "This analysis has " << analysis.size() << " events" << endl;
   cout << nevtmax_ << " events have been selected." << endl;
@@ -344,6 +344,8 @@ int main(int argc, char * argv[])
   
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
+      cout << "1";
+
       noofeventsstart ++;
       int njets = 0;
       int njets_csv = 0;
@@ -386,6 +388,8 @@ int main(int argc, char * argv[])
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
       
+      cout << "2";
+
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
       float sgweight = 0;
@@ -423,6 +427,8 @@ int main(int argc, char * argv[])
 	  if (slimmedJets->at(j).pileupJetIdFullId("loose") && slimmedJets->at(j).idTight() ) selectedJets.push_back(&slimmedJets->at(j));
 	}
 
+      cout << "3";
+
       double HT_before_any_cut = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_before_any_cut );
       h1["HT_bef_cuts"] -> Fill(HT_before_any_cut);
@@ -454,6 +460,8 @@ int main(int argc, char * argv[])
 	  if (isMC_ && jecsigma_ != 0 ) correctJetpt( *jet, 1.0 + jecsigma_*jet->jecUncert() );
 	}
 
+      cout << "4";
+
       // Kinematic selection - 3/4 leading jets
       for ( int j = 0; j < njetsmin_; ++j )
 	{
@@ -464,7 +472,7 @@ int main(int argc, char * argv[])
 	      break;
 	    }
 	}
-  
+
       if ( ! goodEvent ) continue;
 
       ++nsel[2];
@@ -505,6 +513,8 @@ int main(int argc, char * argv[])
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_AftKinCuts_BefBtag );
       h1["HT"] -> Fill(HT_AftKinCuts_BefBtag);
 
+      cout << "5";
+
       //b tagging
       float storedisc = -1;
       float jet_offl_sf_cent = 1.0;
@@ -517,11 +527,13 @@ int main(int argc, char * argv[])
       //check for 4th b jet; selectedJets ordered by pt and only checked for leading 3/4
       //--> only [3] needs to be tested
       //in 3b cat: veto 4th but only exclude those events which are caught in 4b cat in order not to lose stat
-      if (regions == "3j"){
+      if (regions == "3j" && selectedJets.size() > 3){
 	Jet *j4 = selectedJets[3];
 	float btag4 = j4->btag("btag_dfb") + j4->btag("btag_dfbb") + j4->btag("btag_dflepb");
 	if (btag4 > btagwp_) goodEvent = false;
       }
+
+      cout << "6";
 
       for ( int j = 0; j < njetsmin_; ++j )
 	{
@@ -583,7 +595,12 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
+	  cout << "7";
+
 	  if (!usebtagweights_){
+
+	    cout << "8";
+
 	    if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
@@ -670,6 +687,8 @@ int main(int argc, char * argv[])
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
 
+      cout << "9";
+
       // Is matched?
       if (!isMC_) analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
@@ -701,6 +720,8 @@ int main(int argc, char * argv[])
 	  }
       }
 
+      cout << "10";
+
       if ( ! goodEvent ) continue;
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
@@ -729,6 +750,8 @@ int main(int argc, char * argv[])
 	      h1["rank_softjet"] -> Fill(s);
 	    }
 	}
+
+      cout << "11";
 
       // Check for muons in the jets
       if (muonveto_){
@@ -763,6 +786,8 @@ int main(int argc, char * argv[])
 	if(isMC_ && sgweight > 0) ++nweigh[7];
 	else if(isMC_ && sgweight < 0) --nweigh[7];
       } //end: muon veto
+
+      cout << "12";
 
       // Fill histograms of passed bbnb btagging selection
       for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
@@ -817,6 +842,8 @@ int main(int argc, char * argv[])
 	}
       }
 
+      cout << "13";
+
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
@@ -841,7 +868,7 @@ int main(int argc, char * argv[])
       mbb_sel = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
 
       if (m12min_ > 0 && mbb_sel < m12min_) goodEvent = false;
-
+      
       if (massdepptcut_ > 0){
 	float fraccut = massdepptcut_;
 	if ( (selectedJets[0]->pt() < fraccut*mbb) || (selectedJets[1]->pt() < fraccut*mbb) ) goodEvent = false;
@@ -850,16 +877,16 @@ int main(int argc, char * argv[])
       if (!goodEvent) continue;
       nsel[8]++;
 
+      cout << "14";
+
       if(isMC_ && sgweight > 0) ++nweigh[8];
       else if(isMC_ && sgweight < 0) --nweigh[8];
 
       double HT_aac = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_aac );
       h1["HT_aac"] -> Fill(HT_aac);
-
       double deltaeta12_aac = fabs(selectedJets[0]->eta() - selectedJets[1]->eta());
       h1["deltaeta12_aac"] -> Fill(deltaeta12_aac,eventweight);
-
       double deltaphi12_aac = fabs(selectedJets[0]->phi() - selectedJets[1]->phi());
       h1["deltaphi12_aac"] -> Fill(deltaphi12_aac,eventweight);
 
@@ -868,12 +895,14 @@ int main(int argc, char * argv[])
           Jet* jet = selectedJets[j];
           h1[Form("pt_%i_aac",j)]   -> Fill(jet->pt(),eventweight);
           h1[Form("eta_%i_aac",j)]  -> Fill(jet->eta(),eventweight);
-
-	  if (jet->pt() < jetsptmax_[j])
+	  
+	  if (!jetsptmax_.empty() && jet->pt() < jetsptmax_[j])
 	  h1[Form("eta_%i_aac_pTbelowMax",j)] -> Fill(jet->eta(),eventweight);
-
+	  
           h1[Form("deepflavourbtag_%i_aac",j)] -> Fill(jet->btag("btag_dfb")+jet->btag("btag_dfbb")+jet->btag("btag_dflepb"),eventweight);
+
 	  h2[Form("pt_eta_%i_aac",j)] -> Fill(jet->pt(),jet->eta(),eventweight);
+
 	  for (unsigned int f = 0; f < flavors.size(); f++){
 	    if (jet->extendedFlavour() == (flavors[f]).c_str()) {
 	      h1[Form("pt_%i_%s_aac",j,(flavors[f]).c_str())] -> Fill(jet->pt(),eventweight);
@@ -884,6 +913,8 @@ int main(int argc, char * argv[])
 	    }
 	  }
 	}
+
+      cout << "15";
 
       if ( ! isMC_ && ! signalregion_ ){
 	applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  );
