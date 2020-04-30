@@ -4,16 +4,19 @@ for strength in signalstrengths:
     print("Starting " + strength)
     instring = "r_" + strength + ".txt"
     outstring = "pulls_" + strength + ".txt"
+    outstringrextr = "r_extracted_" + strength + ".txt"
 
     combineresults = open(instring,"r")
     individualresults = combineresults.readlines()
 
     pulls = []
+    rextracted = []
     rexp = float(strength.replace("p","."))
 
     for oneresult in individualresults:
         words = oneresult.split()
         rvalue = words[3]
+        rextracted.append(rvalue)
         upperuncert = ((words[4].split('/'))[1]).split('+')[1]#uncertainties are given as -x.yz/+a.bc --> first get + part as - can be strongly biased towards negative values --> only get number without + sign
         pull = (float(rvalue)-rexp)/float(upperuncert)
         pulls.append(pull)
@@ -24,3 +27,9 @@ for strength in signalstrengths:
                 output.write(str(onepull))
             else:
                 output.write(str(onepull)+"\n")
+    with open (outstringrextr,"w") as rout:
+        for oner in rextracted:
+            if oner == rextracted[-1]:
+                rout.write(oner)
+            else:
+                rout.write(oner+"\n")
