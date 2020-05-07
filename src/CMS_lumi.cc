@@ -19,7 +19,7 @@ CMS_lumi( TPad* pad, TString mytxt , int iPeriod, int iPosX )
   if( iPosX/10==1 ) alignX_=1;
   if( iPosX/10==2 ) alignX_=2;
   if( iPosX/10==3 ) alignX_=3;
-  if( iPosX == 0  ) relPosX = 0.12;
+  if( iPosX == 0  ) relPosX = 0.16;
   int align_ = 10*alignX_ + alignY_;
 
   float H = pad->GetWh();

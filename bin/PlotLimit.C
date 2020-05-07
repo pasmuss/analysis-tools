@@ -31,9 +31,10 @@ using namespace boost::program_options;
 void PlotSigmaBRLimit(const char * fileList = "Hbb.limits",
                std::string output = "",
                bool blindData = true,
-               float yMin = 0.1,
-               float yMax = 500,
-               float xMax = -150,
+               float yMin = 0.15,
+               float yMax = 80,
+               float xMax = 1310,
+	       float xMin = 290,
                TString Lumi = "36.0 fb^{-1}",
                TString xtitle = "m_{#Phi} [GeV]",
                TString ytitle = "95% C.L. limit on #sigma#times BR [pb]",
@@ -136,7 +137,7 @@ int main(int argc, char * argv[]){
         return 0;
 }
 
-void PlotSigmaBRLimit(const char * fileList, std::string output, bool blindData, float yMin, float yMax, float xMax, TString Lumi, TString xtitle, TString ytitle, bool logY) {
+void PlotSigmaBRLimit(const char * fileList, std::string output, bool blindData, float yMin, float yMax, float xMax, float xMin, TString Lumi, TString xtitle, TString ytitle, bool logY) {
 
   // char * filelist - List of files (output RooT files
   //                   produced by 'combine -M Asymptotic')
@@ -186,8 +187,8 @@ void PlotSigmaBRLimit(const char * fileList, std::string output, bool blindData,
 
   int counter = 0;
 
-  float massMin = 1000;
-  float massMax = 0;
+  float massMin = 290;
+  float massMax = 2005;
 
   while (inputList >> fileName) {
 
@@ -336,7 +337,7 @@ void PlotSigmaBRLimit(const char * fileList, std::string output, bool blindData,
 //  float yLegend = 0.41;
 //  float sizeLeg = 0.27;
 
-  TLegend * leg = new TLegend(0.67,0.54,0.90,0.76);
+  TLegend * leg = new TLegend(0.67,0.69,0.90,0.91);
   leg->SetFillColor(0);
   leg->SetTextSize(0.035);
   leg->SetBorderSize(0);
@@ -354,8 +355,8 @@ void PlotSigmaBRLimit(const char * fileList, std::string output, bool blindData,
   TPad * pad = (TPad*)canv->GetPad(0);
   writeExtraText = true;
   lumi_13TeV = Lumi;
-  extraText = "Simulation";
-  CMS_lumi(pad,4,33); 
+  extraText = "Work in progress";
+  CMS_lumi(pad,extraText,4,0);
   pad->RedrawAxis();
 
   leg->Draw();
