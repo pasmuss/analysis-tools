@@ -344,8 +344,6 @@ int main(int argc, char * argv[])
   
   for ( int i = 0 ; i < nevtmax_ ; ++i )
     {
-      cout << "1";
-
       noofeventsstart ++;
       int njets = 0;
       int njets_csv = 0;
@@ -388,8 +386,6 @@ int main(int argc, char * argv[])
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
       
-      cout << "2";
-
       // Jets - std::shared_ptr< Collection<Jet> >
       auto slimmedJets = analysis.collection<Jet>("Jets");
       float sgweight = 0;
@@ -427,8 +423,6 @@ int main(int argc, char * argv[])
 	  if (slimmedJets->at(j).pileupJetIdFullId("loose") && slimmedJets->at(j).idTight() ) selectedJets.push_back(&slimmedJets->at(j));
 	}
 
-      cout << "3";
-
       double HT_before_any_cut = 0;
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_before_any_cut );
       h1["HT_bef_cuts"] -> Fill(HT_before_any_cut);
@@ -459,8 +453,6 @@ int main(int argc, char * argv[])
 	  //For JES up and down variation
 	  if (isMC_ && jecsigma_ != 0 ) correctJetpt( *jet, 1.0 + jecsigma_*jet->jecUncert() );
 	}
-
-      cout << "4";
 
       // Kinematic selection - 3/4 leading jets
       for ( int j = 0; j < njetsmin_; ++j )
@@ -513,8 +505,6 @@ int main(int argc, char * argv[])
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_AftKinCuts_BefBtag );
       h1["HT"] -> Fill(HT_AftKinCuts_BefBtag);
 
-      cout << "5";
-
       //b tagging
       float storedisc = -1;
       float jet_offl_sf_cent = 1.0;
@@ -532,8 +522,6 @@ int main(int argc, char * argv[])
 	float btag4 = j4->btag("btag_dfb") + j4->btag("btag_dfbb") + j4->btag("btag_dflepb");
 	if (btag4 > btagwp_) goodEvent = false;
       }
-
-      cout << "6";
 
       for ( int j = 0; j < njetsmin_; ++j )
 	{
@@ -595,12 +583,7 @@ int main(int argc, char * argv[])
 	    }
 	  }
 
-	  cout << "7";
-
 	  if (!usebtagweights_){
-
-	    cout << "8";
-
 	    if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
 	      if (! signalregion_){//CR 3j: bbnb
@@ -687,8 +670,6 @@ int main(int argc, char * argv[])
       calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
 
-      cout << "9";
-
       // Is matched?
       if (!isMC_) analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
       bool matched[12] = {true,true,true,true,true,true,true,true,true,true,true,true};//for both leading jets: five objects to be tested
@@ -720,8 +701,6 @@ int main(int argc, char * argv[])
 	  }
       }
 
-      cout << "10";
-
       if ( ! goodEvent ) continue;
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
@@ -750,8 +729,6 @@ int main(int argc, char * argv[])
 	      h1["rank_softjet"] -> Fill(s);
 	    }
 	}
-
-      cout << "11";
 
       // Check for muons in the jets
       if (muonveto_){
@@ -786,8 +763,6 @@ int main(int argc, char * argv[])
 	if(isMC_ && sgweight > 0) ++nweigh[7];
 	else if(isMC_ && sgweight < 0) --nweigh[7];
       } //end: muon veto
-
-      cout << "12";
 
       // Fill histograms of passed bbnb btagging selection
       for ( int j = 0 ; j < (int)selectedJets.size() ; ++j )
@@ -842,8 +817,6 @@ int main(int argc, char * argv[])
 	}
       }
 
-      cout << "13";
-
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet* jet = selectedJets[j];
@@ -876,8 +849,6 @@ int main(int argc, char * argv[])
 
       if (!goodEvent) continue;
       nsel[8]++;
-
-      cout << "14";
 
       if(isMC_ && sgweight > 0) ++nweigh[8];
       else if(isMC_ && sgweight < 0) --nweigh[8];
@@ -913,8 +884,6 @@ int main(int argc, char * argv[])
 	    }
 	  }
 	}
-
-      cout << "15";
 
       if ( ! isMC_ && ! signalregion_ ){
 	applyPrescale ( analysis.run(), R->Rndm(), prescaleEra, nsubsamples, window  );
@@ -965,7 +934,7 @@ int main(int argc, char * argv[])
 	  }
 	//Offbtag
 	double eventweight_offbtag_up   = eventweight * jet_offl_sf_up   / jet_offl_sf_cent;
-	  double eventweight_offbtag_down = eventweight * jet_offl_sf_down / jet_offl_sf_cent;
+	double eventweight_offbtag_down = eventweight * jet_offl_sf_down / jet_offl_sf_cent;
 	//Onlbtag
 	double eventweight_onlbtag_up   = eventweight * jet_onl_sf_up   / jet_onl_sf_cent;
 	double eventweight_onlbtag_down = eventweight * jet_onl_sf_down / jet_onl_sf_cent;
