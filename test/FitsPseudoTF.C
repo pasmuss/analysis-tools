@@ -25,14 +25,14 @@ void FitsPseudoTF() {
 
   TCanvas* can = style.MakeCanvas("can","",700,700);
 
-  TFile* f_in = new TFile("Outputdata/TF_bias/Pseudos1904.root","READ");
+  TFile* f_in = new TFile("Outputdata/TF_bias/Pseudos_20GeVBins_1904.root","READ");
   TH1F* tf_in = (TH1F*)f_in->Get("TFHist");
 
   TF1* fitfunction1a = new TF1("fitfunction1a","[0]*erf([2]*(x-[1]))",200,500);//simple erf
   TF1* fitfunction1b = new TF1("fitfunction1b","[0]*erf([2]*(x-[1]))*(1+[3]*x)",200,500);//erf times linear decrease at higher masses
 
-  TF1* fitfunction2 = new TF1("fitfunction2","[0]*erf([2]*(x-[1]))*(1+[3]*x)",200,2000);//erf times linear decrease at higher masses
-  TF1* fitfunction20 = new TF1("fitfunction20","[0]*erf((7.5e-3)*(x-93))*(1-(1.5e-4)*x)",200,2000);//ext erf with gen parameters
+  TF1* fitfunction2 = new TF1("fitfunction2","[0]*erf([2]*(x-[1]))*(1+[3]*x)",260,785);//erf times linear decrease at higher masses
+  TF1* fitfunction20 = new TF1("fitfunction20","[0]*erf((7.5e-3)*(x-93))*(1-(1.5e-4)*x)",260,785);//ext erf with gen parameters
   TF1* fitfunction2a = new TF1("fitfunction2a","[0]*erf([2]*(x-[1]))",260,785);//simple erf
   TF1* fitfunction2b = new TF1("fitfunction2b","[0]*x+[1]",260,785);//ax+b
   TF1* fitfunction2c = new TF1("fitfunction2c","[0]*x*x+[1]*x+[2]",260,785);//ax^2+bx+c
@@ -59,13 +59,13 @@ void FitsPseudoTF() {
   //TFitResultPtr r1a = tf_in->Fit(fitfunction1a,"RS");
   //cout << "chi2/ndf = " << r1a->Chi2() << "/" << r1a->Ndf() << " = " << r1a->Chi2()/r1a->Ndf() << ", prob = " << r1a->Prob() << endl;
 
-  tf_in -> Fit(fitfunction1b,"R");
-  TFitResultPtr r1b = tf_in->Fit(fitfunction1b,"RS");
-  cout << "chi2/ndf = " << r1b->Chi2() << "/" << r1b->Ndf() << " = " << r1b->Chi2()/r1b->Ndf() << ", prob = " << r1b->Prob() << endl;
+  //tf_in -> Fit(fitfunction1b,"R");
+  //TFitResultPtr r1b = tf_in->Fit(fitfunction1b,"RS");
+  //cout << "chi2/ndf = " << r1b->Chi2() << "/" << r1b->Ndf() << " = " << r1b->Chi2()/r1b->Ndf() << ", prob = " << r1b->Prob() << endl;
 
-  //tf_in -> Fit(fitfunction2,"R");
-  //TFitResultPtr r2 = tf_in->Fit(fitfunction2,"RS");
-  //cout << "chi2/ndf = " << r2->Chi2() << "/" << r2->Ndf() << " = " << r2->Chi2()/r2->Ndf() << ", prob = " << r2->Prob() << endl;
+  tf_in -> Fit(fitfunction2,"R");
+  TFitResultPtr r2 = tf_in->Fit(fitfunction2,"RS");
+  cout << "chi2/ndf = " << r2->Chi2() << "/" << r2->Ndf() << " = " << r2->Chi2()/r2->Ndf() << ", prob = " << r2->Prob() << endl;
 
   //tf_in -> Fit(fitfunction20,"R");
   //TFitResultPtr r20 = tf_in->Fit(fitfunction20,"RS");
@@ -91,6 +91,6 @@ void FitsPseudoTF() {
   //TFitResultPtr r4 = tf_in->Fit(fitfunction4,"RS");
   //cout << "chi2/ndf = " << r4->Chi2() << "/" << r4->Ndf() << " = " << r4->Chi2()/r4->Ndf() << ", prob = " << r4->Prob() << endl;
 
-  can -> SaveAs("Outputdata/TF_bias/TF-SR1_exterf_1904.pdf");
+  //can -> SaveAs("Outputdata/TF_bias/TF-SR1_exterf_1904.pdf");
 
 }

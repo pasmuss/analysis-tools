@@ -107,14 +107,14 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
 
   TRandom3* rand = new TRandom3(seed_);//standard: 1904
 
-  TH1F* CRHist = new TH1F("CRHist","",180,200,2000);
+  TH1F* CRHist = new TH1F("CRHist","",90,200,2000);
   style.InitHist(CRHist,"m_{12} [GeV]","Entries / 10 GeV",kBlue,0);
-  TH1F* SRHist = new TH1F("SRHist","",180,200,2000);
+  TH1F* SRHist = new TH1F("SRHist","",90,200,2000);
   style.InitHist(SRHist,"m_{12} [GeV]","Entries / 10 GeV",kRed,0);
 
-  TH1F* CRHist_SR1 = new TH1F("CRHist_SR1","",180,200,2000);
+  TH1F* CRHist_SR1 = new TH1F("CRHist_SR1","",90,200,2000);
   style.InitHist(CRHist_SR1,"m_{12} [GeV]","Entries / 10 GeV",kBlue,0);
-  TH1F* SRHist_SR1 = new TH1F("SRHist_SR1","",180,200,2000);
+  TH1F* SRHist_SR1 = new TH1F("SRHist_SR1","",90,200,2000);
   style.InitHist(SRHist_SR1,"m_{12} [GeV]","Entries / 10 GeV",kRed,0);
 
   TF1* transferfactor = new TF1("transferfactor","[0]*erf([2]*(x-[1]))*(1+[3]*x)",200,2000);
@@ -122,21 +122,21 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
   int n_obs_SR_1 = 0;
   int n_obs_SiSR_1 = 0;
   
-  for (int i = 0; i < 180; i++){
+  for (int i = 0; i < 90; i++){
     int bin = i+1;
-    float bincenter = 205 + i*10;
+    float bincenter = 210 + i*20;
     float value = 0;
     float error = 0;
     float tfval = transferfactor->Eval(bincenter);
     float sigval = 0;
     float sigerr = 0;
-    if (i < 18){
+    if (i < 9){
       value = funcSR1 -> Eval(bincenter);
     }
-    else if (i < 38){
+    else if (i < 19){
       value = funcSR2 -> Eval(bincenter);
     }
-    else if (i < 68){
+    else if (i < 34){
       value = funcSR3 -> Eval(bincenter);
     }
     else{
@@ -152,7 +152,7 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
     SRHist -> SetBinContent(bin,acsigval);
     sigerr = sqrt(sigval);
     SRHist -> SetBinError(bin,sigerr);
-    if (i < 30){
+    if (i < 15){
       CRHist_SR1 -> SetBinContent(bin,actualvalue);
       CRHist_SR1 -> SetBinError(bin,error);
       SRHist_SR1 -> SetBinContent(bin,acsigval);
@@ -164,6 +164,36 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
 
   CRHist -> Draw("PE0");
   SRHist -> Draw("PE0SAME");
+
+  ///
+  /// Properly binned SR2 hist
+  ///
+
+  TH1F* CRHist_SR2 = new TH1F("CRHist_SR2","",35,260,785);
+  style.InitHist(CRHist_SR2,"m_{12} [GeV]","Entries / 10 GeV",kBlue,0);
+  TH1F* SRHist_SR2 = new TH1F("SRHist_SR2","",35,260,785);
+  style.InitHist(SRHist_SR2,"m_{12} [GeV]","Entries / 10 GeV",kRed,0);
+
+  for (int i = 0; i < 35; i++){
+    int bin = i+1;
+    float bincenter = 267.5 + i*15;
+    float value = 0;
+    float error = 0;
+    float tfval = transferfactor->Eval(bincenter);
+    float sigval = 0;
+    float sigerr = 0;
+    value = funcSR2 -> Eval(bincenter);
+    float actualvalue = rand->Poisson(value);
+    CRHist_SR2 -> SetBinContent(bin,actualvalue);
+    //CRHist -> SetBinErrorOption((TH1::EBinErrorOpt) 1);
+    error = sqrt(value);
+    CRHist_SR2 -> SetBinError(bin,error);
+    sigval = value*tfval;
+    float acsigval = rand->Poisson(sigval);
+    SRHist_SR2 -> SetBinContent(bin,acsigval);
+    sigerr = sqrt(sigval);
+    SRHist_SR2 -> SetBinError(bin,sigerr);
+  }
 
   //
   // SR 1, including a signal
@@ -219,7 +249,7 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
   // Saving
   //
 
-  TFile* outfile = new TFile(("Outputdata/TF_bias/Pseudos_10GeVBins_Sig500EvtsMu400Sig10" + seedstr + ".root").c_str(),"RECREATE");
+  TFile* outfile = new TFile(("Outputdata/TF_bias/Pseudos_20GeVBins_" + seedstr + ".root").c_str(),"RECREATE");
   funcSR1 -> Write();
   funcSR2 -> Write();
   funcSR3 -> Write();
@@ -231,8 +261,10 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
   SigSRHist -> Write();
   CRHist_SR1 -> Write();
   SRHist_SR1 -> Write();
+  CRHist_SR2 -> Write();
+  SRHist_SR2 -> Write();
   outfile -> Close();
-  cout << ("Outputdata/TF_bias/Pseudos_10GeVBins_Sig500EvtsMu400Sig10" + seedstr + ".root").c_str() << " has been created" << endl;
+  cout << ("Outputdata/TF_bias/Pseudos_20GeVBins_" + seedstr + ".root").c_str() << " has been created" << endl;
   /*if (log_) {can -> SetLogy(); canTF -> SetLogy(); canCR -> SetLogy(); c_withsig -> SetLogy();
     can -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_10GeVBins_Sig5kEvts" + seedstr + "_log.pdf").c_str());
     can -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_10GeVBins_Sig5kEvts" + seedstr + "_log.root").c_str());
