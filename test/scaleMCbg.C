@@ -34,7 +34,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   string xtitleEnr, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
   double binning = 0.0;
 
-  string assigndir = "rootfiles_4med_3bSel_NoM12ForTF_MConly_cuts_Mar03-20/";
+  string assigndir = "rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/rootfiles_May11-20_properSubranges_inclMC/";
   string directory = ("Configs_diffBTags_allmedium/" + assigndir).c_str();
 
   string outfilename = (directory + "mcbg/MCbg-QCD-" + var_ + "-2017" + era_ + "-" + region_ + "-3j" + ".root").c_str();
@@ -114,6 +114,14 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
     ytitle = ("Events/" + to_string(binning) + " [a.u.]").c_str();
   }
   else if ( var == "m12" || (var == "m12_csv" || var == "m12_aac")){
+    cout << "m12 selected" << endl;
+    binning = rebin_*20.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( (var == "m12_SR1" || var == "m12_SR2") || (var == "m12_SR3" || var == "m12_SR4")){
     cout << "m12 selected" << endl;
     binning = rebin_*20.0;
     xtitleEnr = "m_{12} [GeV], bEnriched";
@@ -417,28 +425,28 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   GesCan -> Update();
     
   if (threejets_){
-    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-total-3j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-total-3j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-3j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-total-3j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-total-3j.root").c_str() );
   }
   else{
-    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
-    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
-    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
-    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
-    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
-    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-total-4j.pdf").c_str() );
-    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-bb-analysis-samples-" + var_ + "-2017" + era_ + "-" + region_ + "-total-4j.root").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j.pdf").c_str() );
+    EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j.root").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j-single_hists.pdf").c_str() );
+    EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-4j-single_hists.root").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j.pdf").c_str() );
+    GeFCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j.root").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j-single_hists.pdf").c_str() );
+    GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
+    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-total-4j.pdf").c_str() );
+    GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-total-4j.root").c_str() );
     }
   return 0;
 }

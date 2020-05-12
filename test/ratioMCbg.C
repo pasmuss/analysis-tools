@@ -25,8 +25,8 @@ int ratioMCbg(string basis_, double ylow_, double yhigh_, bool logy_, int rebin_
 
   TFile* file_cr_3b = new TFile( (basis_ + "CR-3j.root").c_str() ,"READ");
   TFile* file_sr_3b = new TFile( (basis_ + "SR-3j.root").c_str() ,"READ");
-  TFile* file_cr_4b = new TFile( (basis_ + "CR-4j.root").c_str() ,"READ");
-  TFile* file_sr_4b = new TFile( (basis_ + "SR-4j.root").c_str() ,"READ");
+  //TFile* file_cr_4b = new TFile( (basis_ + "CR-4j.root").c_str() ,"READ");
+  //TFile* file_sr_4b = new TFile( (basis_ + "SR-4j.root").c_str() ,"READ");
 
   TFile* out_file = new TFile( (basis_ + "-MC-tf.root").c_str(), "RECREATE");
 
@@ -49,7 +49,7 @@ int ratioMCbg(string basis_, double ylow_, double yhigh_, bool logy_, int rebin_
   if (logy_) out_can_3b -> SetLogy(1);
   hist_sr_3b -> Draw();
 
-  TF1* fitfunction = new TF1("fitfunction","[0]*erf([2]*(x-[1]))*(1+[3]*x)",80,2000);//erf times linear decrease at higher masses
+  TF1* fitfunction = new TF1("fitfunction","[0]*erf([2]*(x-[1]))*(1+[3]*x)",200,500);//erf times linear decrease at higher masses
   //TF1* fitfunction = new TF1("fitfunction","[0]*erf([2]*(x-[1]))",80,500);//simple erf
   //TF1* fitfunction = new TF1("fitfunction","[0]*x+[1]",200,500);//ax+b
   //TF1* fitfunction = new TF1("fitfunction","[0]*x*x+[1]*x+[2]",200,500);//ax^2+bx+c
@@ -65,8 +65,8 @@ int ratioMCbg(string basis_, double ylow_, double yhigh_, bool logy_, int rebin_
 
   out_can_3b -> Update();
 
-  out_can_3b -> SaveAs("Outputdata/m12_ratio_CR-SR_weights/tf_nom12Min_erfext_80to2000_SR1Andlowm_Mar09-20_weights.pdf");
-  out_can_3b -> SaveAs("Outputdata/m12_ratio_CR-SR_weights/tf_nom12Min_erfext_80to2000_SR1Andlowm_Mar09-20_weights.root");
+  out_can_3b -> SaveAs("Outputdata/m12_ratio_CR-SR_weights/exterf_SR1_200to500_May12-20_weights.pdf");
+  out_can_3b -> SaveAs("Outputdata/m12_ratio_CR-SR_weights/exterf_SR1_200to500_May12-20_weights.root");
   
   hist_sr_3b -> Write();
   out_cr_3b -> Write();
