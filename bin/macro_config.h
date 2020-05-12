@@ -328,12 +328,12 @@ int macro_config(int argc, char * argv[])
 	    }
 	  po::notify(vm);
 	  boost::algorithm::to_upper(jetsid_);
-	  if ( !(regions_ == "4j3" || regions_ == "4j4") && !(regions_ == "3j" || regions_ == "3jor") && !(regions_=="4jnn" || regions_ == "") )
+	  if ( (!(regions_ == "4j3" || regions_ == "4j4") && !(regions_ == "3j" || regions_ == "3jor")) && (!(regions_=="4jnn" || regions_ == "") && !(regions_ == "3jveto")) )
 	    {
-	      std::cout << "Config Error *** No valid set of regions defined. Must be 3j, 4j3, 4j4, 4jnn or 3jor." << std::endl;
+	      std::cout << "Config Error *** No valid set of regions defined. Must be 3j, 4j3, 4j4, 4jnn, 3jveto or 3jor." << std::endl;
 	      return -1;
 	    }
-	  if (regions_ == "3j") njetsmin_ = 3;
+	  if (regions_ == "3j" || regions_ == "3jveto") njetsmin_ = 3;
 	  if (regions_ == "4j3") njetsmin_ = 4;
 	  if ( ((regions_ == "4j3" || regions_ == "4j4") || regions_ == "4jnn") && njetsmin_ != 4)
 	    {
