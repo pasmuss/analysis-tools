@@ -344,6 +344,7 @@ int main(int argc, char * argv[])
   int nsel[10] = { };
   int nweigh[10] = { };
   int nmatch[10] = { };
+  int n_SR[10] = { };
 
   int noofeventsstart = 0;
 
