@@ -122,6 +122,11 @@ int main(int argc, char * argv[])
   h1["n_ptmin20_csv"]     = new TH1F("n_ptmin20_csv"    , "" ,   30,  0,    30);
   h1["nentries"]          = new TH1F("nentries"         , "" ,    2,  0,     2);
 
+  h1["nentries_SR1"]      = new TH1F("nentries_SR1"     , "" ,    1,  0,     1);
+  h1["nentries_SR2"]      = new TH1F("nentries_SR2"     , "" ,    1,  0,     1);
+  h1["nentries_SR3"]      = new TH1F("nentries_SR3"     , "" ,    1,  0,     1);
+  h1["nentries_SR4"]      = new TH1F("nentries_SR4"     , "" ,    1,  0,     1);
+
   h1["HT_bef_cuts"]       = new TH1F("HT_bef_cuts"      , "" , 1080,  0, 10800);
   h1["HT"]                = new TH1F("HT"               , "" , 1080,  0, 10800);
   h1["HT_after_bTag"]     = new TH1F("HT_after_bTag"    , "" , 1080,  0, 10800);
@@ -209,6 +214,12 @@ int main(int argc, char * argv[])
   h1["m12"]               = new TH1F("m12"               , "" , 150, 0, 3000);
   h1["m12_aac"]           = new TH1F("m12_aac"           , "" , 150, 0, 3000);
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
+
+  //SR histograms 3b category (intended for aac, only final selection for combine tool use)
+  h1["m12_SR1"]           = new TH1F("m12_SR1"           , "" , 30, 200,  500);//10 GeV binning
+  h1["m12_SR2"]           = new TH1F("m12_SR2"           , "" , 35, 260,  785);//15 GeV binning
+  h1["m12_SR3"]           = new TH1F("m12_SR3"           , "" , 44, 390, 1270);//20 GeV binning
+  h1["m12_SR4"]           = new TH1F("m12_SR4"           , "" , 60, 500, 2000);//25 GeV binning
 
   h1["pt_0_JER_up"]                    = new TH1F("pt_0_JER_up"                    , "" , 210,  0, 2100);
   h1["pt_0_JER_down"]                  = new TH1F("pt_0_JER_down"                  , "" , 210,  0, 2100);
@@ -896,10 +907,18 @@ int main(int argc, char * argv[])
           else mbbw[i] = mbb_sel;
 	}
 
+      if (mbb_sel > 200 && mbb_sel < 500) n_SR[1]++;
+      if (mbb_sel > 260 && mbb_sel < 785) n_SR[2]++;
+      if (mbb_sel > 390 && mbb_sel < 1270) n_SR[3]++;
+      if (mbb_sel > 500 && mbb_sel < 2000) n_SR[4]++;
       
       if ( !signalregion_ || isMC_)//blinding
 	{ 
 	  h1["m12_aac"] -> Fill(mbb_sel,eventweight); //unprescaled
+	  if (mbb_sel > 200 && mbb_sel < 500) h1["m12_SR1"] -> Fill(mbb_sel,eventweight);
+	  if (mbb_sel > 260 && mbb_sel < 785) h1["m12_SR2"] -> Fill(mbb_sel,eventweight);
+	  if (mbb_sel > 390 && mbb_sel < 1270) h1["m12_SR3"] -> Fill(mbb_sel,eventweight);
+	  if (mbb_sel > 500 && mbb_sel < 2000) h1["m12_SR4"] -> Fill(mbb_sel,eventweight);
 	  mbb = mbb_sel;
 	  weight = eventweight;
 	  tree -> Fill();
@@ -1034,6 +1053,11 @@ int main(int argc, char * argv[])
 		
       }
     }//end: event loop
+
+  h1["nentries_SR1"] -> SetBinContent(1,n_SR[1]);
+  h1["nentries_SR2"] -> SetBinContent(1,n_SR[2]);
+  h1["nentries_SR3"] -> SetBinContent(1,n_SR[3]);
+  h1["nentries_SR4"] -> SetBinContent(1,n_SR[4]);
 
   h1["noofevents_h"] -> SetBinContent(1,noofeventsstart); //total number of events
   h1["noofevents_h"] -> SetBinContent(2,nsel[0]); //triggered
