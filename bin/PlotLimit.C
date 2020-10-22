@@ -31,7 +31,7 @@ using namespace boost::program_options;
 void PlotSigmaBRLimit(const char * fileList = "Hbb.limits",
                std::string output = "",
                bool blindData = true,
-               float yMin = 0.001,
+               float yMin = 0.015,
                float yMax = 80,
                float xMax = 1610,
 	       float xMin = 290,

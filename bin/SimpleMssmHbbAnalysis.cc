@@ -216,11 +216,27 @@ int main(int argc, char * argv[])
   h1["pt_HiggsCand"]      = new TH1F("pt_HiggsCand"      , "" , 210, 0, 2100);
 
   //SR histograms 3b category (intended for aac, only final selection for combine tool use)
-  h1["m12_SR1"]           = new TH1F("m12_SR1"           , "" , 30, 200,  500);//10 GeV binning
+  h1["m12_SR1_1GeV"]            = new TH1F("m12_SR1_1GeV"           , "" ,300, 200,  500);// 1 GeV binning 
+  h1["m12_SR1_2GeV"]            = new TH1F("m12_SR1_2GeV"           , "" ,150, 200,  500);// 2 GeV binning 
+  h1["m12_SR1_5GeV"]            = new TH1F("m12_SR1_5GeV"           , "" , 60, 200,  500);// 5 GeV binning
+  h1["m12_SR1_10GeV"]           = new TH1F("m12_SR1_10GeV"          , "" , 30, 200,  500);//10 GeV binning
+
+  h1["m12_SR2_1GeV"]            = new TH1F("m12_SR2_1GeV"           , "" , 525,260,  785);// 1 GeV binning
+  h1["m12_SR2_3GeV"]            = new TH1F("m12_SR2_3GeV"           , "" , 175,260,  785);// 3 GeV binning
+  h1["m12_SR2_5GeV"]            = new TH1F("m12_SR2_5GeV"           , "" , 105,260,  785);// 5 GeV binning
+  h1["m12_SR2_15GeV"]           = new TH1F("m12_SR2_15GeV"          , "" , 35, 260,  785);//15 GeV binning
+
+  h1["m12_SR3_5GeV"]            = new TH1F("m12_SR3_5GeV"           , "" , 176,390, 1270);// 5 GeV binning
+  h1["m12_SR3_20GeV"]           = new TH1F("m12_SR3_20GeV"          , "" , 44, 390, 1270);//20 GeV binning
+
+  h1["m12_SR4_5GeV"]            = new TH1F("m12_SR4_5GeV"           , "" , 300,500, 2000);// 5 GeV binning
+  h1["m12_SR4_10GeV"]           = new TH1F("m12_SR4_10GeV"          , "" , 150,500, 2000);//10 GeV binning
+  h1["m12_SR4_25GeV"]           = new TH1F("m12_SR4_25GeV"          , "" , 60, 500, 2000);//25 GeV binning
+  /*
   h1["m12_SR2"]           = new TH1F("m12_SR2"           , "" , 35, 260,  785);//15 GeV binning
   h1["m12_SR3"]           = new TH1F("m12_SR3"           , "" , 44, 390, 1270);//20 GeV binning
   h1["m12_SR4"]           = new TH1F("m12_SR4"           , "" , 60, 500, 2000);//25 GeV binning
-
+  */
   h1["pt_0_JER_up"]                    = new TH1F("pt_0_JER_up"                    , "" , 210,  0, 2100);
   h1["pt_0_JER_down"]                  = new TH1F("pt_0_JER_down"                  , "" , 210,  0, 2100);
   h1["j0_JER_diff"]                    = new TH1F("j0_JER_diff"                    , "" , 210,  0, 2100);
@@ -916,10 +932,27 @@ int main(int argc, char * argv[])
       if ( !signalregion_ || isMC_)//blinding
 	{ 
 	  h1["m12_aac"] -> Fill(mbb_sel,eventweight); //unprescaled
-	  if (mbb_sel > 200 && mbb_sel < 500) h1["m12_SR1"] -> Fill(mbb_sel,eventweight);
-	  if (mbb_sel > 260 && mbb_sel < 785) h1["m12_SR2"] -> Fill(mbb_sel,eventweight);
-	  if (mbb_sel > 390 && mbb_sel < 1270) h1["m12_SR3"] -> Fill(mbb_sel,eventweight);
-	  if (mbb_sel > 500 && mbb_sel < 2000) h1["m12_SR4"] -> Fill(mbb_sel,eventweight);
+	  if (mbb_sel > 200 && mbb_sel < 500){
+	    h1["m12_SR1_1GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR1_2GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR1_5GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR1_10GeV"] -> Fill(mbb_sel,eventweight);
+	  }
+	  if (mbb_sel > 260 && mbb_sel < 785){
+	    h1["m12_SR2_1GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR2_3GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR2_5GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR2_15GeV"] -> Fill(mbb_sel,eventweight);
+	  }
+	  if (mbb_sel > 390 && mbb_sel < 1270){
+	    h1["m12_SR3_5GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR3_20GeV"] -> Fill(mbb_sel,eventweight);
+	  }
+	  if (mbb_sel > 500 && mbb_sel < 2000){
+	    h1["m12_SR4_5GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR4_10GeV"] -> Fill(mbb_sel,eventweight);
+	    h1["m12_SR4_25GeV"] -> Fill(mbb_sel,eventweight);
+	  }
 	  mbb = mbb_sel;
 	  weight = eventweight;
 	  tree -> Fill();
