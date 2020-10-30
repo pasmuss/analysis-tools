@@ -19,6 +19,7 @@ int runmax_;
 bool isMC_;
 bool invertCutflow_;
 bool signalregion_;
+bool validationregion_;
 std::string inputlist_;
 std::string outputRoot_;
 std::string json_;
@@ -249,6 +250,7 @@ int macro_config(int argc, char * argv[])
 	("isMC",po::value <bool> (&isMC_)->default_value(true),"Flag for MC dataset")
 	("invertCutflow",po::value <bool> (&invertCutflow_)->default_value(false),"Flag for inverting Cutflow (placing trigger as last step)")
 	("signalRegion",po::value <bool> (&signalregion_)->default_value(true),"Flag for signal region")
+	("validationRegion",po::value <bool> (&validationregion_)->default_value(false),"Flag for validation region")
 	("hltPath",po::value <std::string> (&hltPath_),"HLT path name")
 	("l1Seed",po::value <std::string> (&l1Seed_)->default_value(""),"L1 seed name")
 	("hltPathReference",po::value <std::string> (&hltPathRef_),"HLT path name for reference trigger for trigger efficiency")

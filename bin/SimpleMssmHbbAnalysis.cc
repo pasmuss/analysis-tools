@@ -614,11 +614,17 @@ int main(int argc, char * argv[])
 	  if (!usebtagweights_){
 	    if ( j < 2 && btagdisc < btagwp_ ) goodEvent = false;// 0/1: 1st/2nd jet: always to be b tagged
 	    if (regions == "3j"){
-	      if (! signalregion_){//CR 3j: bbnb
-		if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
+	      if (validationregion_ && j == 2){//VR: third jet between nb and b --> should not test SR vs CR
+		if (btagdisc < nonbtagwp_ || btagdisc > btagwp_) goodEvent = false;
 	      }
-	      else{//SR 3j: bbb
-		if (j == 2 && btagdisc < btagwp_) goodEvent = false;
+	      else{//not validation --> normal SR/CR
+		cout << "checking SR/CR" << endl;
+		if (! signalregion_){//CR 3j: bbnb
+		  if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
+		}
+		else{//SR 3j: bbb
+		  if (j == 2 && btagdisc < btagwp_) goodEvent = false;
+		}
 	      }
 	    }//3j
 	    else if (regions == "4j3"){
@@ -643,7 +649,7 @@ int main(int argc, char * argv[])
 	      }
 	      else{//SR 3jor: bbbnb || bbnbb (3rd or 4th jet may be third b-jet)
 		if (j == 2) storedisc = btagdisc;
-		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < btagwp_) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
+ 		if (j == 2 && (btagdisc > nonbtagwp_ && btagdisc < btagwp_) ) goodEvent = false;//if larger than veto and smaller than btag: bad anyhow (neither nb nor b)
 		if (j == 3 && (storedisc >= jetsbtagmin_[2] && btagdisc > nonbtagwp_) ) goodEvent = false;//if third b -> fourth must be nb
 		if (j == 3 && (storedisc <= nonbtagwp_ && btagdisc < btagwp_) ) goodEvent= false;//if third nb, fourth must be b
 	      }
@@ -929,45 +935,45 @@ int main(int argc, char * argv[])
       if (mbb_sel > 390 && mbb_sel < 1270) n_SR[3]++;
       if (mbb_sel > 500 && mbb_sel < 2000) n_SR[4]++;
       
-      if ( !signalregion_ || isMC_)//blinding
-	{ 
-	  h1["m12_aac"] -> Fill(mbb_sel,eventweight); //unprescaled
-	  if (mbb_sel > 200 && mbb_sel < 500){
-	    h1["m12_SR1_1GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR1_2GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR1_5GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR1_10GeV"] -> Fill(mbb_sel,eventweight);
-	  }
-	  if (mbb_sel > 260 && mbb_sel < 785){
-	    h1["m12_SR2_1GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR2_3GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR2_5GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR2_15GeV"] -> Fill(mbb_sel,eventweight);
-	  }
-	  if (mbb_sel > 390 && mbb_sel < 1270){
-	    h1["m12_SR3_5GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR3_20GeV"] -> Fill(mbb_sel,eventweight);
-	  }
-	  if (mbb_sel > 500 && mbb_sel < 2000){
-	    h1["m12_SR4_5GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR4_10GeV"] -> Fill(mbb_sel,eventweight);
-	    h1["m12_SR4_25GeV"] -> Fill(mbb_sel,eventweight);
-	  }
-	  mbb = mbb_sel;
-	  weight = eventweight;
-	  tree -> Fill();
-
-	  if     ( window == 0 ) tree0 -> Fill();
-	  else if( window == 1 ) tree1 -> Fill();
-	  else if( window == 2 ) tree2 -> Fill();
-	  else if( window == 3 ) tree3 -> Fill();
-	  else if( window == 4 ) tree4 -> Fill();
-	  else if( window == 5 ) tree5 -> Fill();
-	  else if( window == 6 ) tree6 -> Fill();
-
-	  if ( !isMC_ && !signalregion_) h1[Form("m12_sel_%i",window)] -> Fill(mbbw[window], eventweight);
-	}
-
+      //if ( !signalregion_ || isMC_)//blinding
+      //{ 
+      h1["m12_aac"] -> Fill(mbb_sel,eventweight); //unprescaled
+      if (mbb_sel > 200 && mbb_sel < 500){
+	h1["m12_SR1_1GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR1_2GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR1_5GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR1_10GeV"] -> Fill(mbb_sel,eventweight);
+      }
+      if (mbb_sel > 260 && mbb_sel < 785){
+	h1["m12_SR2_1GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR2_3GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR2_5GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR2_15GeV"] -> Fill(mbb_sel,eventweight);
+      }
+      if (mbb_sel > 390 && mbb_sel < 1270){
+	h1["m12_SR3_5GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR3_20GeV"] -> Fill(mbb_sel,eventweight);
+      }
+      if (mbb_sel > 500 && mbb_sel < 2000){
+	h1["m12_SR4_5GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR4_10GeV"] -> Fill(mbb_sel,eventweight);
+	h1["m12_SR4_25GeV"] -> Fill(mbb_sel,eventweight);
+      }
+      mbb = mbb_sel;
+      weight = eventweight;
+      tree -> Fill();
+      
+      if     ( window == 0 ) tree0 -> Fill();
+      else if( window == 1 ) tree1 -> Fill();
+      else if( window == 2 ) tree2 -> Fill();
+      else if( window == 3 ) tree3 -> Fill();
+      else if( window == 4 ) tree4 -> Fill();
+      else if( window == 5 ) tree5 -> Fill();
+      else if( window == 6 ) tree6 -> Fill();
+      
+      if ( !isMC_ && !signalregion_) h1[Form("m12_sel_%i",window)] -> Fill(mbbw[window], eventweight);
+      //}
+      
       if (isMC_){
 	ptH = (selectedJets[0]->p4() + selectedJets[1]->p4()).Pt();
 	h1["pt_HiggsCand"] -> Fill(ptH,eventweight);
