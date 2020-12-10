@@ -618,7 +618,7 @@ int main(int argc, char * argv[])
 		if (btagdisc < nonbtagwp_ || btagdisc > btagwp_) goodEvent = false;
 	      }
 	      else{//not validation --> normal SR/CR
-		cout << "checking SR/CR" << endl;
+		//cout << "checking SR/CR" << endl;
 		if (! signalregion_){//CR 3j: bbnb
 		  if (j == 2 && btagdisc > nonbtagwp_) goodEvent = false;
 		}
@@ -1070,7 +1070,7 @@ int main(int argc, char * argv[])
 	  }
 
 	//JES
-	std::vector<std::pair<string,int>> sigmas = { {"up",2}, {"down",-2} };
+	std::vector<std::pair<string,int>> sigmas = { {"up",1}, {"down",-1} };
 	for ( auto & var : sigmas)
 	  {
 	    correctJetpt( *j0, 1 + var.second*j0->jecUncert()  );
