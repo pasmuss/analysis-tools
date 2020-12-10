@@ -22,7 +22,7 @@ void compareLOnlo34j_cutflow(){
   style.SetStyle();
   gStyle->SetOptStat(0);
 
-  vector<string> nlomasspoints = {"200","250","300","350","400","450","500","600","700","800","900","1000","1200","1400","1600"/*,"1800","2000"*/};
+  vector<string> nlomasspoints = {"300","350","400","450","500","600","700","800","900","1000","1200","1400","1600"/*,"1800","2000"*/};
   //vector<string> lomasspoints  = {            "350",                  "600",                         "1200"};
 
   int nlopoints = nlomasspoints.size();

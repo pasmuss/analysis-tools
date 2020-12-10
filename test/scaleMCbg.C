@@ -34,7 +34,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   string xtitleEnr, xtitleGeF, xtitleGes, ytitle = "Did you forget me?";
   double binning = 0.0;
 
-  string assigndir = "rootfiles_4med_Weights_histForSubranges_mcbg_May12-20/";
+  string assigndir = "rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/rootfiles_May11-20_properSubranges_inclMC/";
   string directory = ("Configs_diffBTags_allmedium/" + assigndir).c_str();
 
   string outfilename = (directory + "mcbg/MCbg-QCD-" + var_ + "-2017" + era_ + "-" + region_ + "-3j" + ".root").c_str();
@@ -113,7 +113,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
     xtitleGes = "#eta, 4^{th} jet";
     ytitle = ("Events/" + to_string(binning) + " [a.u.]").c_str();
   }
-  else if ( var == "m12" || (var == "m12_csv" || var == "m12_aac")){
+  else if ( var == "m12" || (var == "m12_csv" || var == "m12_aac") ){
     cout << "m12 selected" << endl;
     binning = rebin_*20.0;
     xtitleEnr = "m_{12} [GeV], bEnriched";
@@ -124,6 +124,62 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   else if ( (var == "m12_SR1" || var == "m12_SR2") || (var == "m12_SR3" || var == "m12_SR4")){
     cout << "m12 selected" << endl;
     binning = rebin_*20.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( var == "m12_SR1_1GeV" || var == "m12_SR2_1GeV" ){
+    cout << "m12 selected" << endl;
+    binning = rebin_*1.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( var == "m12_SR1_10GeV" ){
+    cout << "m12 selected" << endl;
+    binning = rebin_*10.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( var == "m12_SR2_15GeV" ){
+    cout << "m12 selected" << endl;
+    binning = rebin_*15.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( var == "m12_SR3_5GeV" ){
+    cout << "m12 selected" << endl;
+    binning = rebin_*5.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( var == "m12_SR3_20GeV" ){
+    cout << "m12 selected" << endl;
+    binning = rebin_*20.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( var == "m12_SR4_10GeV" ){
+    cout << "m12 selected" << endl;
+    binning = rebin_*10.0;
+    xtitleEnr = "m_{12} [GeV], bEnriched";
+    xtitleGeF = "m_{12} [GeV], bGenFilter";
+    xtitleGes = "m_{12} [GeV]";
+    ytitle = ("Events/" + to_string(binning) + " GeV").c_str();
+  }
+  else if ( var == "m12_SR4_25GeV" ){
+    cout << "m12 selected" << endl;
+    binning = rebin_*25.0;
     xtitleEnr = "m_{12} [GeV], bEnriched";
     xtitleGeF = "m_{12} [GeV], bGenFilter";
     xtitleGes = "m_{12} [GeV]";
@@ -171,7 +227,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
     ytitle = ("Events/" + to_string(binning)).c_str();
   }
   else{
-    cout << "No known variable selected. Please select 'pt_n', 'eta_n', 'HT' or 'm12' with n=(0,1,2,3). For the quantities after cuts, please add '_aac' to the string." << endl; 
+    cout << "No known variable selected. Please select 'pt_n', 'eta_n', 'HT' or 'm12' with n=(0,1,2,3). For the quantities after cuts, please add '_aac' to the string. For the subrange histograms, the options 'm12_SR1_1GeV', 'm12_SR2_1GeV', 'm12_SR3_5GeV', 'm12_SR4_10GeV' are available." << endl; 
     return -1;
   }
   cout << "Variable check successful. Bin width: " << binning << endl;
@@ -180,8 +236,8 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   cout << " " << endl;
   cout << "Checking region consistency..." << endl;
   string reg = region_;
-  if (! (reg == "CR" || reg == "SR")){
-    cout << "Please select either 'CR' or 'SR' as region!" << endl; 
+  if (! ((reg == "CR" || reg == "SR") || reg == "VR")){
+    cout << "Please select either 'CR', 'VR' or 'SR' as region!" << endl; 
     return -1;
   }
   cout << "Region check successful." << endl;
@@ -424,7 +480,7 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
   CMSPrelim( "Simulation (13 TeV)" , "Work in progress", 0.123, 0.84);
   GesCan -> Update();
     
-  if (threejets_){
+  /*  if (threejets_){
     EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j.pdf").c_str() );
     EnrCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j.root").c_str() );
     EnrSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bEnriched-3j-single_hists.pdf").c_str() );
@@ -447,6 +503,6 @@ int scaleMCbg(string var_, int rebin_ , string region_, string era_, double xlow
     GeFSingleCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-bGenFilter-4j-single_hists.root").c_str() );
     GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-total-4j.pdf").c_str() );
     GesCan -> SaveAs( ("Outputdata/" + assigndir + "mc-bg-inclProperSubrangeHists-" + var_ + "-2017" + era_ + "-" + region_ + "-total-4j.root").c_str() );
-    }
+    }*/
   return 0;
 }

@@ -18,7 +18,7 @@
 
 using namespace std;
 
-void CreateHistFromFormula_TF(bool log_, int seed_){
+void CreateHistFromFormula_TF(bool log_=false, int seed_=1904){
 
   TH1::SetDefaultSumw2();
 
@@ -392,7 +392,7 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
   // Saving
   //
 
-  TFile* outfile = new TFile(("Outputdata/TF_bias/Pseudos_evenFiner1GeVBins_" + seedstr + ".root").c_str(),"RECREATE");
+  /*  TFile* outfile = new TFile(("Outputdata/TF_bias/Pseudos_evenFiner1GeVBins_" + seedstr + ".root").c_str(),"RECREATE");
   funcSR1 -> Write();
   funcSR2 -> Write();
   funcSR3 -> Write();
@@ -416,7 +416,7 @@ void CreateHistFromFormula_TF(bool log_, int seed_){
   canCR_SR1 -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_fineBinsForCombine1GeV_histsSR1_" + seedstr + ".pdf").c_str());
   canCR_SR2 -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_fineBinsForCombine1GeV_histsSR2_" + seedstr + ".pdf").c_str());
   canCR_SR3 -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_fineBinsForCombine1GeV_histsSR3_" + seedstr + ".pdf").c_str());
-  canCR_SR4 -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_fineBinsForCombine1GeV_histsSR4_" + seedstr + ".pdf").c_str());
+  canCR_SR4 -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_fineBinsForCombine1GeV_histsSR4_" + seedstr + ".pdf").c_str());*/
   /*if (log_) {can -> SetLogy(); canTF -> SetLogy(); canCR -> SetLogy(); c_withsig -> SetLogy();
     can -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_10GeVBins_Sig5kEvts" + seedstr + "_log.pdf").c_str());
     can -> SaveAs(("Outputdata/TF_bias/subranges_modeled_4TF1s_10GeVBins_Sig5kEvts" + seedstr + "_log.root").c_str());
