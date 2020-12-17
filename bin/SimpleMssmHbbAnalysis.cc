@@ -232,11 +232,21 @@ int main(int argc, char * argv[])
   h1["m12_SR4_5GeV"]            = new TH1F("m12_SR4_5GeV"           , "" , 300,500, 2000);// 5 GeV binning
   h1["m12_SR4_10GeV"]           = new TH1F("m12_SR4_10GeV"          , "" , 150,500, 2000);//10 GeV binning
   h1["m12_SR4_25GeV"]           = new TH1F("m12_SR4_25GeV"          , "" , 60, 500, 2000);//25 GeV binning
-  /*
-  h1["m12_SR2"]           = new TH1F("m12_SR2"           , "" , 35, 260,  785);//15 GeV binning
-  h1["m12_SR3"]           = new TH1F("m12_SR3"           , "" , 44, 390, 1270);//20 GeV binning
-  h1["m12_SR4"]           = new TH1F("m12_SR4"           , "" , 60, 500, 2000);//25 GeV binning
-  */
+
+  //cutflow: m12 histograms including event weights after each step of cutflow
+  //and for each fit range with respective (1/1/5/10 GeV) binning
+  //plu total with 20 GeV binning
+  //float mbb = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+  //steps: 15
+  
+  for (unsigned int stepnumber = 1; stepnumber <= 15; stepnumber ++){
+    h1[Form("m12_SR1_1GeV_step%i",stepnumber)]       = new TH1F(Form("m12_SR1_1GeV_step%i",stepnumber)           , "" ,300,200,  500);
+    h1[Form("m12_SR2_1GeV_step%i",stepnumber)]       = new TH1F(Form("m12_SR2_1GeV_step%i",stepnumber)           , "" ,525,260,  785);
+    h1[Form("m12_SR3_5GeV_step%i",stepnumber)]       = new TH1F(Form("m12_SR3_5GeV_step%i",stepnumber)           , "" ,176,390, 1270);
+    h1[Form("m12_SR4_10GeV_step%i",stepnumber)]      = new TH1F(Form("m12_SR4_10GeV_step%i",stepnumber)          , "" ,150,500, 2000);
+    h1[Form("m12_total_step%i",stepnumber)]          = new TH1F(Form("m12_total_step%i",stepnumber)              , "" ,150,  0, 3000);
+}
+
   h1["pt_0_JER_up"]                    = new TH1F("pt_0_JER_up"                    , "" , 210,  0, 2100);
   h1["pt_0_JER_down"]                  = new TH1F("pt_0_JER_down"                  , "" , 210,  0, 2100);
   h1["j0_JER_diff"]                    = new TH1F("j0_JER_diff"                    , "" , 210,  0, 2100);
@@ -248,7 +258,18 @@ int main(int argc, char * argv[])
   h1["pt_1_JES_up"]                    = new TH1F("pt_1_JES_up"                    , "" , 210,  0, 2100);
   h1["pt_1_JES_down"]                  = new TH1F("pt_1_JES_down"                  , "" , 210,  0, 2100);
 
-  h1["m12_aac_PU_up"]            = new TH1F("m12_aac_PU_up", "", 150, 0, 3000);
+  //for each: additional, properly (1/1/5/10 GeV) binned FR hist
+  //loop over systematics and vars
+  for (unsigned int varentry = 0; varentry < vars.size(); varentry++){
+    for (unsigned int systentry = 0; systentry < systematics.size(); systentry++){
+      h1[Form("m12_aac_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str())] = new TH1F(Form("m12_aac_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str()), "", 150, 0, 3000);
+      h1[Form("m12_SR1_1GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str())] = new TH1F(Form("m12_SR1_1GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str()), "", 300, 200,  500);
+      h1[Form("m12_SR2_1GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str())] = new TH1F(Form("m12_SR2_1GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str()), "", 525, 260,  785);
+      h1[Form("m12_SR3_5GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str())] = new TH1F(Form("m12_SR3_5GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str()), "", 176, 390, 1270);
+      h1[Form("m12_SR4_10GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str())] = new TH1F(Form("m12_SR4_10GeV_%s_%s",(systematics[systentry]).c_str(),(vars[varentry]).c_str()), "", 150, 500, 2000);
+    }
+  }
+  /*h1["m12_aac_PU_up"]            = new TH1F("m12_aac_PU_up", "", 150, 0, 3000);
   h1["m12_aac_PU_down"]          = new TH1F("m12_aac_PU_down", "", 150, 0, 3000);
   h1["m12_aac_SFbtag_up"]        = new TH1F("m12_aac_SFbtag_up", "", 150, 0, 3000);
   h1["m12_aac_SFbtag_down"]      = new TH1F("m12_aac_SFbtag_down", "", 150, 0, 3000);
@@ -258,9 +279,9 @@ int main(int argc, char * argv[])
   h1["m12_aac_jet_trigeff_down"] = new TH1F("m12_aac_jet_trigeff_down", "", 150, 0, 3000);
   h1["m12_aac_JER_up"]           = new TH1F("m12_aac_JER_up", "", 150, 0, 3000);
   h1["m12_aac_JER_down"]         = new TH1F("m12_aac_JER_down", "", 150, 0, 3000);
-  h1["m12_JER_diff"]             = new TH1F("m12_JER_diff", "", 150, 0, 3000);
   h1["m12_aac_JES_up"]           = new TH1F("m12_aac_JES_up", "", 150, 0, 3000);
-  h1["m12_aac_JES_down"]         = new TH1F("m12_aac_JES_down", "", 150, 0, 3000);
+  h1["m12_aac_JES_down"]         = new TH1F("m12_aac_JES_down", "", 150, 0, 3000);*/
+  h1["m12_JER_diff"]             = new TH1F("m12_JER_diff", "", 150, 0, 3000);
   
   for ( int i = 0 ; i < nsubsamples ; ++i )
     h1[Form("m12_sel_%i",i)]  = new TH1F(Form("m12_sel_%i",i) , "" , 150, 0, 3000);
@@ -384,6 +405,25 @@ int main(int argc, char * argv[])
       float puweight = 0;
       float pudown = 0;
       float puup = 0;
+
+      //load jet collection
+      auto slimmedJets = analysis.collection<Jet>("Jets");
+
+      //step 1: weight 1, no trigger, full collection
+      float mbbstep1 = (slimmedJets->at(0).p4() + slimmedJets->at(1).p4()).M();
+      h1["m12_total_step1"] -> Fill(mbbstep1,eventweight);
+      if (mbbstep1 > 200 && mbbstep1 < 500){
+        h1["m12_SR1_1GeV_step1"] -> Fill(mbbstep1,eventweight);
+      }
+      if (mbbstep1 > 260 && mbbstep1 < 785){
+        h1["m12_SR2_1GeV_step1"] -> Fill(mbbstep1,eventweight);
+      }
+      if (mbbstep1 > 390 && mbbstep1 < 1270){
+	h1["m12_SR3_5GeV_step1"] -> Fill(mbbstep1,eventweight);
+      }
+      if (mbbstep1 > 500 && mbbstep1 < 2000){
+	h1["m12_SR4_10GeV_step1"] -> Fill(mbbstep1,eventweight);
+      }
       
       if (isMC_){
 	puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
@@ -391,7 +431,7 @@ int main(int argc, char * argv[])
 	pudown = puweights->weight(analysis.nTruePileup(),-2);
 	puup = puweights->weight(analysis.nTruePileup(),+2);
       }
-      
+
       int window = 0;
       
       if ( i > 0 && i%100000==0 ){
@@ -406,6 +446,23 @@ int main(int argc, char * argv[])
 	{
 	  if (!analysis.selectJson() ) continue; // To use only goodJSonFiles
 	}
+
+      //step 2: json (only data)
+      //step 2: include PU weight (only MC)
+      float mbbstep2 = (slimmedJets->at(0).p4() + slimmedJets->at(1).p4()).M();
+      h1["m12_total_step2"] -> Fill(mbbstep2,eventweight);
+      if (mbbstep2 > 200 && mbbstep2 < 500){
+        h1["m12_SR1_1GeV_step2"] -> Fill(mbbstep2,eventweight);
+      }
+      if (mbbstep2 > 260 && mbbstep2 < 785){
+        h1["m12_SR2_1GeV_step2"] -> Fill(mbbstep2,eventweight);
+      }
+      if (mbbstep2 > 390 && mbbstep2 < 1270){
+	h1["m12_SR3_5GeV_step2"] -> Fill(mbbstep2,eventweight);
+      }
+      if (mbbstep2 > 500 && mbbstep2 < 2000){
+	h1["m12_SR4_10GeV_step2"] -> Fill(mbbstep2,eventweight);
+      }
       
       if(!isMC_ && !invertCutflow_){
 	int triggerFired = analysis.triggerResult(hltPath_);
@@ -415,7 +472,6 @@ int main(int argc, char * argv[])
       } //for MC, the trigger should be the last step of cutflow
       
       // Jets - std::shared_ptr< Collection<Jet> >
-      auto slimmedJets = analysis.collection<Jet>("Jets");
       float sgweight = 0;
       if (isMC_){
 	auto genjets = analysis.collection<GenJet>("GenJets");
@@ -431,6 +487,23 @@ int main(int argc, char * argv[])
 	//Assigning flavor to jets
 	auto particles = analysis.collection<GenParticle>("GenParticles");
 	slimmedJets->associatePartons(particles,0.4,5);
+      }
+
+      //step 3: trigger (only data)
+      //step 3: gen weight (only MC)
+      float mbbstep3 = (slimmedJets->at(0).p4() + slimmedJets->at(1).p4()).M();
+      h1["m12_total_step3"] -> Fill(mbbstep3,eventweight);
+      if (mbbstep3 > 200 && mbbstep3 < 500){
+        h1["m12_SR1_1GeV_step3"] -> Fill(mbbstep3,eventweight);
+      }
+      if (mbbstep3 > 260 && mbbstep3 < 785){
+        h1["m12_SR2_1GeV_step3"] -> Fill(mbbstep3,eventweight);
+      }
+      if (mbbstep3 > 390 && mbbstep3 < 1270){
+	h1["m12_SR3_5GeV_step3"] -> Fill(mbbstep3,eventweight);
+      }
+      if (mbbstep3 > 500 && mbbstep3 < 2000){
+	h1["m12_SR4_10GeV_step3"] -> Fill(mbbstep3,eventweight);
       }
 
       if (isMC_ && sgweight == 0){
@@ -457,6 +530,22 @@ int main(int argc, char * argv[])
 
       //at least 3/4 jets present
       if ( (int)selectedJets.size() < njetsmin_ ) continue;
+
+      //step 4: 3 id-tight jets
+      float mbbstep4 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step4"] -> Fill(mbbstep4,eventweight);
+      if (mbbstep4 > 200 && mbbstep4 < 500){
+        h1["m12_SR1_1GeV_step4"] -> Fill(mbbstep4,eventweight);
+      }
+      if (mbbstep4 > 260 && mbbstep4 < 785){
+        h1["m12_SR2_1GeV_step4"] -> Fill(mbbstep4,eventweight);
+      }
+      if (mbbstep4 > 390 && mbbstep4 < 1270){
+	h1["m12_SR3_5GeV_step4"] -> Fill(mbbstep4,eventweight);
+      }
+      if (mbbstep4 > 500 && mbbstep4 < 2000){
+	h1["m12_SR4_10GeV_step4"] -> Fill(mbbstep4,eventweight);
+      }
 
       ++nsel[1];
       if(isMC_ && sgweight > 0) ++nweigh[1];
@@ -495,6 +584,22 @@ int main(int argc, char * argv[])
 
       if ( ! goodEvent ) continue;
 
+      //step 5: pT/eta
+      float mbbstep5 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step5"] -> Fill(mbbstep5,eventweight);
+      if (mbbstep5 > 200 && mbbstep5 < 500){
+        h1["m12_SR1_1GeV_step5"] -> Fill(mbbstep5,eventweight);
+      }
+      if (mbbstep5 > 260 && mbbstep5 < 785){
+        h1["m12_SR2_1GeV_step5"] -> Fill(mbbstep5,eventweight);
+      }
+      if (mbbstep5 > 390 && mbbstep5 < 1270){
+	h1["m12_SR3_5GeV_step5"] -> Fill(mbbstep5,eventweight);
+      }
+      if (mbbstep5 > 500 && mbbstep5 < 2000){
+	h1["m12_SR4_10GeV_step5"] -> Fill(mbbstep5,eventweight);
+      }
+
       ++nsel[2];
       if(isMC_ && sgweight > 0) ++nweigh[2];
       else if(isMC_ && sgweight < 0) --nweigh[2];
@@ -510,11 +615,45 @@ int main(int argc, char * argv[])
 	}
 
       if ( ! goodEvent ) continue;
+
+      //step 6: delta R
+      float mbbstep6 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step6"] -> Fill(mbbstep6,eventweight);
+      if (mbbstep6 > 200 && mbbstep6 < 500){
+        h1["m12_SR1_1GeV_step6"] -> Fill(mbbstep6,eventweight);
+      }
+      if (mbbstep6 > 260 && mbbstep6 < 785){
+        h1["m12_SR2_1GeV_step6"] -> Fill(mbbstep6,eventweight);
+      }
+      if (mbbstep6 > 390 && mbbstep6 < 1270){
+	h1["m12_SR3_5GeV_step6"] -> Fill(mbbstep6,eventweight);
+      }
+      if (mbbstep6 > 500 && mbbstep6 < 2000){
+	h1["m12_SR4_10GeV_step6"] -> Fill(mbbstep6,eventweight);
+      }
+
       ++nsel[3];
       if(isMC_ && sgweight > 0) ++nweigh[3];
       else if(isMC_ && sgweight < 0) --nweigh[3];
       
       if ( fabs(selectedJets[0]->eta() - selectedJets[1]->eta()) > detamax_ ) continue;
+
+      //step 7: delta eta
+      float mbbstep7 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step7"] -> Fill(mbbstep7,eventweight);
+      if (mbbstep7 > 200 && mbbstep7 < 500){
+        h1["m12_SR1_1GeV_step7"] -> Fill(mbbstep7,eventweight);
+      }
+      if (mbbstep7 > 260 && mbbstep7 < 785){
+        h1["m12_SR2_1GeV_step7"] -> Fill(mbbstep7,eventweight);
+      }
+      if (mbbstep7 > 390 && mbbstep7 < 1270){
+	h1["m12_SR3_5GeV_step7"] -> Fill(mbbstep7,eventweight);
+      }
+      if (mbbstep7 > 500 && mbbstep7 < 2000){
+	h1["m12_SR4_10GeV_step7"] -> Fill(mbbstep7,eventweight);
+      }
+
       ++nsel[4];
       if(isMC_ && sgweight > 0) ++nweigh[4];
       else if(isMC_ && sgweight < 0) --nweigh[4];
@@ -591,6 +730,23 @@ int main(int argc, char * argv[])
 		float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,2);
 		jet_offl_sf_down *= jet_btag_sf_down;
 	      }
+
+	      //step 8 (only MC): offline b tag sf
+	      float mbbstep8 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+	      h1["m12_total_step8"] -> Fill(mbbstep8,eventweight);
+	      if (mbbstep8 > 200 && mbbstep8 < 500){
+		h1["m12_SR1_1GeV_step8"] -> Fill(mbbstep8,eventweight);
+	      }
+	      if (mbbstep8 > 260 && mbbstep8 < 785){
+		h1["m12_SR2_1GeV_step8"] -> Fill(mbbstep8,eventweight);
+	      }
+	      if (mbbstep8 > 390 && mbbstep8 < 1270){
+		h1["m12_SR3_5GeV_step8"] -> Fill(mbbstep8,eventweight);
+	      }
+	      if (mbbstep8 > 500 && mbbstep8 < 2000){
+		h1["m12_SR4_10GeV_step8"] -> Fill(mbbstep8,eventweight);
+	      }
+
 	      //online b tag sf
 	      if (btagalgo == "deepflavour" && (j == 0 || j == 1)){
 		float pt = jet->pt();
@@ -604,11 +760,44 @@ int main(int argc, char * argv[])
 		eventweight *= onl_sf;
 		th2_pT_onlbtagsf -> Fill(pt,onl_sf);
 	      }
+
+	      //step 9 (only MC): online b tag sf
+	      float mbbstep9 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+	      h1["m12_total_step9"] -> Fill(mbbstep9,eventweight);
+	      if (mbbstep9 > 200 && mbbstep9 < 500){
+		h1["m12_SR1_1GeV_step9"] -> Fill(mbbstep9,eventweight);
+	      }
+	      if (mbbstep9 > 260 && mbbstep9 < 785){
+		h1["m12_SR2_1GeV_step9"] -> Fill(mbbstep9,eventweight);
+	      }
+	      if (mbbstep9 > 390 && mbbstep9 < 1270){
+		h1["m12_SR3_5GeV_step9"] -> Fill(mbbstep9,eventweight);
+	      }
+	      if (mbbstep9 > 500 && mbbstep9 < 2000){
+		h1["m12_SR4_10GeV_step9"] -> Fill(mbbstep9,eventweight);
+	      }
 	    }
+
 	    if (j==0){	      
 	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
 	      eventweight *= signgenweight;
 	    }
+	  }
+
+	  //step 10 (only MC): gen weight
+	  float mbbstep10 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+	  h1["m12_total_step10"] -> Fill(mbbstep10,eventweight);
+	  if (mbbstep10 > 200 && mbbstep10 < 500){
+	    h1["m12_SR1_1GeV_step10"] -> Fill(mbbstep10,eventweight);
+	  }
+	  if (mbbstep10 > 260 && mbbstep10 < 785){
+	    h1["m12_SR2_1GeV_step10"] -> Fill(mbbstep10,eventweight);
+	  }
+	  if (mbbstep10 > 390 && mbbstep10 < 1270){
+	    h1["m12_SR3_5GeV_step10"] -> Fill(mbbstep10,eventweight);
+	  }
+	  if (mbbstep10 > 500 && mbbstep10 < 2000){
+	    h1["m12_SR4_10GeV_step10"] -> Fill(mbbstep10,eventweight);
 	  }
 
 	  if (!usebtagweights_){
@@ -697,6 +886,23 @@ int main(int argc, char * argv[])
 	}//end of loop over jets for b tagging
       
       if ( ! goodEvent ) continue;
+      
+      //step 11: b tagging
+      float mbbstep11 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step11"] -> Fill(mbbstep11,eventweight);
+      if (mbbstep11 > 200 && mbbstep11 < 500){
+        h1["m12_SR1_1GeV_step11"] -> Fill(mbbstep11,eventweight);
+      }
+      if (mbbstep11 > 260 && mbbstep11 < 785){
+        h1["m12_SR2_1GeV_step11"] -> Fill(mbbstep11,eventweight);
+      }
+      if (mbbstep11 > 390 && mbbstep11 < 1270){
+	h1["m12_SR3_5GeV_step11"] -> Fill(mbbstep11,eventweight);
+      }
+      if (mbbstep11 > 500 && mbbstep11 < 2000){
+	h1["m12_SR4_10GeV_step11"] -> Fill(mbbstep11,eventweight);
+      }
+
       ++nsel[5];
       if(isMC_ && sgweight > 0) ++nweigh[5];
       else if(isMC_ && sgweight < 0) --nweigh[5];
@@ -713,6 +919,22 @@ int main(int argc, char * argv[])
 	int triggerFired = analysis.triggerResult(hltPath_);
 	if ( !triggerFired ) continue;
 	//++nsel[7];
+      }
+
+      //step 12 (only MC): trigger
+      float mbbstep12 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step12"] -> Fill(mbbstep12,eventweight);
+      if (mbbstep12 > 200 && mbbstep12 < 500){
+        h1["m12_SR1_1GeV_step12"] -> Fill(mbbstep12,eventweight);
+      }
+      if (mbbstep12 > 260 && mbbstep12 < 785){
+        h1["m12_SR2_1GeV_step12"] -> Fill(mbbstep12,eventweight);
+      }
+      if (mbbstep12 > 390 && mbbstep12 < 1270){
+	h1["m12_SR3_5GeV_step12"] -> Fill(mbbstep12,eventweight);
+      }
+      if (mbbstep12 > 500 && mbbstep12 < 2000){
+	h1["m12_SR4_10GeV_step12"] -> Fill(mbbstep12,eventweight);
       }
 
       if (!usebtagweights_){//for data: fine; for MC: not to be used with b tag weights (not using trigger)
@@ -736,6 +958,23 @@ int main(int argc, char * argv[])
       }
 
       if ( ! goodEvent ) continue;
+
+      //step 13: trigger matching
+      float mbbstep13 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step13"] -> Fill(mbbstep13,eventweight);
+      if (mbbstep13 > 200 && mbbstep13 < 500){
+        h1["m12_SR1_1GeV_step13"] -> Fill(mbbstep13,eventweight);
+      }
+      if (mbbstep13 > 260 && mbbstep13 < 785){
+        h1["m12_SR2_1GeV_step13"] -> Fill(mbbstep13,eventweight);
+      }
+      if (mbbstep13 > 390 && mbbstep13 < 1270){
+	h1["m12_SR3_5GeV_step13"] -> Fill(mbbstep13,eventweight);
+      }
+      if (mbbstep13 > 500 && mbbstep13 < 2000){
+	h1["m12_SR4_10GeV_step13"] -> Fill(mbbstep13,eventweight);
+      }
+
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
       else if(isMC_ && sgweight < 0) --nweigh[6];
@@ -793,6 +1032,23 @@ int main(int argc, char * argv[])
 	      }
 	  } //end: loop over muons
 	if ( muonpresent ) continue;
+	
+	//step 14: muon veto
+	float mbbstep14 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+	h1["m12_total_step14"] -> Fill(mbbstep14,eventweight);
+	if (mbbstep14 > 200 && mbbstep14 < 500){
+	  h1["m12_SR1_1GeV_step14"] -> Fill(mbbstep14,eventweight);
+	}
+	if (mbbstep14 > 260 && mbbstep14 < 785){
+	  h1["m12_SR2_1GeV_step14"] -> Fill(mbbstep14,eventweight);
+	}
+	if (mbbstep14 > 390 && mbbstep14 < 1270){
+	  h1["m12_SR3_5GeV_step14"] -> Fill(mbbstep14,eventweight);
+	}
+	if (mbbstep14 > 500 && mbbstep14 < 2000){
+	  h1["m12_SR4_10GeV_step14"] -> Fill(mbbstep14,eventweight);
+	}
+
 	nsel[7]++;
 	if(isMC_ && sgweight > 0) ++nweigh[7];
 	else if(isMC_ && sgweight < 0) --nweigh[7];
@@ -849,6 +1105,22 @@ int main(int argc, char * argv[])
 	  trigger_weight *= triggersf;
 	  eventweight *= triggersf;
 	}
+      }
+
+      //step 15 (only MC): trigger turn-on sf
+      float mbbstep15 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step15"] -> Fill(mbbstep15,eventweight);
+      if (mbbstep15 > 200 && mbbstep15 < 500){
+        h1["m12_SR1_1GeV_step15"] -> Fill(mbbstep15,eventweight);
+      }
+      if (mbbstep15 > 260 && mbbstep15 < 785){
+        h1["m12_SR2_1GeV_step15"] -> Fill(mbbstep15,eventweight);
+      }
+      if (mbbstep15 > 390 && mbbstep15 < 1270){
+	h1["m12_SR3_5GeV_step15"] -> Fill(mbbstep15,eventweight);
+      }
+      if (mbbstep15 > 500 && mbbstep15 < 2000){
+	h1["m12_SR4_10GeV_step15"] -> Fill(mbbstep15,eventweight);
       }
 
       for ( int j = 0; j < njetsmin_; ++j )
@@ -1013,6 +1285,47 @@ int main(int argc, char * argv[])
 	//Jet trig eff
 	h1["m12_aac_jet_trigeff_up"]   -> Fill(mbb_sel, eventweight_jet_trigeff_up   );
 	h1["m12_aac_jet_trigeff_down"] -> Fill(mbb_sel, eventweight_jet_trigeff_down );
+	//subrange histograms
+	if (mbb_sel > 200 && mbb_sel < 500){
+	  h1["m12_SR1_1GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
+	  h1["m12_SR1_1GeV_PU_down"] -> Fill(mbb_sel,eventweight_PU_down);
+	  h1["m12_SR1_1GeV_SFbtag_up"] -> Fill(mbb_sel,eventweight_offbtag_up);
+	  h1["m12_SR1_1GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
+	  h1["m12_SR1_1GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
+	  h1["m12_SR1_1GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
+	  h1["m12_SR1_1GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+	  h1["m12_SR1_1GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+	}
+	if (mbb_sel > 260 && mbb_sel < 785){
+	  h1["m12_SR2_1GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
+          h1["m12_SR2_1GeV_PU_down"] -> Fill(mbb_sel,eventweight_PU_down);
+          h1["m12_SR2_1GeV_SFbtag_up"] -> Fill(mbb_sel,eventweight_offbtag_up);
+          h1["m12_SR2_1GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
+          h1["m12_SR2_1GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
+          h1["m12_SR2_1GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
+          h1["m12_SR2_1GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+          h1["m12_SR2_1GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+	}
+	if (mbb_sel > 390 && mbb_sel < 1270){
+	  h1["m12_SR3_5GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
+          h1["m12_SR3_5GeV_PU_down"] -> Fill(mbb_sel,eventweight_PU_down);
+          h1["m12_SR3_5GeV_SFbtag_up"] -> Fill(mbb_sel,eventweight_offbtag_up);
+          h1["m12_SR3_5GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
+          h1["m12_SR3_5GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
+          h1["m12_SR3_5GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
+          h1["m12_SR3_5GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+          h1["m12_SR3_5GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+	}
+	if (mbb_sel > 500 && mbb_sel < 2000){
+	  h1["m12_SR4_10GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
+          h1["m12_SR4_10GeV_PU_down"] -> Fill(mbb_sel,eventweight_PU_down);
+          h1["m12_SR4_10GeV_SFbtag_up"] -> Fill(mbb_sel,eventweight_offbtag_up);
+          h1["m12_SR4_10GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
+          h1["m12_SR4_10GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
+          h1["m12_SR4_10GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
+          h1["m12_SR4_10GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+          h1["m12_SR4_10GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+	}
 	//Fill trees
 	weight = eventweight_PU_up;
 	m12_vars["m12_PU_up"]->Fill();
