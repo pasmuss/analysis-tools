@@ -406,6 +406,8 @@ int main(int argc, char * argv[])
       float pudown = 0;
       float puup = 0;
 
+      analysis.event(i);
+
       //load jet collection
       auto slimmedJets = analysis.collection<Jet>("Jets");
 
@@ -441,7 +443,6 @@ int main(int argc, char * argv[])
       int run = analysis.run();
       int run_crit = 304508;
      
-      analysis.event(i);
       if (! isMC_ )
 	{
 	  if (!analysis.selectJson() ) continue; // To use only goodJSonFiles
@@ -1245,7 +1246,6 @@ int main(int argc, char * argv[])
       
       if ( !isMC_ && !signalregion_) h1[Form("m12_sel_%i",window)] -> Fill(mbbw[window], eventweight);
       //}
-      
       if (isMC_){
 	ptH = (selectedJets[0]->p4() + selectedJets[1]->p4()).Pt();
 	h1["pt_HiggsCand"] -> Fill(ptH,eventweight);
@@ -1293,8 +1293,8 @@ int main(int argc, char * argv[])
 	  h1["m12_SR1_1GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
 	  h1["m12_SR1_1GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
 	  h1["m12_SR1_1GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
-	  h1["m12_SR1_1GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
-	  h1["m12_SR1_1GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+	  h1["m12_SR1_1GeV_jet_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+	  h1["m12_SR1_1GeV_jet_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
 	}
 	if (mbb_sel > 260 && mbb_sel < 785){
 	  h1["m12_SR2_1GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
@@ -1303,8 +1303,8 @@ int main(int argc, char * argv[])
           h1["m12_SR2_1GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
           h1["m12_SR2_1GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
           h1["m12_SR2_1GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
-          h1["m12_SR2_1GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
-          h1["m12_SR2_1GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+          h1["m12_SR2_1GeV_jet_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+          h1["m12_SR2_1GeV_jet_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
 	}
 	if (mbb_sel > 390 && mbb_sel < 1270){
 	  h1["m12_SR3_5GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
@@ -1313,8 +1313,8 @@ int main(int argc, char * argv[])
           h1["m12_SR3_5GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
           h1["m12_SR3_5GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
           h1["m12_SR3_5GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
-          h1["m12_SR3_5GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
-          h1["m12_SR3_5GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+          h1["m12_SR3_5GeV_jet_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+          h1["m12_SR3_5GeV_jet_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
 	}
 	if (mbb_sel > 500 && mbb_sel < 2000){
 	  h1["m12_SR4_10GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
@@ -1323,9 +1323,10 @@ int main(int argc, char * argv[])
           h1["m12_SR4_10GeV_SFbtag_down"] -> Fill(mbb_sel,eventweight_offbtag_down);
           h1["m12_SR4_10GeV_onlSFbtag_up"] -> Fill(mbb_sel,eventweight_onlbtag_up);
           h1["m12_SR4_10GeV_onlSFbtag_down"] -> Fill(mbb_sel,eventweight_onlbtag_down);
-          h1["m12_SR4_10GeV_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
-          h1["m12_SR4_10GeV_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
+          h1["m12_SR4_10GeV_jet_trigeff_up"] -> Fill(mbb_sel,eventweight_jet_trigeff_up);
+          h1["m12_SR4_10GeV_jet_trigeff_down"] -> Fill(mbb_sel,eventweight_jet_trigeff_down);
 	}
+
 	//Fill trees
 	weight = eventweight_PU_up;
 	m12_vars["m12_PU_up"]->Fill();
@@ -1403,7 +1404,6 @@ int main(int argc, char * argv[])
 	h1["j0_JER_diff"] -> Fill( j0_JER_up->pt()-j0_JER_down->pt() );
 	h1["j1_JER_diff"] -> Fill( j1_JER_up->pt()-j1_JER_down->pt() );
 	h1["m12_JER_diff"] -> Fill( (j0_JER_up->p4() + j1_JER_up->p4()).M() - (j0_JER_down->p4() + j1_JER_down->p4()).M() );
-		
       }
     }//end: event loop
 
