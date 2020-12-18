@@ -425,11 +425,14 @@ int main(int argc, char * argv[])
 	//Assigning flavor to jets
 	auto particles = analysis.collection<GenParticle>("GenParticles");
 	slimmedJets->associatePartons(particles,0.4,5);
+
+	float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
+	eventweight *= signgenweight;
       }
 
       if (slimmedJets->size() < 2) continue;
 
-      //step 1: weight 1, no trigger, full collection (events with at least any two jets)
+      //step 1: effective events (including negative generator weights), no trigger, full collection (events with at least any two jets)
       float mbbstep1 = (slimmedJets->at(0).p4() + slimmedJets->at(1).p4()).M();
       h1["m12_total_step1"] -> Fill(mbbstep1,eventweight);
       if (mbbstep1 > 200 && mbbstep1 < 500){
@@ -782,13 +785,7 @@ int main(int argc, char * argv[])
 		h1["m12_SR4_10GeV_step9"] -> Fill(mbbstep9,eventweight);
 	      }
 	    }
-
-	    if (j==0){	      
-	      float signgenweight = analysis.genWeight()/fabs(analysis.genWeight());
-	      eventweight *= signgenweight;
-	    }
 	  }
-
 	  //step 10 (only MC): gen weight
 	  float mbbstep10 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
 	  h1["m12_total_step10"] -> Fill(mbbstep10,eventweight);
