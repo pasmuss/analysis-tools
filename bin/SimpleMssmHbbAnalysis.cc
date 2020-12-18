@@ -411,7 +411,25 @@ int main(int argc, char * argv[])
       //load jet collection
       auto slimmedJets = analysis.collection<Jet>("Jets");
 
-      //step 1: weight 1, no trigger, full collection
+      // Jets - std::shared_ptr< Collection<Jet> >
+      float sgweight = 0;
+      if (isMC_){
+	auto genjets = analysis.collection<GenJet>("GenJets");
+	slimmedJets->addGenJets(genjets);
+
+	/*std::vector<Jet*> slimmedGenJets;//get a vector of GenJets
+	  for (int a = 0; a < genjets->size(); a++){
+	  slimmedGenJets.push_back(&genjets->at(a));
+	  }*/
+
+	//Assigning flavor to jets
+	auto particles = analysis.collection<GenParticle>("GenParticles");
+	slimmedJets->associatePartons(particles,0.4,5);
+      }
+
+      if (slimmedJets->size() < 2) continue;
+
+      //step 1: weight 1, no trigger, full collection (events with at least any two jets)
       float mbbstep1 = (slimmedJets->at(0).p4() + slimmedJets->at(1).p4()).M();
       h1["m12_total_step1"] -> Fill(mbbstep1,eventweight);
       if (mbbstep1 > 200 && mbbstep1 < 500){
@@ -471,25 +489,12 @@ int main(int argc, char * argv[])
 	//if ( !(triggerFired && triggerFiredL1) ) continue;
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
-      
-      // Jets - std::shared_ptr< Collection<Jet> >
-      float sgweight = 0;
+
       if (isMC_){
-	auto genjets = analysis.collection<GenJet>("GenJets");
-	slimmedJets->addGenJets(genjets);
 	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
 	h1["nentries"] -> Fill((sgweight+1.)/2.);
-
-	/*std::vector<Jet*> slimmedGenJets;//get a vector of GenJets
-	  for (int a = 0; a < genjets->size(); a++){
-	  slimmedGenJets.push_back(&genjets->at(a));
-	  }*/
-
-	//Assigning flavor to jets
-	auto particles = analysis.collection<GenParticle>("GenParticles");
-	slimmedJets->associatePartons(particles,0.4,5);
       }
-
+      
       //step 3: trigger (only data)
       //step 3: gen weight (only MC)
       float mbbstep3 = (slimmedJets->at(0).p4() + slimmedJets->at(1).p4()).M();
@@ -690,7 +695,6 @@ int main(int argc, char * argv[])
 	float btag4 = j4->btag("btag_dfb") + j4->btag("btag_dfbb") + j4->btag("btag_dflepb");
 	if (btag4 > btagwp_) goodEvent = false;
       }
-      
       for ( int j = 0; j < njetsmin_; ++j )
 	{
 	  Jet * jet = selectedJets[j];
@@ -887,7 +891,7 @@ int main(int argc, char * argv[])
 	}//end of loop over jets for b tagging
       
       if ( ! goodEvent ) continue;
-      
+
       //step 11: b tagging
       float mbbstep11 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
       h1["m12_total_step11"] -> Fill(mbbstep11,eventweight);
@@ -1285,6 +1289,7 @@ int main(int argc, char * argv[])
 	//Jet trig eff
 	h1["m12_aac_jet_trigeff_up"]   -> Fill(mbb_sel, eventweight_jet_trigeff_up   );
 	h1["m12_aac_jet_trigeff_down"] -> Fill(mbb_sel, eventweight_jet_trigeff_down );
+
 	//subrange histograms
 	if (mbb_sel > 200 && mbb_sel < 500){
 	  h1["m12_SR1_1GeV_PU_up"] -> Fill(mbb_sel,eventweight_PU_up);
