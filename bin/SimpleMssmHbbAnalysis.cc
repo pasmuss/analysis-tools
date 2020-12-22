@@ -487,12 +487,18 @@ int main(int argc, char * argv[])
 	h1["m12_SR4_10GeV_step2"] -> Fill(mbbstep2,eventweight);
       }
       
+      cout << "before data trigger check" << endl;
+
       if(!isMC_ && !invertCutflow_){
+	cout << "entered data trigger check" << endl;
 	int triggerFired = analysis.triggerResult(hltPath_);
 	//int triggerFiredL1 = analysis.triggerResult(l1Seed_);
 	//if ( !(triggerFired && triggerFiredL1) ) continue;
+	cout << triggerFired << endl;
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
+
+      cout << "passed data trigger check" << endl;
 
       if (isMC_){
 	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
@@ -833,80 +839,6 @@ int main(int argc, char * argv[])
       ++nsel[5];
       if(isMC_ && sgweight > 0) ++nweigh[5];
       else if(isMC_ && sgweight < 0) --nweigh[5];
-      
-      // MC: b tag scale factors, online and offline
-      if (isMC_){
-	if (usebtagsf_ && !usebtagweights_){//for b tag weights: offline b tag sf included, online cannot be included (no trigger information and bias due to [not] cutting)
-	  //offline b tag sf
-	  for ( int j = 0; j < njetsmin_; ++j ) {
-	    Jet * jet = selectedJets[j];
-	    if (j!=2 || signalregion_){//sf not known for reverse b tag
-	      float jet_btag_sf = jet -> btagSF(bsf_reader);
-	      eventweight *= jet_btag_sf;
-	      jet_offl_sf_cent *= jet_btag_sf;
-	      float jet_btag_sf_up = jet -> btagSFup(bsf_reader,1);
-	      jet_offl_sf_up *= jet_btag_sf_up;
-	      float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,1);
-	      jet_offl_sf_down *= jet_btag_sf_down;
-	      float pt = jet->pt();
-	      th2_pT_offlbtagsf -> Fill(pt,jet_btag_sf);
-	    }
-	  }
-	  //step 9 (only MC): offline b tag sf
-	  float mbbstep9 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
-	  h1["m12_total_step9"] -> Fill(mbbstep9,eventweight);
-	  if (mbbstep9 > 200 && mbbstep9 < 500){
-	    h1["m12_SR1_1GeV_step9"] -> Fill(mbbstep9,eventweight);
-	  }
-	  if (mbbstep9 > 260 && mbbstep9 < 785){
-	    h1["m12_SR2_1GeV_step9"] -> Fill(mbbstep9,eventweight);
-	  }
-	  if (mbbstep9 > 390 && mbbstep9 < 1270){
-	    h1["m12_SR3_5GeV_step9"] -> Fill(mbbstep9,eventweight);
-	  }
-	  if (mbbstep9 > 500 && mbbstep9 < 2000){
-	    h1["m12_SR4_10GeV_step9"] -> Fill(mbbstep9,eventweight);
-	  }
-
-	  //online b tag sf
-	  //loop over jets
-	  for (int j = 0; j < njetsmin_; ++j) {
-	    Jet * jet = selectedJets[j];
-	    if (btagalgo == "deepflavour" && (j == 0 || j == 1)){
-	      float pt = jet->pt();
-	      float onl_sf = 0.852 - (pt * 0.0000616);
-	      float onl_sf_up = 0.860 - (pt * 0.0000065);
-	      jet_onl_sf_up *= onl_sf_up;
-	      float onl_sf_down = 0.845 - (pt * 0.0001167);
-	      jet_onl_sf_down *= onl_sf_down;
-	      h1["onl_btag_sf"] -> Fill(onl_sf);
-	      jet_onl_sf_cent *= onl_sf;
-	      eventweight *= onl_sf;
-	      th2_pT_onlbtagsf -> Fill(pt,onl_sf);
-	    }
-	  }
-
-	  //step 10 (only MC): online b tag sf
-	  float mbbstep10 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
-	  h1["m12_total_step10"] -> Fill(mbbstep10,eventweight);
-	  if (mbbstep10 > 200 && mbbstep10 < 500){
-	    h1["m12_SR1_1GeV_step10"] -> Fill(mbbstep10,eventweight);
-	  }
-	  if (mbbstep10 > 260 && mbbstep10 < 785){
-	    h1["m12_SR2_1GeV_step10"] -> Fill(mbbstep10,eventweight);
-	  }
-	  if (mbbstep10 > 390 && mbbstep10 < 1270){
-	    h1["m12_SR3_5GeV_step10"] -> Fill(mbbstep10,eventweight);
-	  }
-	  if (mbbstep10 > 500 && mbbstep10 < 2000){
-	    h1["m12_SR4_10GeV_step10"] -> Fill(mbbstep10,eventweight);
-	  }
-	}
-      }
-
-      double HT_after_bTag = 0;
-      calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
-      h1["HT_after_bTag"] -> Fill(HT_after_bTag);
 
       // Is matched?
       if (!isMC_) analysis.match<Jet,TriggerObject>("Jets",triggerObjects_,0.5);
@@ -919,20 +851,20 @@ int main(int argc, char * argv[])
 	//++nsel[7];
       }
 
-      //step 11 (only MC): trigger
-      float mbbstep11 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
-      h1["m12_total_step11"] -> Fill(mbbstep11,eventweight);
-      if (mbbstep11 > 200 && mbbstep11 < 500){
-        h1["m12_SR1_1GeV_step11"] -> Fill(mbbstep11,eventweight);
+      //step 9 (only MC): trigger
+      float mbbstep9 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step9"] -> Fill(mbbstep9,eventweight);
+      if (mbbstep9 > 200 && mbbstep9 < 500){
+        h1["m12_SR1_1GeV_step9"] -> Fill(mbbstep9,eventweight);
       }
-      if (mbbstep11 > 260 && mbbstep11 < 785){
-        h1["m12_SR2_1GeV_step11"] -> Fill(mbbstep11,eventweight);
+      if (mbbstep9 > 260 && mbbstep9 < 785){
+        h1["m12_SR2_1GeV_step9"] -> Fill(mbbstep9,eventweight);
       }
-      if (mbbstep11 > 390 && mbbstep11 < 1270){
-	h1["m12_SR3_5GeV_step11"] -> Fill(mbbstep11,eventweight);
+      if (mbbstep9 > 390 && mbbstep9 < 1270){
+	h1["m12_SR3_5GeV_step9"] -> Fill(mbbstep9,eventweight);
       }
-      if (mbbstep11 > 500 && mbbstep11 < 2000){
-	h1["m12_SR4_10GeV_step11"] -> Fill(mbbstep11,eventweight);
+      if (mbbstep9 > 500 && mbbstep9 < 2000){
+	h1["m12_SR4_10GeV_step9"] -> Fill(mbbstep9,eventweight);
       }
 
       if (!usebtagweights_){//for data: fine; for MC: not to be used with b tag weights (not using trigger)
@@ -957,25 +889,100 @@ int main(int argc, char * argv[])
 
       if ( ! goodEvent ) continue;
 
-      //step 12: trigger matching
-      float mbbstep12 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
-      h1["m12_total_step12"] -> Fill(mbbstep12,eventweight);
-      if (mbbstep12 > 200 && mbbstep12 < 500){
-        h1["m12_SR1_1GeV_step12"] -> Fill(mbbstep12,eventweight);
+      //step 10: trigger matching
+      float mbbstep10 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+      h1["m12_total_step10"] -> Fill(mbbstep10,eventweight);
+      if (mbbstep10 > 200 && mbbstep10 < 500){
+        h1["m12_SR1_1GeV_step10"] -> Fill(mbbstep10,eventweight);
       }
-      if (mbbstep12 > 260 && mbbstep12 < 785){
-        h1["m12_SR2_1GeV_step12"] -> Fill(mbbstep12,eventweight);
+      if (mbbstep10 > 260 && mbbstep10 < 785){
+        h1["m12_SR2_1GeV_step10"] -> Fill(mbbstep10,eventweight);
       }
-      if (mbbstep12 > 390 && mbbstep12 < 1270){
-	h1["m12_SR3_5GeV_step12"] -> Fill(mbbstep12,eventweight);
+      if (mbbstep10 > 390 && mbbstep10 < 1270){
+	h1["m12_SR3_5GeV_step10"] -> Fill(mbbstep10,eventweight);
       }
-      if (mbbstep12 > 500 && mbbstep12 < 2000){
-	h1["m12_SR4_10GeV_step12"] -> Fill(mbbstep12,eventweight);
+      if (mbbstep10 > 500 && mbbstep10 < 2000){
+	h1["m12_SR4_10GeV_step10"] -> Fill(mbbstep10,eventweight);
       }
 
       ++nsel[6];//for MC and inverted cutflow: matching and trigger in one common step
       if(isMC_ && sgweight > 0) ++nweigh[6];
       else if(isMC_ && sgweight < 0) --nweigh[6];
+
+      
+      // MC: b tag scale factors, online and offline
+      if (isMC_){
+	if (usebtagsf_ && !usebtagweights_){//for b tag weights: offline b tag sf included, online cannot be included (no trigger information and bias due to [not] cutting)
+	  //offline b tag sf
+	  for ( int j = 0; j < njetsmin_; ++j ) {
+	    Jet * jet = selectedJets[j];
+	    if (j!=2 || signalregion_){//sf not known for reverse b tag
+	      float jet_btag_sf = jet -> btagSF(bsf_reader);
+	      eventweight *= jet_btag_sf;
+	      jet_offl_sf_cent *= jet_btag_sf;
+	      float jet_btag_sf_up = jet -> btagSFup(bsf_reader,1);
+	      jet_offl_sf_up *= jet_btag_sf_up;
+	      float jet_btag_sf_down = jet -> btagSFdown(bsf_reader,1);
+	      jet_offl_sf_down *= jet_btag_sf_down;
+	      float pt = jet->pt();
+	      th2_pT_offlbtagsf -> Fill(pt,jet_btag_sf);
+	    }
+	  }
+	  //step 11 (only MC): offline b tag sf
+	  float mbbstep11 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+	  h1["m12_total_step11"] -> Fill(mbbstep11,eventweight);
+	  if (mbbstep11 > 200 && mbbstep11 < 500){
+	    h1["m12_SR1_1GeV_step11"] -> Fill(mbbstep11,eventweight);
+	  }
+	  if (mbbstep11 > 260 && mbbstep11 < 785){
+	    h1["m12_SR2_1GeV_step11"] -> Fill(mbbstep11,eventweight);
+	  }
+	  if (mbbstep11 > 390 && mbbstep11 < 1270){
+	    h1["m12_SR3_5GeV_step11"] -> Fill(mbbstep11,eventweight);
+	  }
+	  if (mbbstep11 > 500 && mbbstep11 < 2000){
+	    h1["m12_SR4_10GeV_step11"] -> Fill(mbbstep11,eventweight);
+	  }
+
+	  //online b tag sf
+	  //loop over jets
+	  for (int j = 0; j < njetsmin_; ++j) {
+	    Jet * jet = selectedJets[j];
+	    if (btagalgo == "deepflavour" && (j == 0 || j == 1)){
+	      float pt = jet->pt();
+	      float onl_sf = 0.852 - (pt * 0.0000616);
+	      float onl_sf_up = 0.860 - (pt * 0.0000065);
+	      jet_onl_sf_up *= onl_sf_up;
+	      float onl_sf_down = 0.845 - (pt * 0.0001167);
+	      jet_onl_sf_down *= onl_sf_down;
+	      h1["onl_btag_sf"] -> Fill(onl_sf);
+	      jet_onl_sf_cent *= onl_sf;
+	      eventweight *= onl_sf;
+	      th2_pT_onlbtagsf -> Fill(pt,onl_sf);
+	    }
+	  }
+
+	  //step 12 (only MC): online b tag sf
+	  float mbbstep12 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
+	  h1["m12_total_step12"] -> Fill(mbbstep12,eventweight);
+	  if (mbbstep12 > 200 && mbbstep12 < 500){
+	    h1["m12_SR1_1GeV_step12"] -> Fill(mbbstep12,eventweight);
+	  }
+	  if (mbbstep12 > 260 && mbbstep12 < 785){
+	    h1["m12_SR2_1GeV_step12"] -> Fill(mbbstep12,eventweight);
+	  }
+	  if (mbbstep12 > 390 && mbbstep12 < 1270){
+	    h1["m12_SR3_5GeV_step12"] -> Fill(mbbstep12,eventweight);
+	  }
+	  if (mbbstep12 > 500 && mbbstep12 < 2000){
+	    h1["m12_SR4_10GeV_step12"] -> Fill(mbbstep12,eventweight);
+	  }
+	}
+      }
+
+      double HT_after_bTag = 0;
+      calculateEventHT ( selectedJets, ptHT, etaHT, HT_after_bTag );
+      h1["HT_after_bTag"] -> Fill(HT_after_bTag);
       
       //FSR recovery
       for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
