@@ -487,8 +487,6 @@ int main(int argc, char * argv[])
 	h1["m12_SR4_10GeV_step2"] -> Fill(mbbstep2,eventweight);
       }
       
-      cout << "before data trigger check" << endl;
-
       if(!isMC_ && !invertCutflow_){
 	cout << "entered data trigger check" << endl;
 	int triggerFired = analysis.triggerResult(hltPath_);
@@ -497,8 +495,6 @@ int main(int argc, char * argv[])
 	cout << triggerFired << endl;
 	if ( !triggerFired ) continue;
       } //for MC, the trigger should be the last step of cutflow
-
-      cout << "passed data trigger check" << endl;
 
       if (isMC_){
 	sgweight = analysis.genWeight()/fabs(analysis.genWeight());
