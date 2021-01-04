@@ -452,8 +452,8 @@ int main(int argc, char * argv[])
       if (isMC_){
 	puweight = puweights->weight(analysis.nTruePileup(),0);//0: central; replace by +-1/2 for +- 1/2 sigma variation (up/down); should use specific values (puup, pudown) for that purpose!
 	eventweight *= puweight;
-	pudown = puweights->weight(analysis.nTruePileup(),-2);
-	puup = puweights->weight(analysis.nTruePileup(),+2);
+	pudown = puweights->weight(analysis.nTruePileup(),-1);
+	puup = puweights->weight(analysis.nTruePileup(),+1);
       }
 
       int window = 0;
