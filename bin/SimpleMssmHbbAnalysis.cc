@@ -577,8 +577,6 @@ int main(int argc, char * argv[])
 	    jet->jerInfo(*jerinfo,0.2);
 	    if      ( jervar_ == "up"   ) correctJetpt( *jet, jet->jerCorrection("up") );
             else if ( jervar_ == "down" ) correctJetpt( *jet, jet->jerCorrection("down") );
-	    else if ( jervar_ == "up3"  ) correctJetpt( *jet, 3*(jet->jerCorrection("up")) );
-	    else if ( jervar_ == "down3") correctJetpt( *jet, 3*(jet->jerCorrection("down")) );
             else    correctJetpt( *jet, jet->jerCorrection() );
 	  }
 	  //For JES up and down variation
