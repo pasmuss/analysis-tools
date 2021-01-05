@@ -1552,7 +1552,7 @@ int main(int argc, char * argv[])
 void correctJetpt ( Jet& jet , const float& cor )
 {
   TLorentzVector CorJet;
-  CorJet.SetPtEtaPhiM(jet.pt()*cor , jet.eta(), jet.phi(), (jet.p4()).M());
+  CorJet.SetPtEtaPhiE(jet.pt()*cor, jet.eta(), jet.phi(), jet.e()*cor);
   jet.p4(CorJet);
 }
 
