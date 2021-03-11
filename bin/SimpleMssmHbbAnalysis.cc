@@ -123,6 +123,8 @@ int main(int argc, char * argv[])
   h1["n_ptmin20_csv"]     = new TH1F("n_ptmin20_csv"    , "" ,   30,  0,    30);
   h1["nentries"]          = new TH1F("nentries"         , "" ,    2,  0,     2);
 
+  h1["deltaeta12"]        = new TH1F("deltaeta12"       , "" ,  120, -6,     6);
+
   h1["nentries_SR1"]      = new TH1F("nentries_SR1"     , "" ,    1,  0,     1);
   h1["nentries_SR2"]      = new TH1F("nentries_SR2"     , "" ,    1,  0,     1);
   h1["nentries_SR3"]      = new TH1F("nentries_SR3"     , "" ,    1,  0,     1);
@@ -627,6 +629,9 @@ int main(int argc, char * argv[])
 	}
 
       if ( ! goodEvent ) continue;
+
+      double deltaetavalue = fabs(selectedJets[0]->eta() - selectedJets[1]->eta());
+      h1["deltaeta12"] -> Fill(deltaetavalue,eventweight);
 
       //step 6: delta R
       float mbbstep6 = (selectedJets[0]->p4() + selectedJets[1]->p4()).M();
