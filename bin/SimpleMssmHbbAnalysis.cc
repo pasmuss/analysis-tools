@@ -630,7 +630,7 @@ int main(int argc, char * argv[])
 
       if ( ! goodEvent ) continue;
 
-      double deltaetavalue = fabs(selectedJets[0]->eta() - selectedJets[1]->eta());
+      double deltaetavalue = selectedJets[0]->eta() - selectedJets[1]->eta();
       h1["deltaeta12"] -> Fill(deltaetavalue,eventweight);
 
       //step 6: delta R
@@ -986,6 +986,7 @@ int main(int argc, char * argv[])
       h1["HT_after_bTag"] -> Fill(HT_after_bTag);
       
       //FSR recovery
+      
       for ( size_t s = njetsmin_; s < selectedJets.size() ; ++s )  //soft jet loop - from 4th/5th jet (depending on region)
 	{
 	  Jet & softjet = *selectedJets[s];
@@ -1008,7 +1009,7 @@ int main(int argc, char * argv[])
 	      h1["rank_softjet"] -> Fill(s);
 	    }
 	}
-
+      
       // Check for muons in the jets
       if (muonveto_){
 	std::vector<Muon*> selectedMuons;
