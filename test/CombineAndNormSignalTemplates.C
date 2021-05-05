@@ -24,7 +24,7 @@ void CombineAndNormSignalTemplates(){
     for (int mass = 0; mass<srmasses.size(); mass++){
       double sf = 1./srsf[mass];
       cout << srsf[mass] << " --> " << sf << endl;
-      TFile* f_signal_in = new TFile(("/nfs/dust/cms/user/asmusspa/private/CMSSW_10_2_13/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/rootfiles_May11-20_properSubranges_inclMC/rootfiles_Nov19-20_inclSystVariations/central/mcsig/mc-sig-" + srmasses[mass]  + "-NLO-deep-SR-3j.root").c_str(),"READ");
+      TFile* f_signal_in = new TFile(("/nfs/dust/cms/user/asmusspa/private/CMSSW_10_2_13/src/Analysis/Tools/test/Configs_diffBTags_allmedium/rootfiles_4med_asympT_onlMC_triggersfMC_Nov12-19/rootfiles_May11-20_properSubranges_inclMC/rootfiles_Nov19-20_inclSystVariations/JESdown/mcsig/mc-sig-" + srmasses[mass]  + "-NLO-deep-SR-3j.root").c_str(),"READ");
       TH1F* frhist_in = (TH1F*)f_signal_in->Get(("m12_"+subrange+"_"+binningsr+"GeV").c_str());
       frhist_in -> SetName(("m12_"+srmasses[mass]+"GeV_"+subrange+"_"+binningsr+"GeVbinning").c_str());
       frhist_in -> Scale(sf);
@@ -43,7 +43,7 @@ void CombineAndNormSignalTemplates(){
     }
   }
 
-  TFile* fOut = new TFile("AllSignals.root","RECREATE");
+  TFile* fOut = new TFile("AllSignals_JESdown.root","RECREATE");
   for (int i = 0; i < finalhists.size(); i++){
     finalhists[i] -> Write();
   }
